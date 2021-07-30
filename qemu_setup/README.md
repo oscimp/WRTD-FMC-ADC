@@ -63,7 +63,7 @@ Hopefully now you have access to your network from QEMU.
 ## 3. Accessing the SPEC board inside QEMU
 The second half of the `setup.sh` script will activate the VFIO kernel modules, unbind the driver on the host side, and assign the board.
 
-You should now be able to launch QEMU with the following options added, where `<PCI ID>` is what the setup script should have printed in the form `0000:XX.XX.X` (the colons need to be escaped with a baskslash in the command argument if written manually):
+You should now be able to launch QEMU with the following options added, where `<PCI ID>` is what the setup script should have printed in the form `XX.XX.X` (the colons need to be escaped with a baskslash in the command argument if written manually):
 ```
 -device intel-iommu,caching-mode=on -device vfio-pci,host=<PCI ID>
 ```
@@ -93,3 +93,11 @@ On the host side, you only need to create a directory to use, and add the follow
 mount -t 9p -o trans=virtio host0 /mnt/shared
 ```
 
+## 5. Summary and launcher script
+To ease the task, a setup and launcher scripts have been created.
+
+You must execute the setup script (with sudo permissions) once after each reboot of the host computer.
+You should provide it with the `HOST_INTERFACE` variable containing the name of the interface to use for QEMU.
+
+You can then use `sudo ./laucher.sh disk.img` to launch QEMU with all the options detailled earlier.
+You can provide a `SHARED_DIR` variable to specify your host shared directory, otherwise it will default to `/mnt/shared`.

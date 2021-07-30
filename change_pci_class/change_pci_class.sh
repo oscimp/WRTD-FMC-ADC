@@ -7,7 +7,7 @@ fi
 
 
 # Search for ht-flasher executable
-if [ -n $HT_FLASHER ]; then
+if [ -z $HT_FLASHER ]; then
 	HT_FLASHER=$(pwd)/ht-flasher/src/ht-flasher
 	echo No ht-flasher path specified, searching at $HT_FLASHER.
 fi

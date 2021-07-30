@@ -18,19 +18,19 @@ iptables -I FORWARD 1 -o tap0 -m state --state RELATED,ESTABLISHED -j ACCEPT
 # Passing the SPEC board to QEMU
 # Get the PCI ID of the board
 PCI_ID=$(lspci | grep CERN | awk {'print $1'})
-if [ -n PCI_ID ]; then
+if [ -z PCI_ID ]; then
 	echo Could not find the SPEC board.
 	exit 1
 fi
-PCI_ID="0000:"$PCI_ID
 echo PCI ID: $PCI_ID
+PCI_ID="0000:"$PCI_ID
 
 # Get the vendor and device IDs of the board
 VENDOR_DEVICE=$(lspci -ns $PCI_ID | awk {'print $3'} | sed 's/:/ /g')
 
 # Unbind the driver in the host system
 if [ -e /sys/bus/pci/devices/$PCI_ID/driver ]; then
-	echo $toto > /sys/bus/pci/devices/$PCI_ID/driver/unbind
+	echo $PCI_ID > /sys/bus/pci/devices/$PCI_ID/driver/unbind
 fi
 
 # Enabling VFIO modules
