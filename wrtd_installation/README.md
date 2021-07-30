@@ -45,11 +45,33 @@ cd scripts
 sh wrtd_ref_spec150t_adc_install.sh
 ```
 
-Afer each reboot, you will need to send the bitstream to the FPGA with the following command before you can do anything with the board:
-(`<PCI ID>` corresponds to the first column you should get when running `lspci | grep CERN`, don't forget to escape the colon with a backslash)
+## 3. Flashing the FPGA
+
+Afer each reboot, you will need to send the bitstream to the FPGA before you can do anything with the board.
+To do so you can use the following command (`<PCI ID>` corresponds to the first column you should get when running `lspci | grep CERN`, don't forget to escape the colon with a backslash):
 ```bash
 echo -e -n "wrtd_ref_spec150t_adc.bin\0" > /sys/kernel/debug/0000\:<PCI ID>/fpga_firmware
 ```
 The script `load_bitstream.sh` will run that command for you.
 
 You may receive an error message saying `Failed to abort DMA transfer`. According to CERN, this does not cause any issue and the FPGA still receives the bitstream.
+
+## 4. PCI class code issue
+
+When installing everything on a Raspberry Pi CM4 (ARM processor), we get an error when the SPEC driver is loaded.
+
+If you see a similar log in `dmesg`, read the following solution:
+```
+spec-fmc-carrier 0000:01:00.0 can't enable device: BAR 0 [mem 0x00000000-0x000fffff 64bit] not claimed
+spec-fmc-carrier 0000:01:00.0 Failed to enable PCI device (-22)
+spec-fmc-carrier probe of 0000:01:00.0 failed with error -22
+
+```
+This issue comes from the BIOS which in not handling properly the PCI class code `0x00`.
+The solution proposed here consists in reprogramming the EEPROM containing the code and change it to `0xFF`.
+
+To do so, look into the `change_pci_class` directory of this repository.
+
+If you want to explore other solutions, see this discussion:
+https://forums.ohwr.org/t/spec-pci-class-code/848718
+
