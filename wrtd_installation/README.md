@@ -50,3 +50,6 @@ Afer each reboot, you will need to send the bitstream to the FPGA with the follo
 ```bash
 echo -e -n "wrtd_ref_spec150t_adc.bin\0" > /sys/kernel/debug/0000\:<PCI ID>/fpga_firmware
 ```
+The script `load_bitstream.sh` will run that command for you.
+
+You may receive an error message saying `Failed to abort DMA transfer`. According to CERN, this does not cause any issue and the FPGA still receives the bitstream.
