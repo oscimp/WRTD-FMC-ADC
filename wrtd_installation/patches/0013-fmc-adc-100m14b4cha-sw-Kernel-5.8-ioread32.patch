@@ -1,0 +1,61 @@
+From 3da1e0e6be26a264e701450ccd665f001164d00b Mon Sep 17 00:00:00 2001
+From: Mathis MARION <mathis.marion@grenoble-inp.org>
+Date: Thu, 29 Jul 2021 16:51:28 +0200
+Subject: [PATCH 13/18] [fmc-adc-100m14b4cha-sw] Kernel 5.8 ioread32
+
+`unsigned int ioread32(void __iomem *)` became
+`unsigned int ioread32(const void __iomem *)` in
+kernel 5.8 and above.
+Changed struct fa_memory_ops accordingly.
+
+Added missing include for linux/io.h
+---
+ patches/fmc-adc-100m14b4cha-sw.diff | 36 +++++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
+ create mode 100644 patches/fmc-adc-100m14b4cha-sw.diff
+
+diff --git a/patches/fmc-adc-100m14b4cha-sw.diff b/patches/fmc-adc-100m14b4cha-sw.diff
+new file mode 100644
+index 0000000..ada3c3f
+--- /dev/null
++++ b/patches/fmc-adc-100m14b4cha-sw.diff
+@@ -0,0 +1,36 @@
++diff --git a/kernel/fa-core.c b/kernel/fa-core.c
++index 6e1eb6d..8a21683 100644
++--- a/kernel/fa-core.c
+++++ b/kernel/fa-core.c
++@@ -10,6 +10,7 @@
++ #include <linux/version.h>
++ #include <linux/dmaengine.h>
++ #include <linux/mod_devicetable.h>
+++#include <linux/io.h>
++ #include "linux/ipmi-fru.h"
++ #include "linux/fmc.h"
++ 
++diff --git a/kernel/fmc-adc-100m14b4cha.h b/kernel/fmc-adc-100m14b4cha.h
++index 089e5e1..aa3a3de 100644
++--- a/kernel/fmc-adc-100m14b4cha.h
+++++ b/kernel/fmc-adc-100m14b4cha.h
++@@ -159,6 +159,7 @@ struct fa_calib {
++ #include <linux/workqueue.h>
++ #include <linux/debugfs.h>
++ #include <linux/platform_device.h>
+++#include <linux/version.h>
++ #include "linux/fmc.h"
++ 
++ #include <linux/zio.h>
++@@ -190,7 +191,11 @@ enum fa_bus_resource {
++ };
++ 
++ struct fa_memory_ops {
+++#if KERNEL_VERSION(5, 8, 0) <= LINUX_VERSION_CODE
+++	u32 (*read)(const void *addr);
+++#else
++ 	u32 (*read)(void *addr);
+++#endif
++ 	void (*write)(u32 value, void *addr);
++ };
++ 
+-- 
+2.27.0
+

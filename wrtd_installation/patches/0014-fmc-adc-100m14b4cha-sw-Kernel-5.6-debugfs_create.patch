@@ -1,0 +1,61 @@
+From 338295c0f9d7999be3e55928d85744affdfa2b76 Mon Sep 17 00:00:00 2001
+From: Mathis MARION <mathis.marion@grenoble-inp.org>
+Date: Thu, 29 Jul 2021 16:55:46 +0200
+Subject: [PATCH 14/18] [fmc-adc-100m14b4cha-sw] Kernel 5.6 debugfs_create
+
+The signature for `debugfs_create_regset32` changed from
+returning a `struct dentry *` to `void`.
+Error checking is no longer possible.
+---
+ patches/fmc-adc-100m14b4cha-sw.diff | 30 ++++++++++++++++++++++++++++-
+ 1 file changed, 29 insertions(+), 1 deletion(-)
+
+diff --git a/patches/fmc-adc-100m14b4cha-sw.diff b/patches/fmc-adc-100m14b4cha-sw.diff
+index ada3c3f..c184ac0 100644
+--- a/patches/fmc-adc-100m14b4cha-sw.diff
++++ b/patches/fmc-adc-100m14b4cha-sw.diff
+@@ -10,8 +10,28 @@ index 6e1eb6d..8a21683 100644
+  #include "linux/ipmi-fru.h"
+  #include "linux/fmc.h"
+  
++diff --git a/kernel/fa-debug.c b/kernel/fa-debug.c
++index 7478641..3e99eb6 100644
++--- a/kernel/fa-debug.c
+++++ b/kernel/fa-debug.c
++@@ -179,14 +179,7 @@ int fa_debug_init(struct fa_dev *fa)
++ 	fa->dbg_reg32.regs = fa_debugfs_reg32;
++ 	fa->dbg_reg32.nregs = ARRAY_SIZE(fa_debugfs_reg32);
++ 	fa->dbg_reg32.base = fa->fa_top_level;
++-	fa->dbg_reg = debugfs_create_regset32("regs", 0200, fa->dbg_dir,
++-					      &fa->dbg_reg32);
++-	if (IS_ERR_OR_NULL(fa->dbg_reg)) {
++-		err = PTR_ERR(fa->dbg_reg);
++-		dev_warn(fa->msgdev,
++-			"Cannot create debugfs file \"regs\" (%d)\n",
++-			 err);
++-	}
+++	debugfs_create_regset32("regs", 0200, fa->dbg_dir, &fa->dbg_reg32);
++ 
++ 	fa->dbg_reg_spi = debugfs_create_file("spi-regs", 0444,
++ 					      fa->dbg_dir, fa,
+ diff --git a/kernel/fmc-adc-100m14b4cha.h b/kernel/fmc-adc-100m14b4cha.h
+-index 089e5e1..aa3a3de 100644
++index 089e5e1..0be6584 100644
+ --- a/kernel/fmc-adc-100m14b4cha.h
+ +++ b/kernel/fmc-adc-100m14b4cha.h
+ @@ -159,6 +159,7 @@ struct fa_calib {
+@@ -34,3 +54,11 @@ index 089e5e1..aa3a3de 100644
+  	void (*write)(u32 value, void *addr);
+  };
+  
++@@ -451,7 +456,6 @@ struct fa_dev {
++ 
++ 	struct dentry *dbg_dir;
++ 	struct debugfs_regset32 dbg_reg32;
++-	struct dentry *dbg_reg;
++ 	struct dentry *dbg_reg_spi;
++ 
++ 	/* Operations */
+-- 
+2.27.0
+

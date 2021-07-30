@@ -1,0 +1,49 @@
+From a315a336dcd76520e14fc339a9815b7e1de48eba Mon Sep 17 00:00:00 2001
+From: Mathis MARION <mathis.marion@grenoble-inp.org>
+Date: Thu, 29 Jul 2021 17:09:26 +0200
+Subject: [PATCH 18/18] [fmc-adc-100m14b4cha] DMA mask initialization
+
+When using the driver, a DMA mask error would occur.
+Pointing the DMA mask to the coherent DMA mask during probing
+and then initializing it fixed the issue.
+---
+ patches/fmc-adc-100m14b4cha-sw.diff | 18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
+
+diff --git a/patches/fmc-adc-100m14b4cha-sw.diff b/patches/fmc-adc-100m14b4cha-sw.diff
+index f0254b4..d5041fd 100644
+--- a/patches/fmc-adc-100m14b4cha-sw.diff
++++ b/patches/fmc-adc-100m14b4cha-sw.diff
+@@ -1,5 +1,5 @@
+ diff --git a/kernel/fa-core.c b/kernel/fa-core.c
+-index 6e1eb6d..7bc7055 100644
++index 6e1eb6d..59368f6 100644
+ --- a/kernel/fa-core.c
+ +++ b/kernel/fa-core.c
+ @@ -10,6 +10,7 @@
+@@ -51,7 +51,21 @@ index 6e1eb6d..7bc7055 100644
+  	fa_writel(fa, fa->fa_utc_base, &zfad_regs[ZFA_UTC_SECONDS_U],
+  		  (seconds >> 32) & 0xFFFFFFFF);
+  	fa_writel(fa, fa->fa_utc_base, &zfad_regs[ZFA_UTC_SECONDS_L],
+-@@ -558,7 +585,7 @@ int fa_probe(struct platform_device *pdev)
++@@ -553,12 +580,21 @@ int fa_probe(struct platform_device *pdev)
++ 	fa->pdev = pdev;
++ 	fa->msgdev = &fa->pdev->dev;
++ 
+++	/* DMA mask initialization */
+++	if (!pdev->dev.dma_mask)
+++		pdev->dev.dma_mask = &pdev->dev.coherent_dma_mask;
+++
+++	if (dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64))) {
+++		if (dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32)))
+++			dev_err(fa->msgdev, "Could not configure DMA mask");
+++	}
+++
++ 	/* Assign IO operation */
++ 	switch (pdev->id_entry->driver_data) {
+  	case ADC_VER_SPEC:
+  		fa->memops.read = ioread32;
+  		fa->memops.write = iowrite32;
+-- 
+2.27.0
+

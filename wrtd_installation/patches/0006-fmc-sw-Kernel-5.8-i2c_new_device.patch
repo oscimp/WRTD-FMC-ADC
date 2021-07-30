@@ -1,0 +1,76 @@
+From e9cfd8870dc4810b73f86f47fe9b072bb3012643 Mon Sep 17 00:00:00 2001
+From: Mathis MARION <mathis.marion@grenoble-inp.org>
+Date: Thu, 29 Jul 2021 16:21:20 +0200
+Subject: [PATCH 06/18] [fmc-sw] Kernel 5.8 i2c_new_device
+
+The function `i2c_new_device` disappeared in kernel 5.8.
+It is now required to use `i2c_new_client_device`.
+Error check now requires using `IS_ERR` instead of just cheking for NULL.
+---
+ patches/fmc-sw.diff | 24 +++++++++++++++++++-----
+ 1 file changed, 19 insertions(+), 5 deletions(-)
+
+diff --git a/patches/fmc-sw.diff b/patches/fmc-sw.diff
+index 9a084e1..f429f43 100644
+--- a/patches/fmc-sw.diff
++++ b/patches/fmc-sw.diff
+@@ -1,5 +1,5 @@
+ diff --git a/drivers/fmc/fmc-eeprom.c b/drivers/fmc/fmc-eeprom.c
+-index a000a0d..2bd2a6f 100644
++index a000a0d..7ae4b11 100644
+ --- a/drivers/fmc/fmc-eeprom.c
+ +++ b/drivers/fmc/fmc-eeprom.c
+ @@ -7,9 +7,14 @@
+@@ -117,7 +117,21 @@ index a000a0d..2bd2a6f 100644
+  }
+  EXPORT_SYMBOL(fmc_slot_eeprom_read);
+  
+-@@ -152,7 +197,9 @@ void fmc_slot_eeprom_del(struct fmc_slot *slot)
++@@ -108,8 +153,13 @@ static int __fmc_slot_eeprom_add(struct fmc_slot *slot,
++ 	}
++ 
++ 	info_l.addr = fmc_slot_i2c_address(info_l.addr, slot->ga);
+++#if KERNEL_VERSION(5, 8, 0) <= LINUX_VERSION_CODE
+++	slot->eeprom = i2c_new_client_device(slot->adapter, &info_l);
+++	if (IS_ERR(slot->eeprom))
+++#else
++ 	slot->eeprom = i2c_new_device(slot->adapter, &info_l);
++ 	if (!slot->eeprom)
+++#endif
++ 		return -ENODEV;
++ 
++ 	err = sysfs_create_link(&slot->dev.kobj, &slot->eeprom->dev.kobj,
++@@ -152,7 +202,9 @@ void fmc_slot_eeprom_del(struct fmc_slot *slot)
+  	sysfs_remove_link(&slot->dev.kobj, FRU_EEPROM_NAME);
+  	i2c_unregister_device(slot->eeprom);
+  	slot->eeprom = NULL;
+@@ -127,7 +141,7 @@ index a000a0d..2bd2a6f 100644
+  }
+  
+  /**
+-@@ -197,19 +244,25 @@ int fmc_slot_eeprom_type_set(struct fmc_slot *slot, const char *type)
++@@ -197,19 +249,25 @@ int fmc_slot_eeprom_type_set(struct fmc_slot *slot, const char *type)
+  
+  
+  	memset(&i2c_info, 0, sizeof(i2c_info));
+@@ -156,7 +170,7 @@ index a000a0d..2bd2a6f 100644
+  	slot->at24_data.byte_len = len;
+  	slot->at24_data.page_size = 1; /* 1Byte page to play safe */
+  	slot->at24_data.setup = fmc_slot_eeprom_setup;
+-@@ -219,7 +272,15 @@ int fmc_slot_eeprom_type_set(struct fmc_slot *slot, const char *type)
++@@ -219,7 +277,15 @@ int fmc_slot_eeprom_type_set(struct fmc_slot *slot, const char *type)
+  		i2c_info.type, i2c_info.addr,
+  		slot->at24_data.byte_len, slot->at24_data.page_size,
+  		slot->at24_data.flags);
+@@ -173,7 +187,7 @@ index a000a0d..2bd2a6f 100644
+  }
+  EXPORT_SYMBOL(fmc_slot_eeprom_type_set);
+ diff --git a/drivers/fmc/fru-parse.c b/drivers/fmc/fru-parse.c
+-index 35a1380..2fd95eb 100644
++index 52b997c..2fd95eb 100644
+ --- a/drivers/fmc/fru-parse.c
+ +++ b/drivers/fmc/fru-parse.c
+ @@ -5,12 +5,6 @@
+-- 
+2.27.0
+

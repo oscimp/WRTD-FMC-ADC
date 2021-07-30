@@ -1,0 +1,82 @@
+From 9e313d1de05e772be159e7e35fb30b733eee4c06 Mon Sep 17 00:00:00 2001
+From: Mathis MARION <mathis.marion@grenoble-inp.org>
+Date: Thu, 29 Jul 2021 16:36:07 +0200
+Subject: [PATCH 11/18] [spec] Kernel 4.4: use fwnode for irq domain
+
+This patch follows a change to how IRQ are handled by HTVIC.
+Here is a copy of the commit message for the corresponding HTVIC patch:
+
+When creating an IRQ domain, the code used to store a device struct
+pointer in the `of_node` field of the irq_domain struct returned by
+`irq_domain_add_linear`. This was done by casting to a void pointer and
+passing as the first argument of the function.
+
+In the SPEC repository (and supposedly other depending repositories),
+we would then get back the irq_domain struct by calling `irq_find_host`
+with again a device struct pointer casted to a void pointer as the
+argument. The function would compare the addresses of the 2 device
+structs and return the right irq_domain.
+
+This trick was most likely due to the fact that the IRQ domain API was
+conceived around OpenFirmware before version 4.4, and that the project
+should work for ACPI.
+A workaround for kernel 4.7 was written, which involved using a `select`
+function, and passing the address of the device struct as a parameter.
+It was particularly ugly as it would require getting around the
+`irq_find_host` to call immediately `irq_find_matching_fwspec` and pass
+in the address of the wanted device struct as a parameter in a hacky way
+to fit it inside two 32 bit integers.
+
+Kernel version 4.4 introduced fwnodes, which would make easier working
+with ACPI. Instead of repeating the hacky workaround (which would result
+in a kernel error on later kernels when calling irq_domain_add_linear),
+I allocated a fwnode_handle struct before creating a new IRQ domain.
+Then I used the new irq_domain_create_* API to get an irq_domain using
+this fwnode. I also took care of disallocating the fwnode_handle.
+
+On the other end, we can just call `irq_find_matching_fwnode` and pass
+dev.fwnode as a parameter.
+---
+ patches/spec.diff | 19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
+
+diff --git a/patches/spec.diff b/patches/spec.diff
+index 366adbd..6fad436 100644
+--- a/patches/spec.diff
++++ b/patches/spec.diff
+@@ -151,7 +151,7 @@ index 9973df0..2232c8c 100644
+  
+  	mutex_lock(gpio_lookup_lock_p);
+ diff --git a/software/kernel/spec-core-fpga.c b/software/kernel/spec-core-fpga.c
+-index 480bf05..b878f75 100644
++index 480bf05..96f3db6 100644
+ --- a/software/kernel/spec-core-fpga.c
+ +++ b/software/kernel/spec-core-fpga.c
+ @@ -140,6 +140,11 @@ static int spec_fpga_dbg_init(struct spec_fpga *spec_fpga)
+@@ -174,6 +174,23 @@ index 480bf05..b878f75 100644
+  
+  	spec_fpga->dbg_bld = debugfs_create_file(SPEC_DBG_BLD_INFO_NAME,
+  						 0444,
++@@ -202,14 +208,8 @@ static struct resource spec_fpga_vic_res[] = {
++ 
++ struct irq_domain *spec_fpga_irq_find_host(struct device *dev)
++ {
++-#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,7,0)
++-	struct irq_fwspec fwspec = {
++-		.fwnode = dev->fwnode,
++-		.param_count = 2,
++-		.param[0] = ((unsigned long)dev >> 32) & 0xffffffff,
++-		.param[1] = ((unsigned long)dev) & 0xffffffff,
++-	};
++-	return irq_find_matching_fwspec(&fwspec, DOMAIN_BUS_ANY);
+++#if KERNEL_VERSION(4, 4, 0) <= LINUX_VERSION_CODE
+++	return irq_find_matching_fwnode(dev->fwnode, DOMAIN_BUS_ANY);
++ #else
++ 	return (irq_find_host((void *)dev));
++ #endif
+ diff --git a/software/kernel/spec-gn412x-dma.c b/software/kernel/spec-gn412x-dma.c
+ index ead355c..10bd54f 100644
+ --- a/software/kernel/spec-gn412x-dma.c
+-- 
+2.27.0
+

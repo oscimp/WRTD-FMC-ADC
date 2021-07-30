@@ -1,0 +1,61 @@
+From db43a2e4ee4aacf2e5387c464ab4d84be043ba72 Mon Sep 17 00:00:00 2001
+From: Mathis MARION <mathis.marion@grenoble-inp.org>
+Date: Thu, 29 Jul 2021 16:05:49 +0200
+Subject: [PATCH 02/18] [mock-turtle] Kernel 5.8 compatibility for ioread
+
+`unsigned int ioread32(void __iomem *)` became
+`unsigned int ioread32(const void __iomem *)` in
+kernel 5.8 and above.
+Changed struct trtl_memory_ops accordingly.
+
+Added missing include for linux/io.h
+---
+ patches/mock-turtle.diff | 36 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
+ create mode 100644 patches/mock-turtle.diff
+
+diff --git a/patches/mock-turtle.diff b/patches/mock-turtle.diff
+new file mode 100644
+index 0000000..6719273
+--- /dev/null
++++ b/patches/mock-turtle.diff
+@@ -0,0 +1,36 @@
++diff --git a/software/kernel/mockturtle-core.c b/software/kernel/mockturtle-core.c
++index 65c1167..13e596a 100644
++--- a/software/kernel/mockturtle-core.c
+++++ b/software/kernel/mockturtle-core.c
++@@ -28,6 +28,7 @@
++ #include <linux/mod_devicetable.h>
++ #include <linux/uaccess.h>
++ #include <linux/version.h>
+++#include <linux/io.h>
++ 
++ #include <mockturtle/hw/mockturtle_cpu_csr.h>
++ #include <mockturtle/hw/mockturtle_queue.h>
++diff --git a/software/kernel/mockturtle-drv.h b/software/kernel/mockturtle-drv.h
++index 75e3929..da3cba8 100644
++--- a/software/kernel/mockturtle-drv.h
+++++ b/software/kernel/mockturtle-drv.h
++@@ -12,6 +12,7 @@
++ #include <linux/irqreturn.h>
++ #include <linux/circ_buf.h>
++ #include <linux/tty.h>
+++#include <linux/version.h>
++ 
++ #include "mockturtle/hw/mockturtle_addresses.h"
++ #include "mockturtle/hw/mockturtle_queue.h"
++@@ -76,7 +77,11 @@ static inline uint32_t trtl_get_sequence(struct trtl_msg *msg)
++ }
++ 
++ struct trtl_memory_ops {
+++#if KERNEL_VERSION(5, 8, 0) <= LINUX_VERSION_CODE
+++	u32 (*read)(const void *addr);
+++#else
++ 	u32 (*read)(void *addr);
+++#endif
++ 	void (*write)(u32 value, void *addr);
++ };
++ 
+-- 
+2.27.0
+

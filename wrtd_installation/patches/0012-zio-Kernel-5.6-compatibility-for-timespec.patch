@@ -1,0 +1,73 @@
+From e3472ab09377252357192d215624a3ef1ad3386f Mon Sep 17 00:00:00 2001
+From: Mathis MARION <mathis.marion@grenoble-inp.org>
+Date: Thu, 29 Jul 2021 16:40:38 +0200
+Subject: [PATCH 12/18] [zio] Kernel 5.6 compatibility for timespec
+
+`struct timespec` is no longer available from headers after kernel 5.6.
+It is now required to use `struct timespec64`, which uses a 64bit
+integer for seconds instead of the former 32bit.
+
+The function `timespec_to_ktime` becomes `timespec64_to_ktime`
+
+The function `getnstimeofday` becomes `ktime_get_real_ts64`
+---
+ patches/zio.diff | 39 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
+
+diff --git a/patches/zio.diff b/patches/zio.diff
+index f6c5570..f7e3c3a 100644
+--- a/patches/zio.diff
++++ b/patches/zio.diff
+@@ -47,6 +47,24 @@ index f1d7e4c..1dd88b4 100644
+  
+  	pr_info("zio-core had been loaded\n");
+  	return 0;
++diff --git a/drivers/zio/devices/zio-fake-dtc.c b/drivers/zio/devices/zio-fake-dtc.c
++index ad1b9f6..629a152 100644
++--- a/drivers/zio/devices/zio-fake-dtc.c
+++++ b/drivers/zio/devices/zio-fake-dtc.c
++@@ -34,8 +34,13 @@ static enum hrtimer_restart zdtc_fn(struct hrtimer *timer)
++ 	struct timespec ts;
++ 
++ 	getnstimeofday(&ts);
+++#if KERNEL_VERSION(5, 6, 0) <= LINUX_VERSION_CODE
+++	dev_dbg(&zdtc.cset->head.dev, "%s: %9lli.%09li\n", __func__,
+++		ts.tv_sec, ts.tv_nsec);
+++#else
++ 	dev_dbg(&zdtc.cset->head.dev, "%s: %9li.%09li\n", __func__,
++ 		ts.tv_sec, ts.tv_nsec);
+++#endif
++ 	zio_trigger_data_done(zdtc.cset);
++ 	return HRTIMER_NORESTART;
++ }
+ diff --git a/drivers/zio/devices/zio-loop.c b/drivers/zio/devices/zio-loop.c
+ index 4edd97f..c88acda 100644
+ --- a/drivers/zio/devices/zio-loop.c
+@@ -84,3 +102,24 @@ index 42f292a..9f0ca40 100644
+  	case 1:
+  		ctrl->zio_alarms &= (~v1);
+  		break;
++diff --git a/include/linux/zio.h b/include/linux/zio.h
++index 0650656..971a01d 100644
++--- a/include/linux/zio.h
+++++ b/include/linux/zio.h
++@@ -23,9 +23,16 @@ extern const uint32_t zio_version;
++ #include <linux/list.h>
++ #include <linux/string.h>
++ #include <linux/spinlock.h>
+++#include <linux/version.h>
++ 
++ #include <linux/zio-sysfs.h>
++ 
+++#if KERNEL_VERSION(5, 6, 0) <= LINUX_VERSION_CODE
+++#define timespec timespec64
+++#define timespec_to_ktime(__z) timespec64_to_ktime(__z)
+++#define getnstimeofday(__z) ktime_get_real_ts64(__z)
+++#endif
+++
++ #define ZIO_NR_MINORS  (1<<16) /* Ask for 64k minors: no harm done... */
++ 
++ /* Name the data structures */
+-- 
+2.27.0
+

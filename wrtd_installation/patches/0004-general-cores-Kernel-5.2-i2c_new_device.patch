@@ -1,0 +1,38 @@
+From 85a2790809991551fe4fb9e9e0f977454e94547e Mon Sep 17 00:00:00 2001
+From: Mathis MARION <mathis.marion@grenoble-inp.org>
+Date: Thu, 29 Jul 2021 16:14:56 +0200
+Subject: [PATCH 04/18] [general-cores] Kernel 5.2 i2c_new_device
+
+`i2c_new_device` disappeared in kernel 5.2 and onwards.
+It is now required to use `i2c_new_client_device`, which
+works the same way except for error checking.
+---
+ patches/general-cores.diff | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+ create mode 100644 patches/general-cores.diff
+
+diff --git a/patches/general-cores.diff b/patches/general-cores.diff
+new file mode 100644
+index 0000000..dbf77a5
+--- /dev/null
++++ b/patches/general-cores.diff
+@@ -0,0 +1,16 @@
++diff --git a/software/i2c-ocores/drivers/i2c/busses/i2c-ocores.c b/software/i2c-ocores/drivers/i2c/busses/i2c-ocores.c
++index 12465de..6941bc8 100644
++--- a/software/i2c-ocores/drivers/i2c/busses/i2c-ocores.c
+++++ b/software/i2c-ocores/drivers/i2c/busses/i2c-ocores.c
++@@ -982,7 +982,11 @@ static int ocores_i2c_probe(struct platform_device *pdev)
++ 	/* add in known devices to the bus */
++ 	if (pdata) {
++ 		for (i = 0; i < pdata->num_devices; i++)
+++#if KERNEL_VERSION(5, 2, 0) <= LINUX_VERSION_CODE
+++			i2c_new_client_device(&i2c->adap, pdata->devices + i);
+++#else
++ 			i2c_new_device(&i2c->adap, pdata->devices + i);
+++#endif
++ 	}
++ 
++ 	return 0;
+-- 
+2.27.0
+

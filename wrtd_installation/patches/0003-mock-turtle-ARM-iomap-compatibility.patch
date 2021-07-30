@@ -1,0 +1,74 @@
+From 89a686aaae53b6beaf1aef57d8b995b894a79d82 Mon Sep 17 00:00:00 2001
+From: Mathis MARION <mathis.marion@grenoble-inp.org>
+Date: Thu, 29 Jul 2021 16:09:29 +0200
+Subject: [PATCH 03/18] [mock-turtle] ARM iomap compatibility
+
+Some architectures such as ARM don't use asm-generic/iomap.h and instead
+define their own implementation for ioread32 and iowrite32.
+This can be checked using the CONFIG_GENERIC_IOMAP preprocessor.
+
+The signature used inside asm-generic/io.h uses volatile for the address
+parameter. Thus it is necessary to accomodate this change.
+
+Moreover, ARM uses macros to define ioread32be and iowrite32be, so it is
+necessary to define a function on top of the macro to allow for
+assignation.
+Note: other architectures may not use macros, or use macros for ioread32
+and iowrite32, in which case this patch may not work and has to be
+adapted.
+---
+ patches/mock-turtle.diff | 23 +++++++++++++++++++++--
+ 1 file changed, 21 insertions(+), 2 deletions(-)
+
+diff --git a/patches/mock-turtle.diff b/patches/mock-turtle.diff
+index 6719273..b9dad8e 100644
+--- a/patches/mock-turtle.diff
++++ b/patches/mock-turtle.diff
+@@ -11,7 +11,7 @@ index 65c1167..13e596a 100644
+  #include <mockturtle/hw/mockturtle_cpu_csr.h>
+  #include <mockturtle/hw/mockturtle_queue.h>
+ diff --git a/software/kernel/mockturtle-drv.h b/software/kernel/mockturtle-drv.h
+-index 75e3929..da3cba8 100644
++index 75e3929..352b407 100644
+ --- a/software/kernel/mockturtle-drv.h
+ +++ b/software/kernel/mockturtle-drv.h
+ @@ -12,6 +12,7 @@
+@@ -22,15 +22,34 @@ index 75e3929..da3cba8 100644
+  
+  #include "mockturtle/hw/mockturtle_addresses.h"
+  #include "mockturtle/hw/mockturtle_queue.h"
+-@@ -76,7 +77,11 @@ static inline uint32_t trtl_get_sequence(struct trtl_msg *msg)
++@@ -75,9 +76,30 @@ static inline uint32_t trtl_get_sequence(struct trtl_msg *msg)
++ 	return msg->data[1];
+  }
+  
+++#ifndef CONFIG_GENERIC_IOMAP
+++static inline u32 (ioread32be)(const volatile void __iomem *addr)
+++{
+++	return ioread32be(addr);
+++}
+++
+++static inline void (iowrite32be)(u32 value, volatile void __iomem *addr)
+++{
+++	iowrite32be(value, addr);
+++}
+++#endif
+++
+  struct trtl_memory_ops {
+++#ifdef CONFIG_GENERIC_IOMAP
+ +#if KERNEL_VERSION(5, 8, 0) <= LINUX_VERSION_CODE
+ +	u32 (*read)(const void *addr);
+ +#else
+  	u32 (*read)(void *addr);
+ +#endif
+  	void (*write)(u32 value, void *addr);
+++#else
+++	u32 (*read)(const volatile void *addr);
+++	void (*write)(u32 value, volatile void *addr);
+++#endif
+  };
+  
++ extern struct trtl_memory_ops memops;
+-- 
+2.27.0
+

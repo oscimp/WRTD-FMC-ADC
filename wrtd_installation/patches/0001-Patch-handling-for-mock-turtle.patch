@@ -1,0 +1,24 @@
+From 681a55020bd24369dba050912a66149020cb4c4b Mon Sep 17 00:00:00 2001
+From: Mathis MARION <mathis.marion@grenoble-inp.org>
+Date: Thu, 29 Jul 2021 16:01:56 +0200
+Subject: [PATCH 01/18] Patch handling for mock-turtle
+
+---
+ scripts/mockturtle_build.sh | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/scripts/mockturtle_build.sh b/scripts/mockturtle_build.sh
+index f171eb5..06d4332 100644
+--- a/scripts/mockturtle_build.sh
++++ b/scripts/mockturtle_build.sh
+@@ -11,6 +11,7 @@ cd $BUILD_DIR
+ [ -d $PROJECT ] || git clone https://ohwr.org/project/mock-turtle.git $PROJECT
+ cd $PROJECT
+ git checkout -B release v4.0.4
++[ $SKIP_PATCH ] || [ -e $PATCH_DIR/$PROJECT.diff ] && patch -p1 < $PATCH_DIR/$PROJECT.diff
+ [ $SKIP_BUILD ] || WBGEN2=$BUILD_DIR/wishbone-gen/wbgen2 make -C software
+ [ $SKIP_INSTALL ] || WBGEN2=$BUILD_DIR/wishbone-gen/wbgen2 sudo -E make -C software install
+ [ $SKIP_INSTALL ] || sudo -E make -C software/lib/PyMockTurtle install
+-- 
+2.27.0
+

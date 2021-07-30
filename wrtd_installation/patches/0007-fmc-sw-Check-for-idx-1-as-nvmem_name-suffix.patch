@@ -1,0 +1,108 @@
+From 8fee356ffc8ced292432523c62a37e2f48cad4fc Mon Sep 17 00:00:00 2001
+From: Mathis MARION <mathis.marion@grenoble-inp.org>
+Date: Thu, 29 Jul 2021 16:24:52 +0200
+Subject: [PATCH 07/18] [fmc-sw] Check for idx=1 as nvmem_name suffix
+
+During some testing on a 5.11 kernel, I realized that
+the ID was 1 instead of the hardcoded 0.
+It is still left to figure out if this suffix can be
+anything else than 0 or 1.
+
+Improved error checking, since nvmem may be an error
+pointer instead of NULL.
+---
+ patches/fmc-sw.diff | 31 +++++++++++++++++--------------
+ 1 file changed, 17 insertions(+), 14 deletions(-)
+
+diff --git a/patches/fmc-sw.diff b/patches/fmc-sw.diff
+index f429f43..e80a869 100644
+--- a/patches/fmc-sw.diff
++++ b/patches/fmc-sw.diff
+@@ -1,5 +1,5 @@
+ diff --git a/drivers/fmc/fmc-eeprom.c b/drivers/fmc/fmc-eeprom.c
+-index a000a0d..7ae4b11 100644
++index a000a0d..c3aa905 100644
+ --- a/drivers/fmc/fmc-eeprom.c
+ +++ b/drivers/fmc/fmc-eeprom.c
+ @@ -7,9 +7,14 @@
+@@ -74,7 +74,7 @@ index a000a0d..7ae4b11 100644
+  }
+  
+  /**
+-@@ -66,13 +83,41 @@ static void fmc_slot_eeprom_init_default(struct fmc_slot *slot,
++@@ -66,13 +83,44 @@ static void fmc_slot_eeprom_init_default(struct fmc_slot *slot,
+  ssize_t fmc_slot_eeprom_read(struct fmc_slot *slot,
+  			     void *buf, off_t offset, size_t count)
+  {
+@@ -85,21 +85,24 @@ index a000a0d..7ae4b11 100644
+ +	struct nvmem_device *nvmem;
+ +	char *nvmem_name;
+ +	/* 
+-+	 * TODO Check if index can be anything else than zero and,
+++	 * TODO Check if index can be anything else than 0 or 1 and,
+ +	 * if yes, how to get the proper value.
+ +	 */
+-+	idx = 0;
+ +	len = strlen(dev_name(&slot->eeprom->dev)) + 2;
+ +	nvmem_name = kzalloc(len, GFP_KERNEL);
+ +	if (nvmem_name) {
+-+		snprintf(nvmem_name, len, "%s%d",
+-+			 dev_name(&slot->eeprom->dev), idx);
+-+		nvmem = nvmem_device_get(&slot->dev, nvmem_name);
+-+		if (nvmem) {
+-+			err = nvmem_device_read(nvmem, offset, count, buf);
+++		for (idx = 0; idx <= 1; idx++) {
+++			snprintf(nvmem_name, len, "%s%d",
+++				 dev_name(&slot->eeprom->dev), idx);
+++			nvmem = nvmem_device_get(&slot->dev, nvmem_name);
+++			if (!IS_ERR(nvmem)) {
+++				err = nvmem_device_read(nvmem, offset, count, buf);
+ +#if KERNEL_VERSION(5, 1, 0) <= LINUX_VERSION_CODE
+-+			nvmem_device_put(nvmem);
+++				nvmem_device_put(nvmem);
+ +#endif
+++				break;
+++			}
+++			err = PTR_ERR(nvmem);
+ +		}
+ +		kfree(nvmem_name);
+ +	}
+@@ -117,7 +120,7 @@ index a000a0d..7ae4b11 100644
+  }
+  EXPORT_SYMBOL(fmc_slot_eeprom_read);
+  
+-@@ -108,8 +153,13 @@ static int __fmc_slot_eeprom_add(struct fmc_slot *slot,
++@@ -108,8 +156,13 @@ static int __fmc_slot_eeprom_add(struct fmc_slot *slot,
+  	}
+  
+  	info_l.addr = fmc_slot_i2c_address(info_l.addr, slot->ga);
+@@ -131,7 +134,7 @@ index a000a0d..7ae4b11 100644
+  		return -ENODEV;
+  
+  	err = sysfs_create_link(&slot->dev.kobj, &slot->eeprom->dev.kobj,
+-@@ -152,7 +202,9 @@ void fmc_slot_eeprom_del(struct fmc_slot *slot)
++@@ -152,7 +205,9 @@ void fmc_slot_eeprom_del(struct fmc_slot *slot)
+  	sysfs_remove_link(&slot->dev.kobj, FRU_EEPROM_NAME);
+  	i2c_unregister_device(slot->eeprom);
+  	slot->eeprom = NULL;
+@@ -141,7 +144,7 @@ index a000a0d..7ae4b11 100644
+  }
+  
+  /**
+-@@ -197,19 +249,25 @@ int fmc_slot_eeprom_type_set(struct fmc_slot *slot, const char *type)
++@@ -197,19 +252,25 @@ int fmc_slot_eeprom_type_set(struct fmc_slot *slot, const char *type)
+  
+  
+  	memset(&i2c_info, 0, sizeof(i2c_info));
+@@ -170,7 +173,7 @@ index a000a0d..7ae4b11 100644
+  	slot->at24_data.byte_len = len;
+  	slot->at24_data.page_size = 1; /* 1Byte page to play safe */
+  	slot->at24_data.setup = fmc_slot_eeprom_setup;
+-@@ -219,7 +277,15 @@ int fmc_slot_eeprom_type_set(struct fmc_slot *slot, const char *type)
++@@ -219,7 +280,15 @@ int fmc_slot_eeprom_type_set(struct fmc_slot *slot, const char *type)
+  		i2c_info.type, i2c_info.addr,
+  		slot->at24_data.byte_len, slot->at24_data.page_size,
+  		slot->at24_data.flags);
+-- 
+2.27.0
+
