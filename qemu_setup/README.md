@@ -32,7 +32,7 @@ qemu-system-x86_64 -enable-kvm -cpu host -m 2G -hda disk.img
 ## 2. Setting up network for QEMU
 
 Running `sudo ./setup.sh` will configure the network on the host side. You can look at the first half of the script to see that it creates a virtual interface named `tap0` and routes the host interface properly to get network access.
-__Note: You should provide the script with the `HOST_INTERFACE` variable containing the name of your host interface, otherwise it will default to `eth0`.__
+_Note: You should provide the script with the `HOST_INTERFACE` variable containing the name of your host interface, otherwise it will default to `eth0`._
 
 You then need to add the following options when launching QEMU:
 ```
@@ -58,3 +58,17 @@ GATEWAY=192.168.0.1
 
 You may need to edit `/etc/resolv.conf` to setup the DNS servers, and also provide your proxy with the `http_proxy` and `https_proxy` variables.
 Hopefully now you have access to your network from QEMU.
+
+## 3. Passing the SPEC board to QEMU
+The second half of the `setup.sh` script will activate the VFIO kernel modules, unbind the driver on the host side, and assign the board.
+You should now be able to launch QEMU with the following options added, where `<PCI ID>` is what the setup script should have printed in the form `0000:XX.XX.X` (the colons need to be escaped with a baskslash in the command argument if written manually):
+```
+-device intel-iommu,caching-mode=on -device vfio-pci,host=<PCI ID>
+```
+
+If QEMU does not launch, you should try adding the following boot option to your host computer (inside `/sys/grub/grub.cfg` most likely):
+```
+vfio_iommu_type1 allow_unsafe_interrupts=1
+```
+
+At last, you should see the SPEC board if you run `lspci | grep CERN` inside QEMU.
