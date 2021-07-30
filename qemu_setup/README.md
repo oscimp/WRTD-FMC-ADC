@@ -63,7 +63,7 @@ Hopefully now you have access to your network from QEMU.
 ## 3. Accessing the SPEC board inside QEMU
 The second half of the `setup.sh` script will activate the VFIO kernel modules, unbind the driver on the host side, and assign the board.
 
-You should now be able to launch QEMU with the following options added, where `<PCI ID>` is what the setup script should have printed in the form `XX.XX.X` (the colons need to be escaped with a baskslash in the command argument if written manually):
+You should now be able to launch QEMU with the following options added, where `<PCI ID>` is what the setup script should have printed in the form `XX:XX.X` (the colons need to be escaped with a baskslash in the command argument if written manually):
 ```
 -device intel-iommu,caching-mode=on -device vfio-pci,host=<PCI ID>
 ```
