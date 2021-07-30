@@ -1,6 +1,6 @@
 # Installing WRTD for the SPEC150T and FMC ADC
 
-We will be using the scripts provided by Dimitrios Lampridis to install all dependencies:
+We will be using the scripts provided by Dimitrios Lampridis to build and install all necessary CERN repositories:
 https://gitlab.cern.ch/dlamprid/ohwr-build-scripts
 
 ## 1. Installing dependencies 
@@ -38,8 +38,15 @@ patch -p 1 < ../ohwr-build-scripts-patch.patch
 ```
 
 You should set the variable `BUILD_DIR` to a directory where all sources and built files will end up.
-Finally, you should just need to run the installation script:
+
+Finally, you should just need to run the installation script and reboot:
 ```bash
 cd scripts
 sh wrtd_ref_spec150t_adc_install.sh
+```
+
+Afer each reboot, you will need to send the bitstream to the FPGA with the following command before you can do anything with the board:
+(`<PCI ID>` corresponds to the first column you should get when running `lspci | grep CERN`, don't forget to escape the colon with a backslash)
+```bash
+echo -e -n "wrtd_ref_spec150t_adc.bin\0" > /sys/kernel/debug/0000\:<PCI ID>/fpga_firmware
 ```
