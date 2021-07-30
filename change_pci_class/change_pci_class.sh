@@ -38,6 +38,7 @@ echo Writing back to the EEPROM
 $HT_FLASHER -a spec-eeprom -d $DEV_ID -w eeprom.img
 if [ $? -ne 0 ]; then
 	echo Failed to write to the EEPROM.
+	rm eeprom.img
 	exit 1
 else
 	echo Successfully wrote to the EEPROM.

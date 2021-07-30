@@ -39,7 +39,7 @@ patch -p 1 < ../ohwr-build-scripts-patch.patch
 
 You should set the variable `BUILD_DIR` to a directory where all sources and built files will end up.
 
-Finally, you should just need to run the installation script and reboot:
+Finally, you just need to run the installation script and reboot:
 ```bash
 cd scripts
 sh wrtd_ref_spec150t_adc_install.sh
@@ -65,10 +65,9 @@ If you see a similar log in `dmesg`, read the following solution:
 spec-fmc-carrier 0000:01:00.0 can't enable device: BAR 0 [mem 0x00000000-0x000fffff 64bit] not claimed
 spec-fmc-carrier 0000:01:00.0 Failed to enable PCI device (-22)
 spec-fmc-carrier probe of 0000:01:00.0 failed with error -22
-
 ```
 This issue comes from the BIOS which in not handling properly the PCI class code `0x00`.
-The solution proposed here consists in reprogramming the EEPROM containing the code and change it to `0xFF`.
+The solution proposed here consists in reprogramming the EEPROM containing the code and changing it to `0xFF`.
 
 To do so, look into the `change_pci_class` directory of this repository.
 
