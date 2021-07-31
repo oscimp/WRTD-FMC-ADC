@@ -1,5 +1,5 @@
 # Network configuration
-if [ -n $HOST_INTERFACE ]; then
+if [ -z "$HOST_INTERFACE" ]; then
 	echo No host interface name sepcified, defaulting to eth0
 	HOST_INTERFACE=eth0
 fi
@@ -17,16 +17,20 @@ iptables -I FORWARD 1 -o tap0 -m state --state RELATED,ESTABLISHED -j ACCEPT
 
 # Passing the SPEC board to QEMU
 # Get the PCI ID of the board
-PCI_ID=$(lspci | grep CERN | awk {'print $1'})
-if [ -z PCI_ID ]; then
+PCI_ID="$(lspci | grep CERN | awk '{print $1}')"
+if [ -z "$PCI_ID" ]; then
 	echo Could not find the SPEC board.
+	exit 1
+elif [ ${#PCI_ID} -gt 7 ]; then
+	echo Found several boards from CERN, exiting to avoid ambiguity.
+	echo PCI IDs: $PCI_ID
 	exit 1
 fi
 echo PCI ID: $PCI_ID
-PCI_ID="0000:"$PCI_ID
+PCI_ID="0000:$PCI_ID"
 
 # Get the vendor and device IDs of the board
-VENDOR_DEVICE=$(lspci -ns $PCI_ID | awk {'print $3'} | sed 's/:/ /g')
+VENDOR_DEVICE="$(lspci -ns $PCI_ID | awk {'print $3'} | sed 's/:/ /')"
 
 # Unbind the driver in the host system
 if [ -e /sys/bus/pci/devices/$PCI_ID/driver ]; then
