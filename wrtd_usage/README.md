@@ -84,7 +84,7 @@ Thus we can check after each adc-lib function call if it went fine.
 
 There is also a function to get a string from an error code: `adc_strerror`.
 
-I like to write and use the following function, and call after any adc-lib function call where I want to check for errors:
+I like to write and use the following function, and call it after any adc-lib function call where I want to check for errors:
 ```c
 static void adc_check_error(char *message)
 {
@@ -131,9 +131,20 @@ The most important parameters for our purposes are the number of samples to be a
 
 To acquire data, we first need to allocate a buffer using `adc_request_buffer`.
 
-TODO
+The signature of the function is the following:
+```c
+struct adc_buffer *adc_request_buffer(struct adc_dev *adc,
+                                      int nsamples,
+                                      void *(*alloc_fn)(size_t),
+                                      unsigned int flags)
+```
+`adc` will be our point to the ADC device. `nsamples` will be the total number of samples to acquire `NSHOTS * (PRESAMPLES + POSTSAMPLES)`. And we can leave the allocation function to default with `NULL` and set flags to `0`.
 
-#### Software trigger
+We will need to free the buffer once we are done with the acquisition using `adc_release_buffer`.
+
+Then we can start the acquisition by calling `adc_acq_start`. The ADC will then wait for a trigger before acquiring samples. I may be good practice to stop any pending acquisition before starting one by calling `adc_acq_stop`.
+
+#### Software triggers
 
 We can trigger manually a trigger in software, which is very handy for testing.
 Normally we should be able to use `adc_trigger_fire` according to the documentation.
@@ -147,4 +158,54 @@ static void trigger_fire()
 	write(fd, "1", 1);
 	close(fd);
 }
+```
+
+#### Time triggers
+
+It is possible to tell the ADC to trigger an acquisition at a certain date.
+Note that this date comes from the ADC's internal clock, and this is not how the ADC should be configure for use with WRTD.
+Nonetheless this can be useful for testing or other applications.
+
+We only to configure the time triggers with the API described earlier.
+We can set a date in two parts: seconds and nanoseconds.
+```c
+// Initializing the configuration to default
+struct adc_conf config;
+memset(&config, 0, sizeof(struct adc_conf);
+
+// Setting the category (time triggers in this case)
+config.type = ADC_CONF_TYPE_TRG_TIM;
+
+// Enabling time trigger
+adc_set_conf(&config, ADC_CONF_TRG_TIM_ENABLE, 1);
+// Setting seconds
+adc_set_conf(&config, ADC_CONF_TRG_TIM_SECONDS, seconds);
+// Setting nanoseconds
+adc_set_conf(&config, ADC_CONF_TRG_TIM_NANO_SECONDS, nano_seconds);
+
+// Applying the configuration
+adc_apply_config(adc, 0, &config);
+```
+
+Generally you would want to retrieve the current time of the clock before you set up the trigger.
+To do so you can read some variables from the current configuration using `adc_retrieve_config` and `adc_get_conf`.
+The API provides 3 variables to get the current time in "seconds", "coarse sub-seconds", and "fine sub-seconds".
+Since I generally just use time triggers for testing, I do not need nanosecond precision. Thus I just retrieve the seconds and increment it, and set the nanoseconds to 0.
+```c
+// Initializing the configuration to default
+struct adc_conf config;
+memset(&config, 0, sizeof(struct adc_conf);
+
+// Setting the category (board in this case)
+config.type = ADC_CONF_TYPE_BRD;
+
+// Retrieving the current configuration
+adc_set_conf_mask_all(&config, adc);
+adc_retrieve_config(adc, &config);
+
+// Getting the number of seconds
+adc_get_conf(&config, ADC_CONF_UTC_TIMING_BASE_S, &seconds);
+
+seconds += 1;
+nano_seconds = 0;
 ```
