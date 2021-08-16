@@ -44,11 +44,12 @@ Finally, you just need to run the installation script and reboot:
 cd scripts
 sh wrtd_ref_spec150t_adc_install.sh
 ```
+This should take roughly 5 minutes.
 
 ## 3. Flashing the FPGA
 
 Afer each reboot, you will need to send the bitstream to the FPGA before you can do anything with the board.
-To do so you can use the following command (`<PCI ID>` corresponds to the first column you should get when running `lspci | grep CERN`, don't forget to escape the colon with a backslash):
+To do so you can use the following command (`<PCI ID>` corresponds to the first column you should get when running `lspci | grep CERN`, looking like `XX:XX.X`; don't forget to escape the colon with a backslash):
 ```bash
 echo -e -n "wrtd_ref_spec150t_adc.bin\0" > /sys/kernel/debug/0000\:<PCI ID>/fpga_firmware
 ```

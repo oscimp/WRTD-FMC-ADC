@@ -17,7 +17,7 @@ qemu-img create -f qcow2 disk.img 10G
 ```
 
 You now need to get an iso file to install your preferred Linux distribution, which I will refer as `linux.iso`.
-To install your distribution on the disk image, run the following command:
+To install your distribution on the disk image, run the following command and follow the installer's intructions:
 ```bash
 qemu-system-x86_64 -enable-kvm -cpu host -m 2G -boot d -cdrom linux.iso -hda disk.img
 ```

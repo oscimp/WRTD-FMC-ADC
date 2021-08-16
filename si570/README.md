@@ -25,7 +25,7 @@ python3 setup.py install --user
 
 You will need to specify the path to the tool `wbgen2`.
 
-If you have installed the WRTD software from the scripts, then it should be located in your build directory.
+If you have installed WRTD software from the scripts, it should be located in your build directory.
 ```bash
 export WBGEN2=$BUILD_DIR/wishbone-gen/wbgen2
 ```
@@ -65,6 +65,8 @@ git submodule update --init
 ```
 
 ### Synthesis
+
+You must configure a git username for the WRTD repository (if not already done) before starting the synthesis. Use `git config user.name <your username>`.
 
 At last, you should be able to generate the bitstream:
 ```bash

@@ -279,7 +279,7 @@ new file mode 100644
 index 0000000..08ad541
 --- /dev/null
 +++ b/patches/general-cores.diff
-@@ -0,0 +1,107 @@
+@@ -0,0 +1,110 @@
 +diff --git a/software/htvic/drivers/htvic.c b/software/htvic/drivers/htvic.c
 +index 2f87aa7..76490f0 100644
 +--- a/software/htvic/drivers/htvic.c
@@ -324,7 +324,7 @@ index 0000000..08ad541
 + 	.map = htvic_irq_domain_map,
 + };
 + 
-+@@ -335,11 +309,26 @@ static int htvic_irq_mapping(struct htvic_device *htvic)
++@@ -335,11 +309,27 @@ static int htvic_irq_mapping(struct htvic_device *htvic)
 + {
 + 	int i, irq;
 + 
@@ -352,7 +352,7 @@ index 0000000..08ad541
 + #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0)
 + 	htvic->domain->name = kasprintf(GFP_KERNEL, "%s",
 + 					dev_name(&htvic->pdev->dev));
-+@@ -362,6 +351,9 @@ static int htvic_irq_mapping(struct htvic_device *htvic)
++@@ -362,6 +351,10 @@ static int htvic_irq_mapping(struct htvic_device *htvic)
 + 
 + out:
 + 	irq_domain_remove(htvic->domain);
@@ -363,7 +363,7 @@ index 0000000..08ad541
 + 	return -EPERM;
 + }
 + 
-+@@ -613,6 +605,9 @@ static int htvic_remove(struct platform_device *pdev)
++@@ -613,6 +605,10 @@ static int htvic_remove(struct platform_device *pdev)
 + 	 * Clear the memory and restore flags when needed
 + 	 */
 + 	irq_domain_remove(htvic->domain);

@@ -86,7 +86,7 @@ index dbf77a5..08ad541 100644
 + 	.map = htvic_irq_domain_map,
 + };
 + 
-+@@ -335,11 +309,26 @@ static int htvic_irq_mapping(struct htvic_device *htvic)
++@@ -335,11 +309,27 @@ static int htvic_irq_mapping(struct htvic_device *htvic)
 + {
 + 	int i, irq;
 + 
@@ -114,7 +114,7 @@ index dbf77a5..08ad541 100644
 + #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0)
 + 	htvic->domain->name = kasprintf(GFP_KERNEL, "%s",
 + 					dev_name(&htvic->pdev->dev));
-+@@ -362,6 +351,9 @@ static int htvic_irq_mapping(struct htvic_device *htvic)
++@@ -362,6 +351,10 @@ static int htvic_irq_mapping(struct htvic_device *htvic)
 + 
 + out:
 + 	irq_domain_remove(htvic->domain);
@@ -125,7 +125,7 @@ index dbf77a5..08ad541 100644
 + 	return -EPERM;
 + }
 + 
-+@@ -613,6 +605,9 @@ static int htvic_remove(struct platform_device *pdev)
++@@ -613,6 +605,10 @@ static int htvic_remove(struct platform_device *pdev)
 + 	 * Clear the memory and restore flags when needed
 + 	 */
 + 	irq_domain_remove(htvic->domain);
