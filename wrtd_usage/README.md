@@ -13,8 +13,10 @@ To use adc-lib, you have to include the following headers:
 #include <adc-lib.h>
 #include <adc-lib-100m14b4cha.h>
 ```
-You may also need to specify the path to these headers when compiling (-I option for gcc). These are located inside your build directory at `$BUILD_DIR/adc-lib/lib`.
+You may also need to specify the path to these headers when compiling (`-I` option for gcc). These are located inside your build directory at `$BUILD_DIR/adc-lib/lib`.
 Finally you want to tell gcc to load the library using the `-ladc` option.
+
+The Documentation for adc-lib was provided in html format in this repository to avoid having to build it from sources.
 
 ### ZIO device ID
 
@@ -26,17 +28,58 @@ Running the script `zio_id.sh` should return this ID (printed in hexadecimal).
 
 ### Initializing the library
 
-TODO
+Before you use any function from adc-lib, you should call `adc_init` once. Similarly, `adc_exit` should be called before quitting your program.
+
+The first thing to do after initialization is to get a structure for your device, which will be used by most functions from the library.
+To do so we can call `adc_open`.
+
+Its signature is the following:
+```c
+struct adc_dev *adc_open(char *name,
+                         unsigned int dev_id,
+                         unsigned long totalsamples
+                         unsigned int nbuffer,
+                         unsigned long flags)
+```
+In our case `name` will be `"fmc-adc-100m14b4cha"` and `dev_id` will be the ZIO device ID mentionned above.
+
+Reading the documentation, we get that `totalsamples` is a hint to how big the buffer needs to be, this should be set to `NSHOTS * (PRESAMPLES + POSTSAMPLES)`.
+`nbuffer` is a hint to how many buffers are to be used at the same time.
+And `flags` can be set to `ADC_F_FLUSH`.
+
+In the end our program should look like the following:
+```c
+int main()
+{
+	struct adc_dev *adc;
+
+	adc_init();
+
+	adc = adc_open("fmc_adc_100m14b4cha",
+	               ZIO_ID,
+                       NSHOTS * (PRESAMPLE + POSTSAMPLE),
+	               NSHOTS,
+                       ADC_F_FLUSH);
+
+	// Configuring the ADC
+	config(adc);
+	// Acquiring data
+	acquire(adc);
+
+	adc_exit();
+	return EXIT_SUCCESS;
+}
+```
 
 ### Configuring the ADC
 
 The first step before acquiring any data is to configure the ADC.
-There are a lot of parameters that can be changed, which are somewhat documented in the adc-lib documentation.
+There are a lot of parameters that can be changed, which are documented in the adc-lib documentation.
 
-- adc-lib sorts parameters in several categories such as "acquisition", "timing triggers" or "channels" for example.
+- adc-lib sorts parameters in several categories such as "acquisition", "timing triggers" or "channels" for example. All categories are listed in the `adc_configuration_type` enumeration.
 - When setting any parameter, we will have to fill a structure of type `struct adc_conf`.
 - We first tell the category of parameters we want by setting the `.type` member.
-- Then we can provide values for one or several parameters corresponding to the category using the function `adc_set_conf`.
+- Then we can provide values for one or several parameters corresponding to the category using the function `adc_set_conf`. Parameters for each category are listed in an enumeration called `adc_configuration_<category>`.
 - Finally we apply the changes with the function `adc_apply_config`.
 
 Here is an example for setting the number of samples:
