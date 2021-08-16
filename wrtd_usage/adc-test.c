@@ -17,9 +17,9 @@
 #define SAMPLES (NSHOTS * (PRESAMPLES + POSTSAMPLES))
 
 #define ZIO_ID 0x0000
-#define SW_TRG /sys/bus/zio/devices/adc-100m14b-0000/cset0/triggers/sw-trg-fire
+#define SW_TRG "/sys/bus/zio/devices/adc-100m14b-0000/cset0/triggers/sw-trg-fire"
 
-#define CSV_FILE /tmp/data.csv
+#define CSV_FILE "/tmp/data.csv"
 
 static void adc_check_error(char *message) {
 	if (errno) {
@@ -42,7 +42,7 @@ static void config(struct adc_dev *adc) {
 }
 
 static void trigger_fire() {
-	int fd = open("SW_TRG", O_WRONLY);
+	int fd = open(SW_TRG, O_WRONLY);
 	adc_check_error("Failed to open file descriptor for software trigger");
 	
 	write(fd, "1", 1);
@@ -54,7 +54,7 @@ static void trigger_fire() {
 static void write_acq(struct adc_buffer *buffer) {
 	int value1, value2, value3, value4;
 
-	FILE *file = fopen("CSV_FILE", "w");
+	FILE *file = fopen(CSV_FILE, "w");
 	adc_check_error("Failed to open file for writing data");
 	
 	for (int i = 0; i < PRESAMPLES + POSTSAMPLES; i++) {
@@ -66,7 +66,7 @@ static void write_acq(struct adc_buffer *buffer) {
 		adc_check_error("Failed to get sample");
 		adc_buffer_get_sample(buffer, 3, i, &value4);
 		adc_check_error("Failed to get sample");
-		fprintf(file, "%i,%i,%i,%i,%i\n", time, value1, value2, value3, value4);
+		fprintf(file, "%i,%i,%i,%i,%i\n", i, value1, value2, value3, value4);
 		adc_check_error("Could not write data");
 	}
 
