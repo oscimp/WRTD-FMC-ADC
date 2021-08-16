@@ -138,11 +138,14 @@ struct adc_buffer *adc_request_buffer(struct adc_dev *adc,
                                       void *(*alloc_fn)(size_t),
                                       unsigned int flags)
 ```
-`adc` will be our point to the ADC device. `nsamples` will be the total number of samples to acquire `NSHOTS * (PRESAMPLES + POSTSAMPLES)`. And we can leave the allocation function to default with `NULL` and set flags to `0`.
+`adc` will be our pointer to the ADC device. `nsamples` will be the total number of samples to acquire `NSHOTS * (PRESAMPLES + POSTSAMPLES)`. And we can leave the allocation function to default with `NULL` and set flags to `0`.
 
 We will need to free the buffer once we are done with the acquisition using `adc_release_buffer`.
 
-Then we can start the acquisition by calling `adc_acq_start`. The ADC will then wait for a trigger before acquiring samples. I may be good practice to stop any pending acquisition before starting one by calling `adc_acq_stop`.
+Then we can start the acquisition by calling `adc_acq_start`. The ADC will then wait for a trigger before acquiring samples.
+It may be good practice to stop any pending acquisition before starting one by calling `adc_acq_stop`.
+
+
 
 #### Software triggers
 
@@ -163,10 +166,11 @@ static void trigger_fire()
 #### Time triggers
 
 It is possible to tell the ADC to trigger an acquisition at a certain date.
-Note that this date comes from the ADC's internal clock, and this is not how the ADC should be configure for use with WRTD.
+Note that this date comes from the ADC's internal clock, and this is not how the ADC should be configured for use with WRTD.
 Nonetheless this can be useful for testing or other applications.
+What WRTD uses is external triggers, which will be discussed later.
 
-We only to configure the time triggers with the API described earlier.
+We only need to configure the time triggers with the API described earlier.
 We can set a date in two parts: seconds and nanoseconds.
 ```c
 // Initializing the configuration to default
@@ -209,3 +213,6 @@ adc_get_conf(&config, ADC_CONF_UTC_TIMING_BASE_S, &seconds);
 seconds += 1;
 nano_seconds = 0;
 ```
+
+`adc-time.c` is a test program which prints the time in seconds of the ADC clock.
+It was used to test timing triggers with the `adc-acq` tool provided with adc-lib.
