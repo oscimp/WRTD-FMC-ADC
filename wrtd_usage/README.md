@@ -20,7 +20,7 @@ To use adc-lib, you have to include the following headers:
 ```
 You will also need to specify the path to these headers when compiling (`-I` option for gcc).
 These are located inside your build directory at `$BUILD_DIR/adc-lib/lib`.
-Finally you want to tell gcc to load the library using the `-ladc` option.
+Finally you want to tell gcc to load the library using the `-ladc` option. (The script `compile.sh` already has these options set)
 
 The Documentation for adc-lib was provided in html format in this repository to avoid having to build it from sources.
 
@@ -278,3 +278,58 @@ static void write_csv(struct adc_buffer *buffer, char *filename)
 
 `adc-test.c` will perform an acquisition and write the result to a file in CSV format.
 I you want to try it out, edit the `ZIO_ID`, `SW_TRG` and `CSV_FILE` macros at the start of the file before compiling.
+
+## 2. How to use WRTD
+
+We will be using the C library provided by WRTD to interact with the SPEC board.
+To do so we will need to include the following header:
+```c
+#include <libwrtd.h>
+```
+We also need to include the relevent repositories with `-I` when using gcc: `$BUILD_DIR/wrtd/software/lib` and `$BUILD_DIR/wrtd/software/include`.
+The option `-lwrtd` also needs to be specified.
+(These script `compile.sh` already has these options set)
+
+The documentation for WRTD is available online at https://wrtd.readthedocs.io/en/latest
+
+### Introduction
+
+In this section I will attempt to explain concisely the WRTD concepts needed for use with the SPEC and ADC.
+
+In our wanted setup, we have several SPEC boards connected through a White Rabbit network. The WR network and the FPGA design of the SPEC ensures that the clocks of all boards are synchronized.
+
+In the WRTD language, each SPEC board will be called a "node". For each node we can define "rules", whose purposes are to associate an input event with an output event.
+
+In our case, input events will be one of the two:
+- The node receives a message from the WR network (which was sent by another node)
+- The node receives a signal from the computer (in reality we can't really do that directly as we will see later, but it is easier to understand this way)
+
+And output events will be one of the two:
+- Send a message to the WR network
+- Send a trigger to the ADC
+
+This is basically all you need to know to understand the following.
+In code we will essentially only configure rules, which just consist of telling which output event corresponds to which input event.
+
+### Initialization
+
+As for adc-lib, there are a few initialization steps to follow. First we need to get an ID for our node using `wrtd_get_node`. Then we can call `wrtd_init` to get a WRTD device struct, configure our rules, and finally call `wrtd_close`.
+
+Here is a skeleton for a WRTD program:
+```c
+int main()
+{
+	struct wrtd_dev *wrtd;
+	uint32_t node_id;
+
+	// Get one node identifier
+	wrtd_get_node_id(1, &node_id);
+	// Initialize our device struct (the 2 middle arguments are not used)
+	wrtd_init(node_id, false, NULL, &wrtd);
+
+	config_rules(wrtd);
+
+	wrtd_close(wrtd);
+	return EXIT_SUCCESS;
+}
+```
