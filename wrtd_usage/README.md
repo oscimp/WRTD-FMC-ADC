@@ -243,7 +243,7 @@ nano_seconds = 0;
 
 `adc-time.c` is a test program which prints the time in seconds of the ADC clock.
 It was used to test timing triggers with the `adc-acq` tool provided with adc-lib.
-If you want to use it, make sure to modify the ZIO_ID macro to the correct value.
+If you want to use it, make sure to modify the `ZIO_ID` macro to the correct value.
 
 #### Processing data
 
@@ -277,4 +277,4 @@ static void write_csv(struct adc_buffer *buffer, char *filename)
 ```
 
 `adc-test.c` will perform an acquisition and write the result to a file in CSV format.
-I you want to try it out, edit the ZIO_ID, SW_TRG and CSV_FILE macros at the start of the file before compiling.
+I you want to try it out, edit the `ZIO_ID`, `SW_TRG` and `CSV_FILE` macros at the start of the file before compiling.

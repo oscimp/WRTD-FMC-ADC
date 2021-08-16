@@ -34,8 +34,8 @@ static void config(struct adc_dev *adc) {
 	memset(&config, 0, sizeof(struct adc_conf));
 	config.type = ADC_CONF_TYPE_ACQ;
 	adc_set_conf(&config, ADC_CONF_ACQ_N_SHOTS, NSHOTS);
-	adc_set_conf(&config, ADC_CONF_ACQ_POST_SAMP, POSTSAMPLE);
-	adc_set_conf(&config, ADC_CONF_ACQ_PRE_SAMP, PRESAMPLE);
+	adc_set_conf(&config, ADC_CONF_ACQ_POST_SAMP, POSTSAMPLES);
+	adc_set_conf(&config, ADC_CONF_ACQ_PRE_SAMP, PRESAMPLES);
 	adc_set_conf(&config, ADC_CONF_ACQ_UNDERSAMPLE, 0);
 	adc_apply_config(adc, 0, &config);
 	adc_check_error("Failed to apply acquisition configuration");	
@@ -57,7 +57,7 @@ static void write_acq(struct adc_buffer *buffer) {
 	FILE *file = fopen("CSV_FILE", "w");
 	adc_check_error("Failed to open file for writing data");
 	
-	for (int i = 0; i < PRESAMPLE + POSTSAMPLE; i++) {
+	for (int i = 0; i < PRESAMPLES + POSTSAMPLES; i++) {
 		adc_buffer_get_sample(buffer, 0, i, &value1);
 		adc_check_error("Failed to get sample");
 		adc_buffer_get_sample(buffer, 1, i, &value2);
@@ -75,7 +75,7 @@ static void write_acq(struct adc_buffer *buffer) {
 }
 
 static void acquire(struct adc_dev *adc) {
-	struct adc_buffer *buffer = adc_request_buffer(adc, NSHOTS * (PRESAMPLE + POSTSAMPLE), NULL,  0);
+	struct adc_buffer *buffer = adc_request_buffer(adc, SAMPLES, NULL,  0);
 	adc_check_error("Failed to allocate buffer");
 
 	struct timeval timeout = { 0, 0 };
