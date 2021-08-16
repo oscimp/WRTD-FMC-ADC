@@ -1,0 +1,1420 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>The Library API &mdash; ADC Library 2.2.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'./',
+              VERSION:'2.2.0',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: ''
+          };
+      </script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="The adc-acq Tools" href="tools-adc-acq.html" />
+    <link rel="prev" title="The Library For Developers" href="library-devel.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ADC Library
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="library-user.html">The Library For Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="library-devel.html">The Library For Developers</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">The Library API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools-adc-acq.html">The <code class="docutils literal"><span class="pre">adc-acq</span></code> Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools-example.html">The Example Tools</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ADC Library</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>The Library API</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/library-api.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="the-library-api">
+<h1>The Library API<a class="headerlink" href="#the-library-api" title="Permalink to this headline">¶</a></h1>
+<div class="breathe-sectiondef container">
+<p class="breathe-sectiondef-title rubric">Defines</p>
+<dl class="macro">
+<dt id="c.__ADC_ERRNO_START">
+<span class="target" id="adc-lib_8h_1a45c7e7d7bb4871aece644eac5010bb55"></span><code class="descname">__ADC_ERRNO_START</code><a class="headerlink" href="#c.__ADC_ERRNO_START" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="macro">
+<dt id="c.ADC_ENOP">
+<span class="target" id="adc-lib_8h_1a3a0df731822b89d0d338f66c01d237e7"></span><code class="descname">ADC_ENOP</code><a class="headerlink" href="#c.ADC_ENOP" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="macro">
+<dt id="c.ADC_ENOCAP">
+<span class="target" id="adc-lib_8h_1ab7345c23f3036bd697ae716ccbce2f7c"></span><code class="descname">ADC_ENOCAP</code><a class="headerlink" href="#c.ADC_ENOCAP" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="macro">
+<dt id="c.ADC_ENOCFG">
+<span class="target" id="adc-lib_8h_1a2379f66b3a754ff34f1304f33f04bec7"></span><code class="descname">ADC_ENOCFG</code><a class="headerlink" href="#c.ADC_ENOCFG" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="macro">
+<dt id="c.ADC_ENOGET">
+<span class="target" id="adc-lib_8h_1ac911ce9c6dc4f4df37bb675fcfda9ead"></span><code class="descname">ADC_ENOGET</code><a class="headerlink" href="#c.ADC_ENOGET" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="macro">
+<dt id="c.ADC_ENOSET">
+<span class="target" id="adc-lib_8h_1ad66cf53da7a2df3b6ad282a000991c2a"></span><code class="descname">ADC_ENOSET</code><a class="headerlink" href="#c.ADC_ENOSET" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="macro">
+<dt id="c.ADC_ENOCHAN">
+<span class="target" id="adc-lib_8h_1aebfcc348a06f67b1ace828745abecf50"></span><code class="descname">ADC_ENOCHAN</code><a class="headerlink" href="#c.ADC_ENOCHAN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="macro">
+<dt id="c.ADC_ENOMASK">
+<span class="target" id="adc-lib_8h_1a264ffd380b057c625221b12baf6059b0"></span><code class="descname">ADC_ENOMASK</code><a class="headerlink" href="#c.ADC_ENOMASK" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="macro">
+<dt id="c.ADC_EDISABLED">
+<span class="target" id="adc-lib_8h_1a01646dbf340544895df9d8ad4ae60d04"></span><code class="descname">ADC_EDISABLED</code><a class="headerlink" href="#c.ADC_EDISABLED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="macro">
+<dt id="c.ADC_EROUTE">
+<span class="target" id="adc-lib_8h_1a8e3fc1ca2e43a45e307a36f7e4a4fa1d"></span><code class="descname">ADC_EROUTE</code><a class="headerlink" href="#c.ADC_EROUTE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="macro">
+<dt id="c.ADC_ENOP_SWTRG">
+<span class="target" id="adc-lib_8h_1a233dcf5322f55f2801d05cc3dfd8d369"></span><code class="descname">ADC_ENOP_SWTRG</code><a class="headerlink" href="#c.ADC_ENOP_SWTRG" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="macro">
+<dt id="c.ADC_ENOP_OFFCLR">
+<span class="target" id="adc-lib_8h_1a8022f1d9778e8c2b48367ddc2cb18f15"></span><code class="descname">ADC_ENOP_OFFCLR</code><a class="headerlink" href="#c.ADC_ENOP_OFFCLR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="macro">
+<dt id="c.ADC_ENOP_OFFCLRHW">
+<span class="target" id="adc-lib_8h_1adbdaec3d02ad8c86e470acf2a4123661"></span><code class="descname">ADC_ENOP_OFFCLRHW</code><a class="headerlink" href="#c.ADC_ENOP_OFFCLRHW" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="macro">
+<dt id="c.ADC_ENOP_OFFCLRSW">
+<span class="target" id="adc-lib_8h_1a2fcf7a6370482bfd3cfd0783c64fbe64"></span><code class="descname">ADC_ENOP_OFFCLRSW</code><a class="headerlink" href="#c.ADC_ENOP_OFFCLRSW" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="macro">
+<dt id="c.ADC_OFF_AC_RESTORE_S">
+<span class="target" id="adc-lib_8h_1a5fb158be7ae736db0a922f8972b25551"></span><code class="descname">ADC_OFF_AC_RESTORE_S</code><a class="headerlink" href="#c.ADC_OFF_AC_RESTORE_S" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="macro">
+<dt id="c.ADC_OFF_AC_RESTORE_R">
+<span class="target" id="adc-lib_8h_1a98b74299cdc1f818f5e80e57806d19b3"></span><code class="descname">ADC_OFF_AC_RESTORE_R</code><a class="headerlink" href="#c.ADC_OFF_AC_RESTORE_R" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="macro">
+<dt id="c.ADC_ENOFLAGS">
+<span class="target" id="adc-lib_8h_1a62dbe6f6112cea890756d6bf0a292376"></span><code class="descname">ADC_ENOFLAGS</code><a class="headerlink" href="#c.ADC_ENOFLAGS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="macro">
+<dt id="c.__ADC_CONF_LEN">
+<span class="target" id="adc-lib_8h_1a63eae521ca667b803068e0f9262576ee"></span><code class="descname">__ADC_CONF_LEN</code><a class="headerlink" href="#c.__ADC_CONF_LEN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="macro">
+<dt id="c.ADC_F_USERMASK">
+<span class="target" id="adc-lib_8h_1aca6bc4cf041df81899f50dce0cf68857"></span><code class="descname">ADC_F_USERMASK</code><a class="headerlink" href="#c.ADC_F_USERMASK" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flag mask  low-bits are used by lib-int.h </p>
+</dd></dl>
+
+<dl class="macro">
+<dt id="c.ADC_F_FLUSH">
+<span class="target" id="adc-lib_8h_1a1d159b5b42a6bda556dc3289d2eb5a94"></span><code class="descname">ADC_F_FLUSH</code><a class="headerlink" href="#c.ADC_F_FLUSH" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flag used to flush the buffer (used by adc_open). It is equivalent of adc_acq_flush(adc, ADC_FLUSH_F_ANY) </p>
+</dd></dl>
+
+<dl class="macro">
+<dt id="c.ADC_F_VERBOSE">
+<span class="target" id="adc-lib_8h_1a722ddaed8f2e6342dff8ca2e34acb253"></span><code class="descname">ADC_F_VERBOSE</code><a class="headerlink" href="#c.ADC_F_VERBOSE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flag used to verbose on stdout/stderr (usable by any function) </p>
+</dd></dl>
+
+<dl class="macro">
+<dt id="c.ADC_F_FIXUP">
+<span class="target" id="adc-lib_8h_1a8e1f4948f598f7ebbf03372a8af0f60b"></span><code class="descname">ADC_F_FIXUP</code><a class="headerlink" href="#c.ADC_F_FIXUP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flag used to fixup a buffer when filling it (usable by adc_fill_buffer) </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef container">
+<p class="breathe-sectiondef-title rubric">Enums</p>
+<dl class="type">
+<dt id="_CPPv220adc_supported_boards">
+<span id="adc_supported_boards"></span><span class="target" id="adc-lib_8h_1a9196970d39a798e2810522ab46d09f3b"></span><em class="property">enum </em><code class="descname">adc_supported_boards</code><a class="headerlink" href="#_CPPv220adc_supported_boards" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enumerate all supported boards </p>
+<p><em>Values:</em></p>
+<dl class="enumerator">
+<dt id="_CPPv222FMCADC_100MS_4CH_14BIT">
+<span class="target" id="adc-lib_8h_1a9196970d39a798e2810522ab46d09f3bae0c69791d6929e6fd79b1077b94bc23b"></span><code class="descname">FMCADC_100MS_4CH_14BIT</code> = 0<a class="headerlink" href="#_CPPv222FMCADC_100MS_4CH_14BIT" title="Permalink to this definition">¶</a></dt>
+<dd><p>It identifies the FMC ADC 100M 14Bit 4Channel </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv211ADC_ZIOFAKE">
+<span class="target" id="adc-lib_8h_1a9196970d39a798e2810522ab46d09f3ba185a08ff5ab58c2f1eb5bc72d954a3f8"></span><code class="descname">ADC_ZIOFAKE</code><a class="headerlink" href="#_CPPv211ADC_ZIOFAKE" title="Permalink to this definition">¶</a></dt>
+<dd><p>It identifies a generic board that supports the ZIO framework </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv215ADC_GENERICFAKE">
+<span class="target" id="adc-lib_8h_1a9196970d39a798e2810522ab46d09f3ba5f655e2e58e8878825d87ba0893419f6"></span><code class="descname">ADC_GENERICFAKE</code><a class="headerlink" href="#_CPPv215ADC_GENERICFAKE" title="Permalink to this definition">¶</a></dt>
+<dd><p>It identifies a generic board for testing purpose </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv233__ADC_SUPPORTED_BOARDS_LAST_INDEX">
+<span class="target" id="adc-lib_8h_1a9196970d39a798e2810522ab46d09f3babeafca3be2caa43aebe3095f91e4f714"></span><code class="descname">__ADC_SUPPORTED_BOARDS_LAST_INDEX</code><a class="headerlink" href="#_CPPv233__ADC_SUPPORTED_BOARDS_LAST_INDEX" title="Permalink to this definition">¶</a></dt>
+<dd><p>It represents the the last index of enum. It can be useful for some sort of automation </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="type">
+<dt id="_CPPv220adc_trigger_polarity">
+<span id="adc_trigger_polarity"></span><span class="target" id="adc-lib_8h_1a5629449aec28755f925294bf05762caf"></span><em class="property">enum </em><code class="descname">adc_trigger_polarity</code><a class="headerlink" href="#_CPPv220adc_trigger_polarity" title="Permalink to this definition">¶</a></dt>
+<dd><p>It describes the possible polarity values </p>
+<p><em>Values:</em></p>
+<dl class="enumerator">
+<dt id="_CPPv215ADC_TRG_POL_POS">
+<span class="target" id="adc-lib_8h_1a5629449aec28755f925294bf05762cafa92f7adafe77675e749e514d5c8f56400"></span><code class="descname">ADC_TRG_POL_POS</code> = 0<a class="headerlink" href="#_CPPv215ADC_TRG_POL_POS" title="Permalink to this definition">¶</a></dt>
+<dd><p>positive edge/slope </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv215ADC_TRG_POL_NEG">
+<span class="target" id="adc-lib_8h_1a5629449aec28755f925294bf05762cafae8cf3df861430685b0edd21052ba7fa4"></span><code class="descname">ADC_TRG_POL_NEG</code><a class="headerlink" href="#_CPPv215ADC_TRG_POL_NEG" title="Permalink to this definition">¶</a></dt>
+<dd><p>negative edge/slope </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="type">
+<dt id="_CPPv229adc_configuration_trigger_ext">
+<span id="adc_configuration_trigger_ext"></span><span class="target" id="adc-lib_8h_1a2f2e2adb7724587b5bfa6d8ee401cc90"></span><em class="property">enum </em><code class="descname">adc_configuration_trigger_ext</code><a class="headerlink" href="#_CPPv229adc_configuration_trigger_ext" title="Permalink to this definition">¶</a></dt>
+<dd><p>It describes the possible configuration option for an external trigger If not specified, the meaning of a configuration option depends on the board in use</p>
+<p></p>
+<p><em>Values:</em></p>
+<dl class="enumerator">
+<dt id="_CPPv223ADC_CONF_TRG_EXT_ENABLE">
+<span class="target" id="adc-lib_8h_1a2f2e2adb7724587b5bfa6d8ee401cc90a4c67ca1b4321933f7ef96caff2afc902"></span><code class="descname">ADC_CONF_TRG_EXT_ENABLE</code><a class="headerlink" href="#_CPPv223ADC_CONF_TRG_EXT_ENABLE" title="Permalink to this definition">¶</a></dt>
+<dd><p>It enable/disable the trigger </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv225ADC_CONF_TRG_EXT_POLARITY">
+<span class="target" id="adc-lib_8h_1a2f2e2adb7724587b5bfa6d8ee401cc90ae2899d45cddb216c658ab89936552c70"></span><code class="descname">ADC_CONF_TRG_EXT_POLARITY</code><a class="headerlink" href="#_CPPv225ADC_CONF_TRG_EXT_POLARITY" title="Permalink to this definition">¶</a></dt>
+<dd><p>It is used to apply the polarity to the external triggers </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv222ADC_CONF_TRG_EXT_DELAY">
+<span class="target" id="adc-lib_8h_1a2f2e2adb7724587b5bfa6d8ee401cc90a8538164078b67f6f0d66c47aaaa664a2"></span><code class="descname">ADC_CONF_TRG_EXT_DELAY</code><a class="headerlink" href="#_CPPv222ADC_CONF_TRG_EXT_DELAY" title="Permalink to this definition">¶</a></dt>
+<dd><p>acquisition delay after trigger </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv229__ADC_CONF_TRG_EXT_LAST_INDEX">
+<span class="target" id="adc-lib_8h_1a2f2e2adb7724587b5bfa6d8ee401cc90af4f03c1adc9dec973a7d12cb9a7f6322"></span><code class="descname">__ADC_CONF_TRG_EXT_LAST_INDEX</code><a class="headerlink" href="#_CPPv229__ADC_CONF_TRG_EXT_LAST_INDEX" title="Permalink to this definition">¶</a></dt>
+<dd><p>It represents the the last index of this enum. It can be useful for some sort of automation </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="type">
+<dt id="_CPPv229adc_configuration_trigger_thr">
+<span id="adc_configuration_trigger_thr"></span><span class="target" id="adc-lib_8h_1adf4ab93c2f1372ade80b346c8e47611a"></span><em class="property">enum </em><code class="descname">adc_configuration_trigger_thr</code><a class="headerlink" href="#_CPPv229adc_configuration_trigger_thr" title="Permalink to this definition">¶</a></dt>
+<dd><p>It describes the possible configuration option for a threshold trigger If not specified, the meaning of a configuration option depends on the board in use</p>
+<p></p>
+<p><em>Values:</em></p>
+<dl class="enumerator">
+<dt id="_CPPv223ADC_CONF_TRG_THR_ENABLE">
+<span class="target" id="adc-lib_8h_1adf4ab93c2f1372ade80b346c8e47611aae16e80a8b84361f58e3f7e5454c97c79"></span><code class="descname">ADC_CONF_TRG_THR_ENABLE</code><a class="headerlink" href="#_CPPv223ADC_CONF_TRG_THR_ENABLE" title="Permalink to this definition">¶</a></dt>
+<dd><p>It enable (1) or disable (0) the trigger </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv225ADC_CONF_TRG_THR_POLARITY">
+<span class="target" id="adc-lib_8h_1adf4ab93c2f1372ade80b346c8e47611aabe28043181ea9687a4507c4b2c3de87c"></span><code class="descname">ADC_CONF_TRG_THR_POLARITY</code><a class="headerlink" href="#_CPPv225ADC_CONF_TRG_THR_POLARITY" title="Permalink to this definition">¶</a></dt>
+<dd><p>It is used to apply the polarity to the threshold triggers </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv222ADC_CONF_TRG_THR_DELAY">
+<span class="target" id="adc-lib_8h_1adf4ab93c2f1372ade80b346c8e47611aae7309633a876070da6684cb120d85d39"></span><code class="descname">ADC_CONF_TRG_THR_DELAY</code><a class="headerlink" href="#_CPPv222ADC_CONF_TRG_THR_DELAY" title="Permalink to this definition">¶</a></dt>
+<dd><p>It defines the acquisition delay after trigger </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv226ADC_CONF_TRG_THR_THRESHOLD">
+<span class="target" id="adc-lib_8h_1adf4ab93c2f1372ade80b346c8e47611aa6ec1154d327828a0b26815f6887e88ce"></span><code class="descname">ADC_CONF_TRG_THR_THRESHOLD</code><a class="headerlink" href="#_CPPv226ADC_CONF_TRG_THR_THRESHOLD" title="Permalink to this definition">¶</a></dt>
+<dd><p>The threshold value that triggers the acquisition </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv227ADC_CONF_TRG_THR_HYSTERESIS">
+<span class="target" id="adc-lib_8h_1adf4ab93c2f1372ade80b346c8e47611aab37359393346678dade5ee9d29c197a8"></span><code class="descname">ADC_CONF_TRG_THR_HYSTERESIS</code><a class="headerlink" href="#_CPPv227ADC_CONF_TRG_THR_HYSTERESIS" title="Permalink to this definition">¶</a></dt>
+<dd><p>If defines the hysteresis associated to the threshold value </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv229__ADC_CONF_TRG_THR_LAST_INDEX">
+<span class="target" id="adc-lib_8h_1adf4ab93c2f1372ade80b346c8e47611aa8ae732d13d2426fa190f41010570367b"></span><code class="descname">__ADC_CONF_TRG_THR_LAST_INDEX</code><a class="headerlink" href="#_CPPv229__ADC_CONF_TRG_THR_LAST_INDEX" title="Permalink to this definition">¶</a></dt>
+<dd><p>It represents the the last index of this enum. It can be useful for some sort of automation </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="type">
+<dt id="_CPPv229adc_configuration_trigger_tim">
+<span id="adc_configuration_trigger_tim"></span><span class="target" id="adc-lib_8h_1ae58ded39e989a3afd61eda8dcdd68063"></span><em class="property">enum </em><code class="descname">adc_configuration_trigger_tim</code><a class="headerlink" href="#_CPPv229adc_configuration_trigger_tim" title="Permalink to this definition">¶</a></dt>
+<dd><p>It describes the possible configuration option for a time trigger If not specified, the meaning of a configuration option depends on the board in use</p>
+<p></p>
+<p><em>Values:</em></p>
+<dl class="enumerator">
+<dt id="_CPPv223ADC_CONF_TRG_TIM_ENABLE">
+<span class="target" id="adc-lib_8h_1ae58ded39e989a3afd61eda8dcdd68063a1dbc649eba4ec08e8431379917661b40"></span><code class="descname">ADC_CONF_TRG_TIM_ENABLE</code><a class="headerlink" href="#_CPPv223ADC_CONF_TRG_TIM_ENABLE" title="Permalink to this definition">¶</a></dt>
+<dd><p>It enable (1) or disable (0) the trigger </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv224ADC_CONF_TRG_TIM_SECONDS">
+<span class="target" id="adc-lib_8h_1ae58ded39e989a3afd61eda8dcdd68063a854c31bf2890a7d4f0758d5048c8f1c4"></span><code class="descname">ADC_CONF_TRG_TIM_SECONDS</code><a class="headerlink" href="#_CPPv224ADC_CONF_TRG_TIM_SECONDS" title="Permalink to this definition">¶</a></dt>
+<dd><p>When to fire: seconds </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv229ADC_CONF_TRG_TIM_NANO_SECONDS">
+<span class="target" id="adc-lib_8h_1ae58ded39e989a3afd61eda8dcdd68063a96977d92abfbb5ff13b07db9b3829366"></span><code class="descname">ADC_CONF_TRG_TIM_NANO_SECONDS</code><a class="headerlink" href="#_CPPv229ADC_CONF_TRG_TIM_NANO_SECONDS" title="Permalink to this definition">¶</a></dt>
+<dd><p>When to fire: nanoseconds </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv229__ADC_CONF_TRG_TIM_LAST_INDEX">
+<span class="target" id="adc-lib_8h_1ae58ded39e989a3afd61eda8dcdd68063a36226d621e0e249ba3082da940616d0b"></span><code class="descname">__ADC_CONF_TRG_TIM_LAST_INDEX</code><a class="headerlink" href="#_CPPv229__ADC_CONF_TRG_TIM_LAST_INDEX" title="Permalink to this definition">¶</a></dt>
+<dd><p>It represents the the last index of this enum. It can be useful for some sort of automation </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="type">
+<dt id="_CPPv229adc_configuration_acquisition">
+<span id="adc_configuration_acquisition"></span><span class="target" id="adc-lib_8h_1a5c28b7f03e3b411ad93c817408d669b4"></span><em class="property">enum </em><code class="descname">adc_configuration_acquisition</code><a class="headerlink" href="#_CPPv229adc_configuration_acquisition" title="Permalink to this definition">¶</a></dt>
+<dd><p>This represents the list of configuration options for the acquisition when using <code class="docutils literal"><span class="pre">conf-&gt;type</span> <span class="pre">=</span> <span class="pre">ADC_CONF_TYPE_ACQ</span></code> </p>
+<p><em>Values:</em></p>
+<dl class="enumerator">
+<dt id="_CPPv220ADC_CONF_ACQ_N_SHOTS">
+<span class="target" id="adc-lib_8h_1a5c28b7f03e3b411ad93c817408d669b4a4d41f4c4eeb765364712f4b1d9083c5d"></span><code class="descname">ADC_CONF_ACQ_N_SHOTS</code> = 0<a class="headerlink" href="#_CPPv220ADC_CONF_ACQ_N_SHOTS" title="Permalink to this definition">¶</a></dt>
+<dd><p>umber of shots during the acquisition </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv222ADC_CONF_ACQ_POST_SAMP">
+<span class="target" id="adc-lib_8h_1a5c28b7f03e3b411ad93c817408d669b4a1b6de93d5eb51867886aaddecf193ee3"></span><code class="descname">ADC_CONF_ACQ_POST_SAMP</code><a class="headerlink" href="#_CPPv222ADC_CONF_ACQ_POST_SAMP" title="Permalink to this definition">¶</a></dt>
+<dd><p>number of samples after the trigger </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv221ADC_CONF_ACQ_PRE_SAMP">
+<span class="target" id="adc-lib_8h_1a5c28b7f03e3b411ad93c817408d669b4a2439f3f375a7fa3e4706d652263e3570"></span><code class="descname">ADC_CONF_ACQ_PRE_SAMP</code><a class="headerlink" href="#_CPPv221ADC_CONF_ACQ_PRE_SAMP" title="Permalink to this definition">¶</a></dt>
+<dd><p>number of sample before the trigger </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv224ADC_CONF_ACQ_UNDERSAMPLE">
+<span class="target" id="adc-lib_8h_1a5c28b7f03e3b411ad93c817408d669b4ab82ac763850b47b202f36e4a3c216263"></span><code class="descname">ADC_CONF_ACQ_UNDERSAMPLE</code><a class="headerlink" href="#_CPPv224ADC_CONF_ACQ_UNDERSAMPLE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Acquisition undersample factor </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv220ADC_CONF_ACQ_FREQ_HZ">
+<span class="target" id="adc-lib_8h_1a5c28b7f03e3b411ad93c817408d669b4af5f15be62fff2923c8e9fea58c0d4727"></span><code class="descname">ADC_CONF_ACQ_FREQ_HZ</code><a class="headerlink" href="#_CPPv220ADC_CONF_ACQ_FREQ_HZ" title="Permalink to this definition">¶</a></dt>
+<dd><p>Acquisition frequency </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv219ADC_CONF_ACQ_N_BITS">
+<span class="target" id="adc-lib_8h_1a5c28b7f03e3b411ad93c817408d669b4af354e31993ebd411d6ac94f0b91de346"></span><code class="descname">ADC_CONF_ACQ_N_BITS</code><a class="headerlink" href="#_CPPv219ADC_CONF_ACQ_N_BITS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of bit per sample </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv235__ADC_CONF_ACQ_ATTRIBUTE_LAST_INDEX">
+<span class="target" id="adc-lib_8h_1a5c28b7f03e3b411ad93c817408d669b4a4d3cef3a25e8406f5b9ebb8ecc2e067c"></span><code class="descname">__ADC_CONF_ACQ_ATTRIBUTE_LAST_INDEX</code><a class="headerlink" href="#_CPPv235__ADC_CONF_ACQ_ATTRIBUTE_LAST_INDEX" title="Permalink to this definition">¶</a></dt>
+<dd><p>It represents the the last index of this enum. It can be useful for some sort of automation </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="type">
+<dt id="_CPPv225adc_configuration_channel">
+<span id="adc_configuration_channel"></span><span class="target" id="adc-lib_8h_1a49ca92b117b0253026727ee78ac57c2f"></span><em class="property">enum </em><code class="descname">adc_configuration_channel</code><a class="headerlink" href="#_CPPv225adc_configuration_channel" title="Permalink to this definition">¶</a></dt>
+<dd><p>This represents the list of configuration options for the channels when using <code class="docutils literal"><span class="pre">conf-&gt;type</span> <span class="pre">=</span> <span class="pre">ADC_CONF_TYPE_CHN</span></code> If not specified, the meaning of a configuration option depends on the board in use</p>
+<p></p>
+<p><em>Values:</em></p>
+<dl class="enumerator">
+<dt id="_CPPv218ADC_CONF_CHN_RANGE">
+<span class="target" id="adc-lib_8h_1a49ca92b117b0253026727ee78ac57c2face0cf8c0f5f5ec64f06f6f3984c623a7"></span><code class="descname">ADC_CONF_CHN_RANGE</code> = 0<a class="headerlink" href="#_CPPv218ADC_CONF_CHN_RANGE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Volt range </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv224ADC_CONF_CHN_TERMINATION">
+<span class="target" id="adc-lib_8h_1a49ca92b117b0253026727ee78ac57c2fa89e7ce3d302065263139eb1fcf7652f4"></span><code class="descname">ADC_CONF_CHN_TERMINATION</code><a class="headerlink" href="#_CPPv224ADC_CONF_CHN_TERMINATION" title="Permalink to this definition">¶</a></dt>
+<dd><p>channel Termination </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv219ADC_CONF_CHN_OFFSET">
+<span class="target" id="adc-lib_8h_1a49ca92b117b0253026727ee78ac57c2facba44e9246b324d154539cc57d60fee3"></span><code class="descname">ADC_CONF_CHN_OFFSET</code><a class="headerlink" href="#_CPPv219ADC_CONF_CHN_OFFSET" title="Permalink to this definition">¶</a></dt>
+<dd><p>signal offset </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv223ADC_CONF_CHN_SATURATION">
+<span class="target" id="adc-lib_8h_1a49ca92b117b0253026727ee78ac57c2fa87e97d99e7f56052da6916375daecd8a"></span><code class="descname">ADC_CONF_CHN_SATURATION</code><a class="headerlink" href="#_CPPv223ADC_CONF_CHN_SATURATION" title="Permalink to this definition">¶</a></dt>
+<dd><p>saturation value </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv217ADC_CONF_CHN_GAIN">
+<span class="target" id="adc-lib_8h_1a49ca92b117b0253026727ee78ac57c2fa1d05ecd19696cc5885d5740bd830a6d8"></span><code class="descname">ADC_CONF_CHN_GAIN</code><a class="headerlink" href="#_CPPv217ADC_CONF_CHN_GAIN" title="Permalink to this definition">¶</a></dt>
+<dd><p>signal gain </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv235__ADC_CONF_CHN_ATTRIBUTE_LAST_INDEX">
+<span class="target" id="adc-lib_8h_1a49ca92b117b0253026727ee78ac57c2fa819ef436a7b9768508e1248c87bd9471"></span><code class="descname">__ADC_CONF_CHN_ATTRIBUTE_LAST_INDEX</code><a class="headerlink" href="#_CPPv235__ADC_CONF_CHN_ATTRIBUTE_LAST_INDEX" title="Permalink to this definition">¶</a></dt>
+<dd><p>It represents the the last index of this enum. It can be useful for some sort of automation </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="type">
+<dt id="_CPPv223adc_configuration_board">
+<span id="adc_configuration_board"></span><span class="target" id="adc-lib_8h_1a239c71f10abcd026d7a185c0767eb916"></span><em class="property">enum </em><code class="descname">adc_configuration_board</code><a class="headerlink" href="#_CPPv223adc_configuration_board" title="Permalink to this definition">¶</a></dt>
+<dd><p>This represents the list of configuration options for the board status when using <code class="docutils literal"><span class="pre">conf-&gt;type</span> <span class="pre">=</span> <span class="pre">ADC_CONF_TYPE_BRD</span></code> If not specified, the meaning of a configuration option depends on the board in use</p>
+<p></p>
+<p><em>Values:</em></p>
+<dl class="enumerator">
+<dt id="_CPPv219ADC_CONF_BRD_STATUS">
+<span class="target" id="adc-lib_8h_1a239c71f10abcd026d7a185c0767eb916ae34d559b617454c7b7324de58066c985"></span><code class="descname">ADC_CONF_BRD_STATUS</code> = 0<a class="headerlink" href="#_CPPv219ADC_CONF_BRD_STATUS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Board status </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv224ADC_CONF_BRD_MAX_FREQ_HZ">
+<span class="target" id="adc-lib_8h_1a239c71f10abcd026d7a185c0767eb916a67ce62f2dc04387f8e4c659740ebb0ea"></span><code class="descname">ADC_CONF_BRD_MAX_FREQ_HZ</code><a class="headerlink" href="#_CPPv224ADC_CONF_BRD_MAX_FREQ_HZ" title="Permalink to this definition">¶</a></dt>
+<dd><p>Maximum frequency in HZ </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv224ADC_CONF_BRD_MIN_FREQ_HZ">
+<span class="target" id="adc-lib_8h_1a239c71f10abcd026d7a185c0767eb916a249c0c28e4eb23e9d6a807bff0dba1d4"></span><code class="descname">ADC_CONF_BRD_MIN_FREQ_HZ</code><a class="headerlink" href="#_CPPv224ADC_CONF_BRD_MIN_FREQ_HZ" title="Permalink to this definition">¶</a></dt>
+<dd><p>Minimum frequency in HZ </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv233ADC_CONF_BRD_STATE_MACHINE_STATUS">
+<span class="target" id="adc-lib_8h_1a239c71f10abcd026d7a185c0767eb916aea3f11800ef98113904601c9a8797434"></span><code class="descname">ADC_CONF_BRD_STATE_MACHINE_STATUS</code><a class="headerlink" href="#_CPPv233ADC_CONF_BRD_STATE_MACHINE_STATUS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Acquisition state machine status </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv219ADC_CONF_BRD_N_CHAN">
+<span class="target" id="adc-lib_8h_1a239c71f10abcd026d7a185c0767eb916a38f4e5d39258fe453e2d34c32fcd7411"></span><code class="descname">ADC_CONF_BRD_N_CHAN</code><a class="headerlink" href="#_CPPv219ADC_CONF_BRD_N_CHAN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of acquisition channel </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv222ADC_CONF_BRD_N_TRG_EXT">
+<span class="target" id="adc-lib_8h_1a239c71f10abcd026d7a185c0767eb916a03ea95f1b17fea4e1a20ffe9a72868e4"></span><code class="descname">ADC_CONF_BRD_N_TRG_EXT</code><a class="headerlink" href="#_CPPv222ADC_CONF_BRD_N_TRG_EXT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of external triggers </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv222ADC_CONF_BRD_N_TRG_THR">
+<span class="target" id="adc-lib_8h_1a239c71f10abcd026d7a185c0767eb916ab4102c1a531692275843855ccabc16f5"></span><code class="descname">ADC_CONF_BRD_N_TRG_THR</code><a class="headerlink" href="#_CPPv222ADC_CONF_BRD_N_TRG_THR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of threshold triggers </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv222ADC_CONF_BRD_N_TRG_TIM">
+<span class="target" id="adc-lib_8h_1a239c71f10abcd026d7a185c0767eb916ab711759c0bddf272dd91b24dac4bdf1e"></span><code class="descname">ADC_CONF_BRD_N_TRG_TIM</code><a class="headerlink" href="#_CPPv222ADC_CONF_BRD_N_TRG_TIM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of timer triggers </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv226ADC_CONF_UTC_TIMING_BASE_S">
+<span class="target" id="adc-lib_8h_1a239c71f10abcd026d7a185c0767eb916a1c893d68f59ed2979359ba4a8552a313"></span><code class="descname">ADC_CONF_UTC_TIMING_BASE_S</code><a class="headerlink" href="#_CPPv226ADC_CONF_UTC_TIMING_BASE_S" title="Permalink to this definition">¶</a></dt>
+<dd><p>Board internal time: seconds </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv226ADC_CONF_UTC_TIMING_BASE_T">
+<span class="target" id="adc-lib_8h_1a239c71f10abcd026d7a185c0767eb916ae832d7127a436efc06f525ad3c77fc0a"></span><code class="descname">ADC_CONF_UTC_TIMING_BASE_T</code><a class="headerlink" href="#_CPPv226ADC_CONF_UTC_TIMING_BASE_T" title="Permalink to this definition">¶</a></dt>
+<dd><p>Board internal time: coarse sub-seconds </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv226ADC_CONF_UTC_TIMING_BASE_B">
+<span class="target" id="adc-lib_8h_1a239c71f10abcd026d7a185c0767eb916adf2fb2aee823e5c00e12732637b507af"></span><code class="descname">ADC_CONF_UTC_TIMING_BASE_B</code><a class="headerlink" href="#_CPPv226ADC_CONF_UTC_TIMING_BASE_B" title="Permalink to this definition">¶</a></dt>
+<dd><p>Board internal time: fine sub-seconds </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv235__ADC_CONF_BRD_ATTRIBUTE_LAST_INDEX">
+<span class="target" id="adc-lib_8h_1a239c71f10abcd026d7a185c0767eb916a5d062f330343e8a6fd8416cdcf05e9e4"></span><code class="descname">__ADC_CONF_BRD_ATTRIBUTE_LAST_INDEX</code><a class="headerlink" href="#_CPPv235__ADC_CONF_BRD_ATTRIBUTE_LAST_INDEX" title="Permalink to this definition">¶</a></dt>
+<dd><p>It represents the the last index of this enum. It can be useful for some sort of automation </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="type">
+<dt id="_CPPv222adc_configuration_type">
+<span id="adc_configuration_type"></span><span class="target" id="adc-lib_8h_1a2e4f84e901793268e6340b6a30a2659b"></span><em class="property">enum </em><code class="descname">adc_configuration_type</code><a class="headerlink" href="#_CPPv222adc_configuration_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>It describes the possible configuration types If not specified, the meaning of a configuration option depends on the board in use</p>
+<p></p>
+<p><em>Values:</em></p>
+<dl class="enumerator">
+<dt id="_CPPv217ADC_CONF_TYPE_BRD">
+<span class="target" id="adc-lib_8h_1a2e4f84e901793268e6340b6a30a2659ba579306caa621f7465bc8fbe4e36bf99b"></span><code class="descname">ADC_CONF_TYPE_BRD</code> = 0<a class="headerlink" href="#_CPPv217ADC_CONF_TYPE_BRD" title="Permalink to this definition">¶</a></dt>
+<dd><p>Configuration for the board </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv217ADC_CONF_TYPE_CHN">
+<span class="target" id="adc-lib_8h_1a2e4f84e901793268e6340b6a30a2659bad3b6679d6c57064f00934ab02e617e0a"></span><code class="descname">ADC_CONF_TYPE_CHN</code><a class="headerlink" href="#_CPPv217ADC_CONF_TYPE_CHN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Configuration for an acquisition channels </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv217ADC_CONF_TYPE_ACQ">
+<span class="target" id="adc-lib_8h_1a2e4f84e901793268e6340b6a30a2659baff37137de320f923d2751779a24bfc71"></span><code class="descname">ADC_CONF_TYPE_ACQ</code><a class="headerlink" href="#_CPPv217ADC_CONF_TYPE_ACQ" title="Permalink to this definition">¶</a></dt>
+<dd><p>Configuration for the acquisition </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv217ADC_CONF_TYPE_CUS">
+<span class="target" id="adc-lib_8h_1a2e4f84e901793268e6340b6a30a2659ba374cd9398ae478542bbcca4f674aa08f"></span><code class="descname">ADC_CONF_TYPE_CUS</code><a class="headerlink" href="#_CPPv217ADC_CONF_TYPE_CUS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Custom configuration for board-specific options for any of the possible domain: board, channel, triggers. </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv221ADC_CONF_TYPE_TRG_EXT">
+<span class="target" id="adc-lib_8h_1a2e4f84e901793268e6340b6a30a2659ba8b2b2aba7818fa662188c290071d41f9"></span><code class="descname">ADC_CONF_TYPE_TRG_EXT</code><a class="headerlink" href="#_CPPv221ADC_CONF_TYPE_TRG_EXT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Configuration for external triggers </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv221ADC_CONF_TYPE_TRG_THR">
+<span class="target" id="adc-lib_8h_1a2e4f84e901793268e6340b6a30a2659ba4463de3f19cb39aa14b7947aae634638"></span><code class="descname">ADC_CONF_TYPE_TRG_THR</code><a class="headerlink" href="#_CPPv221ADC_CONF_TYPE_TRG_THR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Configuration for threshold triggers </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv221ADC_CONF_TYPE_TRG_TIM">
+<span class="target" id="adc-lib_8h_1a2e4f84e901793268e6340b6a30a2659bab02526cd2b4dc344f18ccd8237f04698"></span><code class="descname">ADC_CONF_TYPE_TRG_TIM</code><a class="headerlink" href="#_CPPv221ADC_CONF_TYPE_TRG_TIM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Configuration for time triggers </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv226__ADC_CONF_TYPE_LAST_INDEX">
+<span class="target" id="adc-lib_8h_1a2e4f84e901793268e6340b6a30a2659bafab1bdd79a08edcffcb7aa1cef029ba5"></span><code class="descname">__ADC_CONF_TYPE_LAST_INDEX</code><a class="headerlink" href="#_CPPv226__ADC_CONF_TYPE_LAST_INDEX" title="Permalink to this definition">¶</a></dt>
+<dd><p>It represents the the last index of this enum. It can be useful for some sort of automation </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="type">
+<dt id="_CPPv214adc_conf_flags">
+<span id="adc_conf_flags"></span><span class="target" id="adc-lib_8h_1a329684416e56b39f5e9120cdccd28e0a"></span><em class="property">enum </em><code class="descname">adc_conf_flags</code><a class="headerlink" href="#_CPPv214adc_conf_flags" title="Permalink to this definition">¶</a></dt>
+<dd><p>It enumerates all possible flags for <a class="reference internal" href="#structadc__conf_1aab3aae333d0fd98eb556ab1368011a62"><span class="std std-ref">adc_conf.flags</span></a> </p>
+<p><em>Values:</em></p>
+<dl class="enumerator">
+<dt id="_CPPv216ADC_CONF_F_ERROR">
+<span class="target" id="adc-lib_8h_1a329684416e56b39f5e9120cdccd28e0aa70df86a4283bf86416e0139ece001d85"></span><code class="descname">ADC_CONF_F_ERROR</code> =(1ULL &lt;&lt; 0)<a class="headerlink" href="#_CPPv216ADC_CONF_F_ERROR" title="Permalink to this definition">¶</a></dt>
+<dd><p>configuration failed </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="type">
+<dt id="_CPPv227adc_offset_auto_clear_flags">
+<span id="adc_offset_auto_clear_flags"></span><span class="target" id="adc-lib_8h_1a77ecb893ae0a611398b49735ca3de8ca"></span><em class="property">enum </em><code class="descname">adc_offset_auto_clear_flags</code><a class="headerlink" href="#_CPPv227adc_offset_auto_clear_flags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enumeration of all possible flags to driver the auto-clear offset </p>
+<p><em>Values:</em></p>
+<dl class="enumerator">
+<dt id="_CPPv222ADC_OFFSET_AC_F_MANUAL">
+<span class="target" id="adc-lib_8h_1a77ecb893ae0a611398b49735ca3de8caa45527b5385e12030791e128b4c936cb6"></span><code class="descname">ADC_OFFSET_AC_F_MANUAL</code> =0x00000001<a class="headerlink" href="#_CPPv222ADC_OFFSET_AC_F_MANUAL" title="Permalink to this definition">¶</a></dt>
+<dd><p>the signal will be acquired with the last configuration set </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv223ADC_OFFSET_AC_F_RESTORE">
+<span class="target" id="adc-lib_8h_1a77ecb893ae0a611398b49735ca3de8caae65a84b37528f7e1418b2822872a0a4d"></span><code class="descname">ADC_OFFSET_AC_F_RESTORE</code> =0x00000002<a class="headerlink" href="#_CPPv223ADC_OFFSET_AC_F_RESTORE" title="Permalink to this definition">¶</a></dt>
+<dd><p>restore previous configuration when done. It does not have any effect when MANUAL is active </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv224ADC_OFFSET_AC_F_SOFTWARE">
+<span class="target" id="adc-lib_8h_1a77ecb893ae0a611398b49735ca3de8caaeaf678fb944dd92b3d192d5c368aedb3"></span><code class="descname">ADC_OFFSET_AC_F_SOFTWARE</code> =0x00000004<a class="headerlink" href="#_CPPv224ADC_OFFSET_AC_F_SOFTWARE" title="Permalink to this definition">¶</a></dt>
+<dd><p>use software mechanism, it implies manual configuration </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv220ADC_OFFSET_AC_F_ZERO">
+<span class="target" id="adc-lib_8h_1a77ecb893ae0a611398b49735ca3de8caa521499c39eb0fec93151bebced6056f6"></span><code class="descname">ADC_OFFSET_AC_F_ZERO</code> =0x00000008<a class="headerlink" href="#_CPPv220ADC_OFFSET_AC_F_ZERO" title="Permalink to this definition">¶</a></dt>
+<dd><p>it sets the zero-offset to zero; which means that it removes any previously set zero-offset. </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv222__ADC_OFFSET_AC_F_MASK">
+<span class="target" id="adc-lib_8h_1a77ecb893ae0a611398b49735ca3de8caa9b97fd540e6925b6cf2e1d2269ee5825"></span><code class="descname">__ADC_OFFSET_AC_F_MASK</code><p>=(ADC_OFFSET_AC_F_MANUAL |</p>
+<p>				ADC_OFFSET_AC_F_RESTORE |</p>
+<p>				ADC_OFFSET_AC_F_SOFTWARE |</p>
+<p>				ADC_OFFSET_AC_F_ZERO)</p>
+<a class="headerlink" href="#_CPPv222__ADC_OFFSET_AC_F_MASK" title="Permalink to this definition">¶</a></dt>
+<dd><p>used internally </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="type">
+<dt id="_CPPv215adc_flush_flags">
+<span id="adc_flush_flags"></span><span class="target" id="adc-lib_8h_1a51864d3e2b8cc183b1060b172e05c0f0"></span><em class="property">enum </em><code class="descname">adc_flush_flags</code><a class="headerlink" href="#_CPPv215adc_flush_flags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enumeration of all possible flags to drive flushing </p>
+<p><em>Values:</em></p>
+<dl class="enumerator">
+<dt id="_CPPv215ADC_FLUSH_F_ANY">
+<span class="target" id="adc-lib_8h_1a51864d3e2b8cc183b1060b172e05c0f0acca489d84e9e7ab2d68f810e58794cf3"></span><code class="descname">ADC_FLUSH_F_ANY</code> = 0x0<a class="headerlink" href="#_CPPv215ADC_FLUSH_F_ANY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv214ADC_FLUSH_F_SW">
+<span class="target" id="adc-lib_8h_1a51864d3e2b8cc183b1060b172e05c0f0a3cab98271b14ce2fd8629e50183e6a35"></span><code class="descname">ADC_FLUSH_F_SW</code> = 0x1<a class="headerlink" href="#_CPPv214ADC_FLUSH_F_SW" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv214ADC_FLUSH_F_HW">
+<span class="target" id="adc-lib_8h_1a51864d3e2b8cc183b1060b172e05c0f0ac6b9ceaf21914bd9109eec5811bfd11d"></span><code class="descname">ADC_FLUSH_F_HW</code> = 0x2<a class="headerlink" href="#_CPPv214ADC_FLUSH_F_HW" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv215ADC_FLUSH_F_ALL">
+<span class="target" id="adc-lib_8h_1a51864d3e2b8cc183b1060b172e05c0f0ad9f5c3072e9d8c1cbbf5c0d5653b072c"></span><code class="descname">ADC_FLUSH_F_ALL</code> = ADC_FLUSH_F_SW | ADC_FLUSH_F_HW<a class="headerlink" href="#_CPPv215ADC_FLUSH_F_ALL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="function">
+<dt id="_CPPv217adc_print_versionv">
+<span id="adc_print_version"></span><span class="target" id="group__dev_1ga5974dad200f755955582a63f8214d19e"></span>void <code class="descname">adc_print_version</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv217adc_print_versionv" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="_CPPv28adc_initv">
+<span id="adc_init__void"></span><span class="target" id="group__dev_1ga17f4991547e2a224daed40a939373d01"></span>int <code class="descname">adc_init</code><span class="sig-paren">(</span>void<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv28adc_initv" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="_CPPv28adc_exitv">
+<span id="adc_exit__void"></span><span class="target" id="group__dev_1gafb1ea905a30e7a85db505fd50cf8e6d1"></span>void <code class="descname">adc_exit</code><span class="sig-paren">(</span>void<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv28adc_exitv" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="_CPPv212adc_strerrori">
+<span id="adc_strerror__i"></span><span class="target" id="group__dev_1gaaccaad36cd1f6af1e1171ee076760478"></span>char *<code class="descname">adc_strerror</code><span class="sig-paren">(</span>int <em>errnum</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv212adc_strerrori" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="_CPPv219adc_get_driver_typeP7adc_dev">
+<span id="adc_get_driver_type__adc_devP"></span><span class="target" id="group__dev_1ga853997978d27633853872717738ada3e"></span>char *<code class="descname">adc_get_driver_type</code><span class="sig-paren">(</span><em class="property">struct</em> adc_dev *<em>dev</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv219adc_get_driver_typeP7adc_dev" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="_CPPv28adc_openPcjmjm">
+<span id="adc_open__cP.unsigned-i.unsigned-l.unsigned-i.unsigned-l"></span><span class="target" id="group__dev_1ga33fa96ff9a96d8b4ffa840a0479b3da6"></span><em class="property">struct</em> adc_dev *<code class="descname">adc_open</code><span class="sig-paren">(</span>char *<em>name</em>, unsigned int <em>dev_id</em>, unsigned long <em>totalsamples</em>, unsigned int <em>nbuffer</em>, unsigned long <em>flags</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv28adc_openPcjmjm" title="Permalink to this definition">¶</a></dt>
+<dd><p>It opens a link with an ADC device <dl class="docutils">
+<dt><strong>Return</strong></dt>
+<dd>It returns an opaque object describing the device. It should be passed around but not be looked into.</dd>
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last simple">
+<li><code class="docutils literal"><span class="pre">name</span></code>: name of the board type to open according to adc_board_name. </li>
+<li><code class="docutils literal"><span class="pre">dev_id</span></code>: The device identifier is used to enumerate several cards in the same system. The number is usually dependent on the geographic placement of the card (bus number, slot number). </li>
+<li><code class="docutils literal"><span class="pre">totalsamples</span></code>: This is a a hint about how big a buffer the application will use. i.e. <code class="docutils literal"><span class="pre">nshots</span> <span class="pre">*</span> <span class="pre">(presamples</span> <span class="pre">+</span> <span class="pre">postsamples)</span></code> </li>
+<li><code class="docutils literal"><span class="pre">nbuffer</span></code>: This is a hint about how many buffers are being used at the same time by the application. For example, a multi-shot acquisition requires all buffers to be available at the same time. Again, this information may require device-level configuration at open time. </li>
+<li><code class="docutils literal"><span class="pre">flags</span></code>: currently it supports: ADC_F_FLUSH, ADC_F_VERBOSE</li>
+</ul>
+</dd>
+</dl>
+</p>
+<p>It initialize the board, this can be different board to board. </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv215adc_open_by_lunPcimjm">
+<span id="adc_open_by_lun__cP.i.unsigned-l.unsigned-i.unsigned-l"></span><span class="target" id="group__dev_1gaee8131032bbe5068f12ad6f3ca2091d8"></span><em class="property">struct</em> adc_dev *<code class="descname">adc_open_by_lun</code><span class="sig-paren">(</span>char *<em>name</em>, int <em>lun</em>, unsigned long <em>totalsamples</em>, unsigned int <em>nbuffer</em>, unsigned long <em>flags</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv215adc_open_by_lunPcimjm" title="Permalink to this definition">¶</a></dt>
+<dd><p>It opens a link with an ADC device using a unit number identifier <dl class="docutils">
+<dt><strong>Return</strong></dt>
+<dd>It returns an opaque object describing the device. It should be passed around but not be looked into.</dd>
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last simple">
+<li><code class="docutils literal"><span class="pre">name</span></code>: name of the board type to open according to adc_board_name. </li>
+<li><code class="docutils literal"><span class="pre">lun</span></code>: the Logical Unit Number. This number comes from a database description of the system. </li>
+<li><code class="docutils literal"><span class="pre">buffersize</span></code>: This is a a hint about how big a buffer the application will use. i.e. <code class="docutils literal"><span class="pre">nshots</span> <span class="pre">*</span> <span class="pre">(presamples</span> <span class="pre">+</span> <span class="pre">postsamples)</span></code> </li>
+<li><code class="docutils literal"><span class="pre">nbuffer</span></code>: This is a hint about how many buffers are being used at the same time by the application. </li>
+<li><code class="docutils literal"><span class="pre">flags</span></code>: currently it supports: ADC_F_FLUSH, ADC_F_VERBOSE</li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv29adc_closeP7adc_dev">
+<span id="adc_close__adc_devP"></span><span class="target" id="group__dev_1ga935d96e1b7766b9f36310ec7d49628e1"></span>int <code class="descname">adc_close</code><span class="sig-paren">(</span><em class="property">struct</em> adc_dev *<em>dev</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv29adc_closeP7adc_dev" title="Permalink to this definition">¶</a></dt>
+<dd><p>It closes the link with the ADC devices previously opened with <a class="reference internal" href="#group__dev_1ga33fa96ff9a96d8b4ffa840a0479b3da6"><span class="std std-ref">adc_open()</span></a> <dl class="docutils">
+<dt><strong>Return</strong></dt>
+<dd>It returns 0 on success, otherwise -1 and errno is appropriately set </dd>
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last simple">
+<li><code class="docutils literal"><span class="pre">dev</span></code>: the device token from <a class="reference internal" href="#group__dev_1ga33fa96ff9a96d8b4ffa840a0479b3da6"><span class="std std-ref">adc_open()</span></a> </li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv216adc_trigger_fireP7adc_dev">
+<span id="adc_trigger_fire__adc_devP"></span><span class="target" id="group__dev_1ga6806b8b2d24dbaea594f4c6b3f95e9a1"></span>int <code class="descname">adc_trigger_fire</code><span class="sig-paren">(</span><em class="property">struct</em> adc_dev *<em>dev</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv216adc_trigger_fireP7adc_dev" title="Permalink to this definition">¶</a></dt>
+<dd><p>It forces the board to trigger the acquisition <dl class="docutils">
+<dt><strong>Return</strong></dt>
+<dd>0 on success, -1 on error and errno is set appropriately ADC_ENOP_SWTRG: when software trigger is not supported </dd>
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last simple">
+<li><code class="docutils literal"><span class="pre">dev</span></code>: ADC device token </li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv220adc_has_trigger_fireP7adc_dev">
+<span id="adc_has_trigger_fire__adc_devP"></span><span class="target" id="group__dev_1gaf0f6d4bd3a275ac379c1a12b20f5dfaa"></span>int <code class="descname">adc_has_trigger_fire</code><span class="sig-paren">(</span><em class="property">struct</em> adc_dev *<em>dev</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv220adc_has_trigger_fireP7adc_dev" title="Permalink to this definition">¶</a></dt>
+<dd><p>It checks if the board support software trigger <dl class="docutils">
+<dt><strong>Return</strong></dt>
+<dd>1 when it does support software trigger; 0 when it does not </dd>
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last simple">
+<li><code class="docutils literal"><span class="pre">dev</span></code>: ADC device token </li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv221adc_offset_auto_clearP7adc_devm">
+<span id="adc_offset_auto_clear__adc_devP.unsigned-l"></span><span class="target" id="group__dev_1ga88825df116c880163e7a4b7298cf400b"></span>int <code class="descname">adc_offset_auto_clear</code><span class="sig-paren">(</span><em class="property">struct</em> adc_dev *<em>dev</em>, unsigned long <em>flags</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv221adc_offset_auto_clearP7adc_devm" title="Permalink to this definition">¶</a></dt>
+<dd><p>It clears eventual offsets on all channel <p>NOTE: The function may overwrite your current configuration (unless you use a flag) and it may remove any trace of previous acquisitions.</p>
+<dl class="docutils">
+<dt><strong>See</strong></dt>
+<dd>adc_offset_auto_clear_flags </dd>
+<dt><strong>Return</strong></dt>
+<dd>0 on success, -1 on error and errno is set appropriately EINVAL: invalid flags value ADC_ENOP_OFFCLR: when offset auto-clear is not supported</dd>
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last simple">
+<li><code class="docutils literal"><span class="pre">dev</span></code>: ADC device token </li>
+<li><code class="docutils literal"><span class="pre">flags</span></code>: options </li>
+</ul>
+</dd>
+</dl>
+</p>
+<p>Offset configuration is always overwritten (no matter what flag you use) </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv213adc_acq_startP7adc_devjP7timeval">
+<span id="adc_acq_start__adc_devP.unsigned-i.timevalP"></span><span class="target" id="group__acq_1gac950b202d5a96f9c101e49ddedb21143"></span>int <code class="descname">adc_acq_start</code><span class="sig-paren">(</span><em class="property">struct</em> adc_dev *<em>dev</em>, unsigned int <em>flags</em>, <em class="property">struct</em> timeval *<em>timeout</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv213adc_acq_startP7adc_devjP7timeval" title="Permalink to this definition">¶</a></dt>
+<dd><p>It tells hardware to start the acquisition on the given device according to the current configuration (but starting in itself is usually a fast operation, because it doesn&#8217;t rewrite configuration to the hardware, at least with currently supported boards). It can return immediately or wait for completion, with a timeout. <dl class="docutils">
+<dt><strong>Return</strong></dt>
+<dd>0 on success, -1 on error and errno is set appropriately ADC_EDISABLED - acquisition disabled or aborted </dd>
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last simple">
+<li><code class="docutils literal"><span class="pre">dev</span></code>: ADC device token </li>
+<li><code class="docutils literal"><span class="pre">flags</span></code>: flags to control the acquisition options ADC_F_FLUSH - discard prevoius leftover data before activating the acquisition (if any is there) </li>
+<li><code class="docutils literal"><span class="pre">timeout</span></code>: The timeout is used like the argument for <code class="docutils literal"><span class="pre">select(2)</span></code>: if NULL, the functions wait forever, otherwise they specify the maximum allowed waiting time  and passing zero values asks to not wait at all (you can use <a class="reference internal" href="#group__acq_1ga349bc5be8fe1541b598375164ff8ceef"><span class="std std-ref">adc_acq_poll()</span></a> later).</li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv212adc_acq_pollP7adc_devjP7timeval">
+<span id="adc_acq_poll__adc_devP.unsigned-i.timevalP"></span><span class="target" id="group__acq_1ga349bc5be8fe1541b598375164ff8ceef"></span>int <code class="descname">adc_acq_poll</code><span class="sig-paren">(</span><em class="property">struct</em> adc_dev *<em>dev</em>, unsigned int <em>flags</em>, <em class="property">struct</em> timeval *<em>timeout</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv212adc_acq_pollP7adc_devjP7timeval" title="Permalink to this definition">¶</a></dt>
+<dd><p>It waits for acquisition to complete. It polls the given device to check if data is available <dl class="docutils">
+<dt><strong>Return</strong></dt>
+<dd>0 on success, -1 on error and errno is set appropriately ADC_EDISABLED - acquisition disabled or aborted EAGAIN - time out</dd>
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last simple">
+<li><code class="docutils literal"><span class="pre">dev</span></code>: ADC device token </li>
+<li><code class="docutils literal"><span class="pre">flags</span></code>: flags to specify how to poll </li>
+<li><code class="docutils literal"><span class="pre">timeout</span></code>: The timeout is used like the argument for <code class="docutils literal"><span class="pre">select(2)</span></code>: if NULL, the functions wait forever, otherwise they specify the maximum allowed waiting time  and passing zero values asks to not wait at all. </li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv212adc_acq_stopP7adc_devj">
+<span id="adc_acq_stop__adc_devP.unsigned-i"></span><span class="target" id="group__acq_1ga6e6570b44cce5b5effc95b74a04181c9"></span>int <code class="descname">adc_acq_stop</code><span class="sig-paren">(</span><em class="property">struct</em> adc_dev *<em>dev</em>, unsigned int <em>flags</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv212adc_acq_stopP7adc_devj" title="Permalink to this definition">¶</a></dt>
+<dd><p>It stops an already-begun acquisition. It is not expected to be of frequent use. <dl class="docutils">
+<dt><strong>Return</strong></dt>
+<dd>0 on success, -1 on error and errno is set appropriately </dd>
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last simple">
+<li><code class="docutils literal"><span class="pre">dev</span></code>: ADC device token </li>
+<li><code class="docutils literal"><span class="pre">flags</span></code>: flags to specify how to stop </li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv213adc_acq_flushP7adc_devj">
+<span id="adc_acq_flush__adc_devP.unsigned-i"></span><span class="target" id="group__acq_1ga282db2bce569d0761b63a2cf74182c13"></span>int <code class="descname">adc_acq_flush</code><span class="sig-paren">(</span><em class="property">struct</em> adc_dev *<em>dev</em>, unsigned int <em>flags</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv213adc_acq_flushP7adc_devj" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flush any acquired data from any software or hardware buffer <dl class="docutils">
+<dt><strong>Return</strong></dt>
+<dd>0 on success, -1 on error and errno is set appropriately </dd>
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last simple">
+<li><code class="docutils literal"><span class="pre">dev</span></code>: ADC device token </li>
+<li><code class="docutils literal"><span class="pre">flags</span></code>: flags for fine control </li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv217adc_set_conf_maskP8adc_confj">
+<span id="adc_set_conf_mask__adc_confP.unsigned-i"></span><span class="target" id="group__conf_1ga07e93fc637bf2bdce90f85c944f899c8"></span>void <code class="descname">adc_set_conf_mask</code><span class="sig-paren">(</span><em class="property">struct</em> <a class="reference internal" href="#_CPPv28adc_conf" title="adc_conf">adc_conf</a> *<em>conf</em>, unsigned int <em>conf_index</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv217adc_set_conf_maskP8adc_confj" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="_CPPv212adc_set_confP8adc_confj8uint32_t">
+<span id="adc_set_conf__adc_confP.unsigned-i.uint32_t"></span><span class="target" id="group__conf_1ga46c7316074622d931ccc00d46302ccf2"></span>void <code class="descname">adc_set_conf</code><span class="sig-paren">(</span><em class="property">struct</em> <a class="reference internal" href="#_CPPv28adc_conf" title="adc_conf">adc_conf</a> *<em>conf</em>, unsigned int <em>conf_index</em>, uint32_t <em>val</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv212adc_set_confP8adc_confj8uint32_t" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="_CPPv212adc_get_confP8adc_confjP8uint32_t">
+<span id="adc_get_conf__adc_confP.unsigned-i.uint32_tP"></span><span class="target" id="group__conf_1ga33634fbd487069166682319fa671eb17"></span>int <code class="descname">adc_get_conf</code><span class="sig-paren">(</span><em class="property">struct</em> <a class="reference internal" href="#_CPPv28adc_conf" title="adc_conf">adc_conf</a> *<em>conf</em>, unsigned int <em>conf_index</em>, uint32_t *<em>val</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv212adc_get_confP8adc_confjP8uint32_t" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="_CPPv221adc_set_conf_mask_allP8adc_confP7adc_dev">
+<span id="adc_set_conf_mask_all__adc_confP.adc_devP"></span><span class="target" id="group__conf_1ga899a4068714f3e3ec33e99e9e56e0319"></span>void <code class="descname">adc_set_conf_mask_all</code><span class="sig-paren">(</span><em class="property">struct</em> <a class="reference internal" href="#_CPPv28adc_conf" title="adc_conf">adc_conf</a> *<em>conf</em>, <em class="property">struct</em> adc_dev *<em>dev</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv221adc_set_conf_mask_allP8adc_confP7adc_dev" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="_CPPv214adc_reset_confP7adc_devjP8adc_conf">
+<span id="adc_reset_conf__adc_devP.unsigned-i.adc_confP"></span><span class="target" id="adc-lib_8h_1ad8c6eb0187a1c0fa8bfd9f192807bef3"></span>int <code class="descname">adc_reset_conf</code><span class="sig-paren">(</span><em class="property">struct</em> adc_dev *<em>dev</em>, unsigned int <em>flags</em>, <em class="property">struct</em> <a class="reference internal" href="#_CPPv28adc_conf" title="adc_conf">adc_conf</a> *<em>conf</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv214adc_reset_confP7adc_devjP8adc_conf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="_CPPv216adc_apply_configP7adc_devjP8adc_conf">
+<span id="adc_apply_config__adc_devP.unsigned-i.adc_confP"></span><span class="target" id="adc-lib_8h_1af5e5c804c7b8af8976f1b3fdfb504aa9"></span>int <code class="descname">adc_apply_config</code><span class="sig-paren">(</span><em class="property">struct</em> adc_dev *<em>dev</em>, unsigned int <em>flags</em>, <em class="property">struct</em> <a class="reference internal" href="#_CPPv28adc_conf" title="adc_conf">adc_conf</a> *<em>conf</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv216adc_apply_configP7adc_devjP8adc_conf" title="Permalink to this definition">¶</a></dt>
+<dd><p>It applies the given configuration to the device <p>If the configuration cannot be applied entirely, then this function will set ADC_CONF_F_ERROR in conf-&gt;flags </p>
+<dl class="docutils">
+<dt><strong>Return</strong></dt>
+<dd>0 on success, -1 on error and errno is set appropriately</dd>
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last simple">
+<li><code class="docutils literal"><span class="pre">dev</span></code>: ADC device token </li>
+<li><code class="docutils literal"><span class="pre">flags</span></code>: </li>
+<li><code class="docutils literal"><span class="pre">conf</span></code>: configuration to apply </li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv218adc_apply_config_nP7adc_devjP8adc_confj">
+<span id="adc_apply_config_n__adc_devP.unsigned-i.adc_confP.unsigned-i"></span><span class="target" id="adc-lib_8h_1a6b48af2c48a5fe70a53a04999eee0c72"></span>int <code class="descname">adc_apply_config_n</code><span class="sig-paren">(</span><em class="property">struct</em> adc_dev *<em>dev</em>, unsigned int <em>flags</em>, <em class="property">struct</em> <a class="reference internal" href="#_CPPv28adc_conf" title="adc_conf">adc_conf</a> *<em>conf</em>, unsigned int <em>n</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv218adc_apply_config_nP7adc_devjP8adc_confj" title="Permalink to this definition">¶</a></dt>
+<dd><p>It applies the given configuration to the device <p>If a configuration cannot be applied entirely, then this function will set ADC_CONF_F_ERROR in conf[i].flags </p>
+<dl class="docutils">
+<dt><strong>Return</strong></dt>
+<dd>0 on success, -1 on error and errno is set appropriately</dd>
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last simple">
+<li><code class="docutils literal"><span class="pre">dev</span></code>: ADC device token </li>
+<li><code class="docutils literal"><span class="pre">flags</span></code>: </li>
+<li><code class="docutils literal"><span class="pre">conf</span></code>: list of configurations to apply </li>
+<li><code class="docutils literal"><span class="pre">n</span></code>: number of valid configurations in conf </li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv219adc_retrieve_configP7adc_devP8adc_conf">
+<span id="adc_retrieve_config__adc_devP.adc_confP"></span><span class="target" id="adc-lib_8h_1ac261356176b81ea16972d0e32bbdc9a5"></span>int <code class="descname">adc_retrieve_config</code><span class="sig-paren">(</span><em class="property">struct</em> adc_dev *<em>dev</em>, <em class="property">struct</em> <a class="reference internal" href="#_CPPv28adc_conf" title="adc_conf">adc_conf</a> *<em>conf</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv219adc_retrieve_configP7adc_devP8adc_conf" title="Permalink to this definition">¶</a></dt>
+<dd><p>It retrieve the current device configuration <p>If the configuration cannot be retrieved entirely, then this function will set ADC_CONF_F_ERROR in conf-&gt;flags </p>
+<dl class="docutils">
+<dt><strong>Return</strong></dt>
+<dd>0 on success, -1 on error and errno is set appropriately</dd>
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last simple">
+<li><code class="docutils literal"><span class="pre">dev</span></code>: ADC device token </li>
+<li><code class="docutils literal"><span class="pre">conf</span></code>: configuration descriptor to fill with configuration values. </li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv221adc_retrieve_config_nP7adc_devP8adc_confj">
+<span id="adc_retrieve_config_n__adc_devP.adc_confP.unsigned-i"></span><span class="target" id="adc-lib_8h_1a4ed9b3b8f33111e78753ba08bab9c6bd"></span>int <code class="descname">adc_retrieve_config_n</code><span class="sig-paren">(</span><em class="property">struct</em> adc_dev *<em>dev</em>, <em class="property">struct</em> <a class="reference internal" href="#_CPPv28adc_conf" title="adc_conf">adc_conf</a> *<em>conf</em>, unsigned int <em>n</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv221adc_retrieve_config_nP7adc_devP8adc_confj" title="Permalink to this definition">¶</a></dt>
+<dd><p>It retrieve the current device configuration <p>If a configuration cannot be retrieved entirely, then this function will set ADC_CONF_F_ERROR in conf[i].flags </p>
+<dl class="docutils">
+<dt><strong>Return</strong></dt>
+<dd>0 on success, -1 on error and errno is set appropriately</dd>
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last simple">
+<li><code class="docutils literal"><span class="pre">dev</span></code>: ADC device token </li>
+<li><code class="docutils literal"><span class="pre">conf</span></code>: configuration descriptor to fill with configuration values. </li>
+<li><code class="docutils literal"><span class="pre">n</span></code>: number of valid configurations in conf </li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv220adc_get_capabilitiesP7adc_dev22adc_configuration_type">
+<span id="adc_get_capabilities__adc_devP.adc_configuration_type"></span><span class="target" id="adc-lib_8h_1aefe5ac99a8a2ab5c90188953b35745e7"></span>uint64_t <code class="descname">adc_get_capabilities</code><span class="sig-paren">(</span><em class="property">struct</em> adc_dev *<em>dev</em>, <em class="property">enum</em> <a class="reference internal" href="#_CPPv222adc_configuration_type" title="adc_configuration_type">adc_configuration_type</a> <em>type</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv220adc_get_capabilitiesP7adc_dev22adc_configuration_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="_CPPv213adc_get_paramP7adc_devPcPcPi">
+<span id="adc_get_param__adc_devP.cP.cP.iP"></span><span class="target" id="adc-lib_8h_1aba69e651b23e529da31829df9eb57f1d"></span>int <code class="descname">adc_get_param</code><span class="sig-paren">(</span><em class="property">struct</em> adc_dev *<em>dev</em>, char *<em>name</em>, char *<em>sptr</em>, int *<em>iptr</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv213adc_get_paramP7adc_devPcPcPi" title="Permalink to this definition">¶</a></dt>
+<dd><p>It get a single parameter from the device <dl class="docutils">
+<dt><strong>Return</strong></dt>
+<dd>0 on success, -1 on error and errno is set appropriately </dd>
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last simple">
+<li><code class="docutils literal"><span class="pre">dev</span></code>: ADC device token </li>
+<li><code class="docutils literal"><span class="pre">name</span></code>: parameter name to set </li>
+<li><code class="docutils literal"><span class="pre">sptr</span></code>: a string value (higher priority than iptr) </li>
+<li><code class="docutils literal"><span class="pre">iptr</span></code>: an integer value </li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv213adc_set_paramP7adc_devPcPcPi">
+<span id="adc_set_param__adc_devP.cP.cP.iP"></span><span class="target" id="adc-lib_8h_1a3507fcff4d77a4f1ff7d571ff7000bcb"></span>int <code class="descname">adc_set_param</code><span class="sig-paren">(</span><em class="property">struct</em> adc_dev *<em>dev</em>, char *<em>name</em>, char *<em>sptr</em>, int *<em>iptr</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv213adc_set_paramP7adc_devPcPcPi" title="Permalink to this definition">¶</a></dt>
+<dd><p>It set a single parameter to the device <dl class="docutils">
+<dt><strong>Return</strong></dt>
+<dd>0 on success, -1 on error and errno is set appropriately </dd>
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last simple">
+<li><code class="docutils literal"><span class="pre">dev</span></code>: ADC device token </li>
+<li><code class="docutils literal"><span class="pre">name</span></code>: parameter name to set </li>
+<li><code class="docutils literal"><span class="pre">sptr</span></code>: a string value (higher priority than iptr) </li>
+<li><code class="docutils literal"><span class="pre">iptr</span></code>: an integer value </li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv218adc_request_bufferP7adc_deviPFPv6size_tEj">
+<span class="target" id="group__buf_1gac98a85dfd90513f89bafc2cd8cc37754"></span><em class="property">struct</em> <a class="reference internal" href="#_CPPv210adc_buffer" title="adc_buffer">adc_buffer</a> *<code class="descname">adc_request_buffer</code><span class="sig-paren">(</span><em class="property">struct</em> adc_dev *<em>dev</em>, int <em>nsamples</em>, void *(*<em>alloc_fn</em>)<span class="sig-paren">(</span>size_t<span class="sig-paren">)</span>, unsigned int <em>flags</em>, <span class="sig-paren">)</span><a class="headerlink" href="#_CPPv218adc_request_bufferP7adc_deviPFPv6size_tEj" title="Permalink to this definition">¶</a></dt>
+<dd><p>It allocates an empty buffer where store data from the acquisition <dl class="docutils">
+<dt><strong>Return</strong></dt>
+<dd>It returns a valid pointer on success, otherwise NULL and errno is set appropriately </dd>
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last simple">
+<li><code class="docutils literal"><span class="pre">dev</span></code>: ADC device token </li>
+<li><code class="docutils literal"><span class="pre">nsamples</span></code>: size of the buffer in number of samples </li>
+<li><code class="docutils literal"><span class="pre">alloc</span></code>: when set it will use the given function to allocate the buffer </li>
+<li><code class="docutils literal"><span class="pre">flags</span></code>: flags to control the buffer request </li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv215adc_fill_bufferP7adc_devP10adc_bufferjP7timeval">
+<span id="adc_fill_buffer__adc_devP.adc_bufferP.unsigned-i.timevalP"></span><span class="target" id="group__buf_1ga2f3b238ee5b460940fd403a04d2efa1d"></span>int <code class="descname">adc_fill_buffer</code><span class="sig-paren">(</span><em class="property">struct</em> adc_dev *<em>dev</em>, <em class="property">struct</em> <a class="reference internal" href="#_CPPv210adc_buffer" title="adc_buffer">adc_buffer</a> *<em>buf</em>, unsigned int <em>flags</em>, <em class="property">struct</em> timeval *<em>timeout</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv215adc_fill_bufferP7adc_devP10adc_bufferjP7timeval" title="Permalink to this definition">¶</a></dt>
+<dd><p>It ask the library to get the data from the device and fill the given buffer. <p>The size of the buffer must be at least equal to the size of the shot that library should copy into; otherwise, the result is undefined. </p>
+<dl class="docutils">
+<dt><strong>Return</strong></dt>
+<dd>0 on success, -1 on error and errno is set appropriately ADC_EDISABLED - when the acquisition is disabled or aborted ETIMEDOUT - timeout</dd>
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last simple">
+<li><code class="docutils literal"><span class="pre">dev</span></code>: ADC device token </li>
+<li><code class="docutils literal"><span class="pre">buf</span></code>: the buffer to fill </li>
+<li><code class="docutils literal"><span class="pre">flags</span></code>: used to control how to fill the buffer (ADC_F_FIXUP) </li>
+<li><code class="docutils literal"><span class="pre">timeout</span></code>: maximum time to fill the buffer. The behavior is similar to <em>select(1)</em>. If NULL, there is no timeout and the function will wait until the data is ready. </li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv217adc_tstamp_bufferP10adc_bufferP13adc_timestamp">
+<span id="adc_tstamp_buffer__adc_bufferP.adc_timestampP"></span><span class="target" id="group__buf_1ga8c8851acbc7cee33b38a5cfa8c6d08f4"></span><em class="property">struct</em> <a class="reference internal" href="#_CPPv213adc_timestamp" title="adc_timestamp">adc_timestamp</a> *<code class="descname">adc_tstamp_buffer</code><span class="sig-paren">(</span><em class="property">struct</em> <a class="reference internal" href="#_CPPv210adc_buffer" title="adc_buffer">adc_buffer</a> *<em>buf</em>, <em class="property">struct</em> <a class="reference internal" href="#_CPPv213adc_timestamp" title="adc_timestamp">adc_timestamp</a> *<em>ts</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv217adc_tstamp_bufferP10adc_bufferP13adc_timestamp" title="Permalink to this definition">¶</a></dt>
+<dd><p>It gets the timestamp of a given buffer, in a driver-specific way (most likely looking in the metadata structure). <p>If the caller passes a </p>
+<code class="docutils literal"><span class="pre">ts</span></code> pointer, the timestamp is copied into that pointer and the same pointer is returned. If <code class="docutils literal"><span class="pre">ts</span></code> is NULL, the function returns a pointer of its own choice, that is only valid until the buffer is released. <dl class="docutils">
+<dt><strong>Return</strong></dt>
+<dd>the buffer timestamp</dd>
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last simple">
+<li><code class="docutils literal"><span class="pre">buf</span></code>: the buffer of interest </li>
+<li><code class="docutils literal"><span class="pre">ts</span></code>: the buffer timestamp </li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv218adc_release_bufferP7adc_devP10adc_bufferPFvPvE">
+<span class="target" id="group__buf_1ga21d892fc4da5e562a51e66fa7d157f31"></span>int <code class="descname">adc_release_buffer</code><span class="sig-paren">(</span><em class="property">struct</em> adc_dev *<em>dev</em>, <em class="property">struct</em> <a class="reference internal" href="#_CPPv210adc_buffer" title="adc_buffer">adc_buffer</a> *<em>buf</em>, void (*<em>free_fn</em>)<span class="sig-paren">(</span>void *<span class="sig-paren">)</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv218adc_release_bufferP7adc_devP10adc_bufferPFvPvE" title="Permalink to this definition">¶</a></dt>
+<dd><p>It releases any resources associated with the buffer. <dl class="docutils">
+<dt><strong>Return</strong></dt>
+<dd>0 on success, -1 on error and errno is set appropriately </dd>
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last simple">
+<li><code class="docutils literal"><span class="pre">dev</span></code>: ADC device token </li>
+<li><code class="docutils literal"><span class="pre">buf</span></code>: the buffer to fill </li>
+<li><code class="docutils literal"><span class="pre">free</span></code>: when set it will use the given function to release the buffer </li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv221adc_buffer_get_sampleP10adc_bufferjjP7int32_t">
+<span id="adc_buffer_get_sample__adc_bufferP.unsigned-i.unsigned-i.int32_tP"></span><span class="target" id="group__buf_1gaaf96dd627f071d2642145af585ca8b58"></span>int <code class="descname">adc_buffer_get_sample</code><span class="sig-paren">(</span><em class="property">struct</em> <a class="reference internal" href="#_CPPv210adc_buffer" title="adc_buffer">adc_buffer</a> *<em>buf</em>, unsigned int <em>chan</em>, unsigned int <em>acq_sample</em>, int32_t *<em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv221adc_buffer_get_sampleP10adc_bufferjjP7int32_t" title="Permalink to this definition">¶</a></dt>
+<dd><p>It gets a sample from the buffer <dl class="docutils">
+<dt><strong>Return</strong></dt>
+<dd>0 on success, -1 on error and errno is set appropriately ADC_ENOP if the operation is not supported by the board that acquired the buffer </dd>
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last simple">
+<li><code class="docutils literal"><span class="pre">buf</span></code>: buffer to use </li>
+<li><code class="docutils literal"><span class="pre">chan</span></code>: which channel </li>
+<li><code class="docutils literal"><span class="pre">acq_sample</span></code>: acquisition sample </li>
+<li><code class="docutils literal"><span class="pre">value</span></code>: </li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv216adc_buffer_fixupP10adc_buffer">
+<span id="adc_buffer_fixup__adc_bufferP"></span><span class="target" id="group__buf_1ga81f39bdff082f2aec3ca732f655f2869"></span>int <code class="descname">adc_buffer_fixup</code><span class="sig-paren">(</span><em class="property">struct</em> <a class="reference internal" href="#_CPPv210adc_buffer" title="adc_buffer">adc_buffer</a> *<em>buf</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv216adc_buffer_fixupP10adc_buffer" title="Permalink to this definition">¶</a></dt>
+<dd><p>It fixes the given buffer if there is any need <p>This is used by board specifc code to compensate some known error </p>
+<dl class="docutils">
+<dt><strong>Return</strong></dt>
+<dd>0 on success, -1 on error and errno is set appropriately</dd>
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last simple">
+<li><code class="docutils literal"><span class="pre">buf</span></code>: acquistion buffer (filled) </li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv219adc_buffer_math_avgP10adc_bufferjP7int32_t">
+<span id="adc_buffer_math_avg__adc_bufferP.unsigned-i.int32_tP"></span><span class="target" id="group__buf__math_1ga4a40715d5fdcb3386971801852e979f7"></span>int <code class="descname">adc_buffer_math_avg</code><span class="sig-paren">(</span><em class="property">struct</em> <a class="reference internal" href="#_CPPv210adc_buffer" title="adc_buffer">adc_buffer</a> *<em>buf</em>, unsigned int <em>chan</em>, int32_t *<em>avg</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv219adc_buffer_math_avgP10adc_bufferjP7int32_t" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef container">
+<p class="breathe-sectiondef-title rubric">Variables</p>
+<dl class="member">
+<dt id="_CPPv214adc_board_name">
+<span id="adc_board_name__cCPA"></span><span class="target" id="adc-lib_8h_1aee97bf20649551be72be71c4b500adc6"></span><em class="property">const</em> char *<code class="descname">adc_board_name</code>[]<a class="headerlink" href="#_CPPv214adc_board_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of supported board names </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv216libadc_version_s">
+<span id="libadc_version_s__cCPC"></span><span class="target" id="adc-lib_8h_1ad24fbfaf8a331519a43010402a835614"></span><em class="property">const</em> char *<em class="property">const</em> <code class="descname">libadc_version_s</code><a class="headerlink" href="#_CPPv216libadc_version_s" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="member">
+<dt id="_CPPv220libadc_zio_version_s">
+<span id="libadc_zio_version_s__cCPC"></span><span class="target" id="adc-lib_8h_1a4fc361fe4dc45ee091fe9e50a85fb221"></span><em class="property">const</em> char *<em class="property">const</em> <code class="descname">libadc_zio_version_s</code><a class="headerlink" href="#_CPPv220libadc_zio_version_s" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="member">
+<dt id="_CPPv234libadc_fmcadc100m14b4cha_version_s">
+<span id="libadc_fmcadc100m14b4cha_version_s__cCPC"></span><span class="target" id="adc-lib_8h_1a602fa1f491187f4dc550e16f135f3961"></span><em class="property">const</em> char *<em class="property">const</em> <code class="descname">libadc_fmcadc100m14b4cha_version_s</code><a class="headerlink" href="#_CPPv234libadc_fmcadc100m14b4cha_version_s" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<dl class="class">
+<dt id="_CPPv210adc_buffer">
+<span id="adc_buffer"></span><span class="target" id="structadc__buffer"></span><em class="property">struct </em><code class="descname">adc_buffer</code><a class="headerlink" href="#_CPPv210adc_buffer" title="Permalink to this definition">¶</a></dt>
+<dd><em>#include &lt;adc-lib.h&gt;</em><p>The buffer hosts data and metadata, plus informative fields </p>
+<div class="breathe-sectiondef container">
+<p class="breathe-sectiondef-title rubric">Public Members</p>
+<dl class="member">
+<dt id="_CPPv2N10adc_buffer4dataE">
+<span id="adc_buffer::data__voidP"></span><span class="target" id="structadc__buffer_1a5322646128829eb4d52be7989d36ec42"></span>void *<code class="descname">data</code><a class="headerlink" href="#_CPPv2N10adc_buffer4dataE" title="Permalink to this definition">¶</a></dt>
+<dd><p>container for all the samples </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv2N10adc_buffer8metadataE">
+<span id="adc_buffer::metadata__voidP"></span><span class="target" id="structadc__buffer_1afbe7e65357926bcf3807ed1ca9ac0110"></span>void *<code class="descname">metadata</code><a class="headerlink" href="#_CPPv2N10adc_buffer8metadataE" title="Permalink to this definition">¶</a></dt>
+<dd><p>description of the acquisition </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv2N10adc_buffer10samplesizeE">
+<span id="adc_buffer::samplesize__i"></span><span class="target" id="structadc__buffer_1ae49eebe0018832257aa124e31b51bed8"></span>int <code class="descname">samplesize</code><a class="headerlink" href="#_CPPv2N10adc_buffer10samplesizeE" title="Permalink to this definition">¶</a></dt>
+<dd><p>size of a single sample in Byte (a sample for each channel, e.g 4 chan 14bit sample =&gt; samplesize = 8 Byte) </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv2N10adc_buffer8nsamplesE">
+<span id="adc_buffer::nsamples__i"></span><span class="target" id="structadc__buffer_1abbc4ecdeae08bf026a72b4f18d45e3ae"></span>int <code class="descname">nsamples</code><a class="headerlink" href="#_CPPv2N10adc_buffer8nsamplesE" title="Permalink to this definition">¶</a></dt>
+<dd><p>number of samples in the buffer </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv2N10adc_buffer3devE">
+<span id="adc_buffer::dev__adc_devP"></span><span class="target" id="structadc__buffer_1ab133c04706498037cb7ddab5c56977dd"></span><em class="property">struct</em> adc_dev *<code class="descname">dev</code><a class="headerlink" href="#_CPPv2N10adc_buffer3devE" title="Permalink to this definition">¶</a></dt>
+<dd><p>the device used for the acquisition </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv2N10adc_buffer7mapaddrE">
+<span id="adc_buffer::mapaddr__voidP"></span><span class="target" id="structadc__buffer_1afe0b3b7d5875f125eb71fefaa8afc207"></span>void *<code class="descname">mapaddr</code><a class="headerlink" href="#_CPPv2N10adc_buffer7mapaddrE" title="Permalink to this definition">¶</a></dt>
+<dd><p>mmap address </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv2N10adc_buffer6maplenE">
+<span id="adc_buffer::maplen__unsigned-l"></span><span class="target" id="structadc__buffer_1a75ed3d6fa8452b26e17e910e5a2e2014"></span>unsigned long <code class="descname">maplen</code><a class="headerlink" href="#_CPPv2N10adc_buffer6maplenE" title="Permalink to this definition">¶</a></dt>
+<dd><p>mmap length </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv2N10adc_buffer5flagsE">
+<span id="adc_buffer::flags__unsigned-l"></span><span class="target" id="structadc__buffer_1a650ee2220b3357ad50e3a9ef1edb5b01"></span>unsigned long <code class="descname">flags</code><a class="headerlink" href="#_CPPv2N10adc_buffer5flagsE" title="Permalink to this definition">¶</a></dt>
+<dd><p>internal to the library </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv2N10adc_buffer4privE">
+<span id="adc_buffer::priv__voidP"></span><span class="target" id="structadc__buffer_1a03f5060e2262d5066631f1793cff1aaf"></span>void *<code class="descname">priv</code><a class="headerlink" href="#_CPPv2N10adc_buffer4privE" title="Permalink to this definition">¶</a></dt>
+<dd><p>library private date </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="_CPPv213adc_timestamp">
+<span id="adc_timestamp"></span><span class="target" id="structadc__timestamp"></span><em class="property">struct </em><code class="descname">adc_timestamp</code><a class="headerlink" href="#_CPPv213adc_timestamp" title="Permalink to this definition">¶</a></dt>
+<dd><em>#include &lt;adc-lib.h&gt;</em><p>Timestamp descriptor. This is should be big enough to store <em>any</em> time stamp. </p>
+<div class="breathe-sectiondef container">
+<p class="breathe-sectiondef-title rubric">Public Members</p>
+<dl class="member">
+<dt id="_CPPv2N13adc_timestamp4secsE">
+<span id="adc_timestamp::secs__uint64_t"></span><span class="target" id="structadc__timestamp_1ac4da77ffed60e5b1e28cf9002385b4bf"></span>uint64_t <code class="descname">secs</code><a class="headerlink" href="#_CPPv2N13adc_timestamp4secsE" title="Permalink to this definition">¶</a></dt>
+<dd><p>number of seconds </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv2N13adc_timestamp5ticksE">
+<span id="adc_timestamp::ticks__uint64_t"></span><span class="target" id="structadc__timestamp_1a42124103ef3190b9aaf8be5cce53f7ed"></span>uint64_t <code class="descname">ticks</code><a class="headerlink" href="#_CPPv2N13adc_timestamp5ticksE" title="Permalink to this definition">¶</a></dt>
+<dd><p>number of coarse sub-seconds unit </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv2N13adc_timestamp4binsE">
+<span id="adc_timestamp::bins__uint64_t"></span><span class="target" id="structadc__timestamp_1a61ff8b24f41ebe1c7d7d4f33dafb5187"></span>uint64_t <code class="descname">bins</code><a class="headerlink" href="#_CPPv2N13adc_timestamp4binsE" title="Permalink to this definition">¶</a></dt>
+<dd><p>high resolution sub-seconds unit </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="_CPPv28adc_conf">
+<span id="adc_conf"></span><span class="target" id="structadc__conf"></span><em class="property">struct </em><code class="descname">adc_conf</code><a class="headerlink" href="#_CPPv28adc_conf" title="Permalink to this definition">¶</a></dt>
+<dd><em>#include &lt;adc-lib.h&gt;</em><p>ADC configuration descriptor. </p>
+<div class="breathe-sectiondef container">
+<p class="breathe-sectiondef-title rubric">Public Members</p>
+<dl class="member">
+<dt id="_CPPv2N8adc_conf4typeE">
+<span id="adc_conf::type__adc_configuration_type"></span><span class="target" id="structadc__conf_1ab0a1c8d82f4362fa423110056aa5b98f"></span><a class="reference internal" href="#_CPPv222adc_configuration_type" title="adc_configuration_type">adc_configuration_type</a> <code class="descname">type</code><a class="headerlink" href="#_CPPv2N8adc_conf4typeE" title="Permalink to this definition">¶</a></dt>
+<dd><p>configuration type </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv2N8adc_conf8dev_typeE">
+<span id="adc_conf::dev_type__uint32_t"></span><span class="target" id="structadc__conf_1a20fbb26f42ca3226e8ea3922465a9d5b"></span>uint32_t <code class="descname">dev_type</code><a class="headerlink" href="#_CPPv2N8adc_conf8dev_typeE" title="Permalink to this definition">¶</a></dt>
+<dd><p>device type </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv2N8adc_conf8route_toE">
+<span id="adc_conf::route_to__uint32_t"></span><span class="target" id="structadc__conf_1affaad6a1f119ed50930f524d32ff2527"></span>uint32_t <code class="descname">route_to</code><a class="headerlink" href="#_CPPv2N8adc_conf8route_toE" title="Permalink to this definition">¶</a></dt>
+<dd><p>internal route to a particular sub-device (e.g. a channel) </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv2N8adc_conf5flagsE">
+<span id="adc_conf::flags__uint32_t"></span><span class="target" id="structadc__conf_1aab3aae333d0fd98eb556ab1368011a62"></span>uint32_t <code class="descname">flags</code><a class="headerlink" href="#_CPPv2N8adc_conf5flagsE" title="Permalink to this definition">¶</a></dt>
+<dd><p>flags from adc_conf_flags </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv2N8adc_conf4maskE">
+<span id="adc_conf::mask__uint64_t"></span><span class="target" id="structadc__conf_1af401284493780722edec1460b942131a"></span>uint64_t <code class="descname">mask</code><a class="headerlink" href="#_CPPv2N8adc_conf4maskE" title="Permalink to this definition">¶</a></dt>
+<dd><p>capabilities mask, 1 when the correspondent value in <code class="docutils literal"><span class="pre">value[]</span></code> is valid </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv2N8adc_conf5valueE">
+<span id="adc_conf::value__uint32_tA"></span><span class="target" id="structadc__conf_1a7650c24a5aef51baf2df27fe639757f4"></span>uint32_t <code class="descname">value</code>[__ADC_CONF_LEN]<a class="headerlink" href="#_CPPv2N8adc_conf5valueE" title="Permalink to this definition">¶</a></dt>
+<dd><p>array of configuration value. The position in the array correspond to a specific capability </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="tools-adc-acq.html" class="btn btn-neutral float-right" title="The adc-acq Tools" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="library-devel.html" class="btn btn-neutral float-left" title="The Library For Developers" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright CERN 2018, Federico Vaga &lt;federico.vaga@cern.ch&gt;.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

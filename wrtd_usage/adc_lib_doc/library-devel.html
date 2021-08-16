@@ -1,0 +1,348 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>The Library For Developers &mdash; ADC Library 2.2.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'./',
+              VERSION:'2.2.0',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: ''
+          };
+      </script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="The Library API" href="library-api.html" />
+    <link rel="prev" title="The Library For Users" href="library-user.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ADC Library
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="library-user.html">The Library For Users</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">The Library For Developers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#sources-organization">Sources Organization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#library">Library</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#board-specific-code-how-to">Board-Specific Code (How To)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#tools">Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tests">Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#documentation">Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="library-api.html">The Library API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools-adc-acq.html">The <code class="docutils literal"><span class="pre">adc-acq</span></code> Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools-example.html">The Example Tools</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ADC Library</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>The Library For Developers</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/library-devel.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="the-library-for-developers">
+<h1>The Library For Developers<a class="headerlink" href="#the-library-for-developers" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="sources-organization">
+<h2>Sources Organization<a class="headerlink" href="#sources-organization" title="Permalink to this headline">¶</a></h2>
+<p>Mainly the sources are organized in four main directory.</p>
+<dl class="docutils">
+<dt><strong>lib</strong></dt>
+<dd>It contains the library sources and the relative building output</dd>
+<dt><strong>tools</strong></dt>
+<dd>It contains the tools sources and the relative building output</dd>
+<dt><strong>tests</strong></dt>
+<dd>It containes the tests sources for automatic tests and the relative
+building output</dd>
+<dt><strong>doc</strong></dt>
+<dd>It containes the <em>sphinx</em> documentation sources and the relative
+building output</dd>
+</dl>
+</div>
+<div class="section" id="library">
+<h2>Library<a class="headerlink" href="#library" title="Permalink to this headline">¶</a></h2>
+<p>You can find the library sources in the directory <em>lib</em>.</p>
+<p>There are two header files: <code class="docutils literal"><span class="pre">adc-lib.h</span></code> and <code class="docutils literal"><span class="pre">adc-lib-int.h</span></code>. The first,
+it is the one used to export the library symbols to user space: the API.
+The latter is used to export symbols among the internal library sources.</p>
+<p>As shown in the graph above, the library has an internal routing mechanism
+that redirect the user&#8217;s requests to the correct board-specific logic.
+Almost all the routing mechanism is implemented in the <code class="docutils literal"><span class="pre">route.c</span></code> file.
+These functions are then exported to the users by declaring them in the
+<code class="docutils literal"><span class="pre">adc-lib.h</span></code> file.</p>
+<p>The source file <code class="docutils literal"><span class="pre">lib.c</span></code> contains a collection of library&#8217;s helpers that
+the users may find handy to deal with most common procedures.</p>
+<p>Finally, the <code class="docutils literal"><span class="pre">init.c</span></code> source file contains all the initialization code.
+For the time being this is empty, but we may fill it in the future.</p>
+<p>The structure above shows the organization of the generic code. For the
+specialized code there are not many rule. The main rule is to have at least
+one source file for each board-type where to put the specific code.
+The specific code means, in other words, to implement all the operations
+in <code class="docutils literal"><span class="pre">struct</span> <span class="pre">adc_operations</span></code> and to declare a new <code class="docutils literal"><span class="pre">struct</span> <span class="pre">adc_board_type</span></code>.</p>
+<div class="section" id="board-specific-code-how-to">
+<h3>Board-Specific Code (How To)<a class="headerlink" href="#board-specific-code-how-to" title="Permalink to this headline">¶</a></h3>
+<p>The first step is to create a new source file in <em>lib</em> named as the board
+type (or something similar) in order to be able to distinguish it.:</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>touch newboard-type.c
+</pre></div>
+</div>
+<p>To add the new file to the building system, you just need to add the object
+file to the Makefile variable <code class="docutils literal"><span class="pre">LOBJ</span></code>:</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>LOBJ += newboard-type.o
+</pre></div>
+</div>
+<p>The minimum implementation requires you to declare a new
+<code class="docutils literal"><span class="pre">struct</span> <span class="pre">adc_board_type</span></code> and the operations in <code class="docutils literal"><span class="pre">struct</span> <span class="pre">adc_operations</span></code>:</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>static struct adc_operations newboard_ops = {
+    /* implement the operations */
+};
+
+struct adc_board_type newboard = {
+    /* fill the attributes */
+};
+</pre></div>
+</div>
+<p>Then, in order to have a compiling system, you have to:</p>
+<ul class="simple">
+<li>export the new <em>adc_board_type</em> in <code class="docutils literal"><span class="pre">adc-lib-int.h</span></code></li>
+<li>add a new board type in <code class="docutils literal"><span class="pre">enum</span> <span class="pre">adc_supported_boards</span></code> in <code class="docutils literal"><span class="pre">adc-lib.h</span></code></li>
+<li>add the board type and the name respectively in <code class="docutils literal"><span class="pre">adc_board_name</span></code> and
+<code class="docutils literal"><span class="pre">adc_board_types</span></code> in <code class="docutils literal"><span class="pre">route.c</span></code></li>
+</ul>
+<p>At this point you should have the new board correctly exported.</p>
+<p>If your new board has some custum configuration or dedicated function,
+you must not use the <code class="docutils literal"><span class="pre">adc-lib.h</span></code> header file to export them. Instead,
+create a new header file.</p>
+</div>
+</div>
+<div class="section" id="tools">
+<h2>Tools<a class="headerlink" href="#tools" title="Permalink to this headline">¶</a></h2>
+<p>The aim of this project is not to develop tools, but to develop a generic
+library; for this reason device-specific tools are not accepted. The main
+purpose of the tools is to show to the user show to use the library, and
+to provide a basic testing tool that can be used to handle generic
+acquisition.</p>
+<p>Each tool shall have a dedicated source file and it shall be compiled using
+the static linkage with the library.
+In principle, in order to add a new tool you have to:</p>
+<ul class="simple">
+<li>create a new source file in the directory <em>tools</em></li>
+<li>add a new entry in the Makefile variable <code class="docutils literal"><span class="pre">DEMO</span></code> with the name of the source
+file without the <em>.c</em> extension</li>
+</ul>
+</div>
+<div class="section" id="tests">
+<h2>Tests<a class="headerlink" href="#tests" title="Permalink to this headline">¶</a></h2>
+<p>In the directory <em>tests</em> you can find all the automatic tests used to validate
+the different devices supported by the library and to validate the library
+itself.</p>
+</div>
+<div class="section" id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
+<p>The documentation is based on the <a class="reference internal" href="#sphinx">Sphinx</a> documentation framework.
+The documents are written in ReStructuredText format with the addition
+of some <em>sphinx</em> directive.</p>
+<p>In order to build the documentation you can run one of the following
+commands from the <em>doc</em> directory:</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>make html
+make epub
+make latexpdf
+</pre></div>
+</div>
+<p>You will find the generated documentation in the respective sub-directories
+in <em>doc/_build/</em>.</p>
+<p><span class="target" id="sphinx">Sphinx</span>: <a class="reference external" href="http://www.sphinx-doc.org/en/master/">http://www.sphinx-doc.org/en/master/</a>
+<span class="target" id="restructuredtext">ReStructuredText</span>: <a class="reference external" href="http://docutils.sourceforge.net/docs/user/rst/quickref.html">http://docutils.sourceforge.net/docs/user/rst/quickref.html</a></p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="library-api.html" class="btn btn-neutral float-right" title="The Library API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="library-user.html" class="btn btn-neutral float-left" title="The Library For Users" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright CERN 2018, Federico Vaga &lt;federico.vaga@cern.ch&gt;.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

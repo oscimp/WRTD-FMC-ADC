@@ -1,0 +1,772 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>The Library For Users &mdash; ADC Library 2.2.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'./',
+              VERSION:'2.2.0',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: ''
+          };
+      </script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="The Library For Developers" href="library-devel.html" />
+    <link rel="prev" title="Welcome to the ADC library documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ADC Library
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">The Library For Users</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#initialization-and-cleanup">Initialization and Cleanup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#error-reporting">Error Reporting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opening-and-closing">Opening and closing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#configuration">Configuration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#offset-auto-clear">Offset Auto Clear</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#board-specific-configuration">Board Specific Configuration</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#fmc-adc-100m-14-bit-4-channel">FMC ADC 100M 14 bit 4 Channel</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#acquisition">Acquisition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#buffers">Buffers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#meta-data">Meta-Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fixup">Fixup</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#time-stamps">Time Stamps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#software-trigger">Software Trigger</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="library-devel.html">The Library For Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="library-api.html">The Library API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools-adc-acq.html">The <code class="docutils literal"><span class="pre">adc-acq</span></code> Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools-example.html">The Example Tools</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ADC Library</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>The Library For Users</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/library-user.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="the-library-for-users">
+<h1>The Library For Users<a class="headerlink" href="#the-library-for-users" title="Permalink to this headline">¶</a></h1>
+<p>The API is meant to be generic, so the same code can be run mostly
+unchanged with a variety of boards and driver types. This is why
+the name used for headers and libraries is simply <em>adc</em>, without
+a card name in there.</p>
+<p>The user, however, is expected to select the card being worked on, by
+means of a name and a <em>device ID</em>, which generally reflects the
+geographic placement of the card.</p>
+<p>This document introduces the developers to the development with the ADC library.
+Here you can find an overview about the API, the rational behind it and
+examples of its usage. It is not the purpose of the document to describe
+the API details. The complete API is available in the Library API document.</p>
+<div class="section" id="initialization-and-cleanup">
+<h2>Initialization and Cleanup<a class="headerlink" href="#initialization-and-cleanup" title="Permalink to this headline">¶</a></h2>
+<p>The library may keep internal information, so the application should
+call its initialization function <a class="reference internal" href="library-api.html#_CPPv28adc_initv" title="adc_init"><code class="xref cpp cpp-func docutils literal"><span class="pre">adc_init()</span></code></a>. After use,
+it should call the exit function <a class="reference internal" href="library-api.html#_CPPv28adc_exitv" title="adc_exit"><code class="xref cpp cpp-func docutils literal"><span class="pre">adc_exit()</span></code></a> to release
+any internal data.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><a class="reference internal" href="library-api.html#_CPPv28adc_exitv" title="adc_exit"><code class="xref cpp cpp-func docutils literal"><span class="pre">adc_exit()</span></code></a> is not mandatory, the operating system
+releases anything in any case &#8211; the library doesn&#8217;t leave unexpected
+files in persistent storage.</p>
+</div>
+<p>These functions don&#8217;t do anything at this point, but they may be
+implemented in later releases.  For example, the library may scan the
+system and cache the list of peripheral cards found, to make
+later <em>open</em> calls faster. For this reason it is <strong>recommended</strong>
+to, at least, initialize and release the library before starting.</p>
+<p>Following an example from the <code class="docutils literal"><span class="pre">example.c</span></code> code available under <code class="docutils literal"><span class="pre">tools</span></code></p>
+<div class="highlight-c"><div class="highlight"><pre><span></span>	<span class="n">err</span> <span class="o">=</span> <span class="n">adc_init</span><span class="p">();</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">err</span><span class="p">)</span>
+		<span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span>
+
+	<span class="n">err</span> <span class="o">=</span> <span class="n">use_adc_library</span><span class="p">();</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">err</span><span class="p">)</span>
+		<span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span>
+	<span class="n">adc_exit</span><span class="p">();</span> <span class="cm">/* optional, indeed in the error condition</span>
+<span class="cm">		       we do not do it */</span>
+	<span class="n">exit</span><span class="p">(</span><span class="n">EXIT_SUCCESS</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="error-reporting">
+<h2>Error Reporting<a class="headerlink" href="#error-reporting" title="Permalink to this headline">¶</a></h2>
+<p>Each library function returns values according to standard <em>libc</em>
+conventions: -1 or NULL (for functions returning <code class="docutils literal"><span class="pre">int</span></code> or pointers,
+resp.) is an error indication. When error happens, the <em class="manpage">errno</em>
+variable is set appropriately.</p>
+<p>The <em class="manpage">errno</em> values can be standard Posix items like <code class="docutils literal"><span class="pre">EINVAL</span></code>, or
+library-specific values, for example <code class="docutils literal"><span class="pre">ADC_ENOSET</span></code> (<em>Cannot set requested
+item</em>). All library-specific error values have a value greater than
+1024, to prevent collision with standard values. To convert
+such values to a string please use <a class="reference internal" href="library-api.html#_CPPv212adc_strerrori" title="adc_strerror"><code class="xref cpp cpp-func docutils literal"><span class="pre">adc_strerror()</span></code></a></p>
+<p>Following an example from the <code class="docutils literal"><span class="pre">example.c</span></code> code available under <code class="docutils literal"><span class="pre">tools</span></code></p>
+<div class="highlight-c"><div class="highlight"><pre><span></span>	<span class="n">adc</span> <span class="o">=</span> <span class="n">adc_open</span><span class="p">(</span><span class="s">&quot;adc-genericfake&quot;</span><span class="p">,</span> <span class="mh">0x0000</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">ADC_F_FLUSH</span><span class="p">);</span>
+	<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">adc</span><span class="p">)</span> <span class="p">{</span>
+		<span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&quot;%s: Cannot open device: %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span>
+			<span class="n">prog_name</span><span class="p">,</span> <span class="n">adc_strerror</span><span class="p">(</span><span class="n">errno</span><span class="p">));</span>
+		<span class="k">return</span> <span class="mi">-1</span><span class="p">;</span>
+	<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="opening-and-closing">
+<h2>Opening and closing<a class="headerlink" href="#opening-and-closing" title="Permalink to this headline">¶</a></h2>
+<p>Each device must be opened before use by calling <a class="reference internal" href="library-api.html#_CPPv28adc_openPcjmjm" title="adc_open"><code class="xref cpp cpp-func docutils literal"><span class="pre">adc_open()</span></code></a>,
+and it should be closed after use by calling <a class="reference internal" href="library-api.html#_CPPv29adc_closeP7adc_dev" title="adc_close"><code class="xref cpp cpp-func docutils literal"><span class="pre">adc_close()</span></code></a>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><a class="reference internal" href="library-api.html#_CPPv29adc_closeP7adc_dev" title="adc_close"><code class="xref cpp cpp-func docutils literal"><span class="pre">adc_close()</span></code></a> is not mandatory, but it is recommended, to
+close if the process is going to terminate, as the library has no
+persistent storage to clean up &#8211; but there may be persistent buffer
+storage allocated, and <a class="reference internal" href="library-api.html#_CPPv29adc_closeP7adc_dev" title="adc_close"><code class="xref cpp cpp-func docutils literal"><span class="pre">adc_close()</span></code></a> may release it in
+future versions.</p>
+</div>
+<p>Following an example from the <code class="docutils literal"><span class="pre">example.c</span></code> code available under <code class="docutils literal"><span class="pre">tools</span></code></p>
+<div class="highlight-c"><div class="highlight"><pre><span></span>	<span class="n">adc</span> <span class="o">=</span> <span class="n">adc_open</span><span class="p">(</span><span class="s">&quot;adc-genericfake&quot;</span><span class="p">,</span> <span class="mh">0x0000</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">ADC_F_FLUSH</span><span class="p">);</span>
+	<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">adc</span><span class="p">)</span> <span class="p">{</span>
+		<span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&quot;%s: Cannot open device: %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span>
+			<span class="n">prog_name</span><span class="p">,</span> <span class="n">adc_strerror</span><span class="p">(</span><span class="n">errno</span><span class="p">));</span>
+		<span class="k">return</span> <span class="mi">-1</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="n">err</span> <span class="o">=</span> <span class="n">alloc_config_and_acquire</span><span class="p">(</span><span class="n">adc</span><span class="p">);</span>
+
+	<span class="n">adc_close</span><span class="p">(</span><span class="n">adc</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>As you can see in the example the <a class="reference internal" href="library-api.html#_CPPv28adc_openPcjmjm" title="adc_open"><code class="xref cpp cpp-func docutils literal"><span class="pre">adc_open()</span></code></a> parameters
+<code class="docutils literal"><span class="pre">totalsamples</span></code> and <code class="docutils literal"><span class="pre">nbuffer</span></code> are optional. The purpose of these
+parameters is to give an hint to the library about the resources that
+the user will ask for.</p>
+<p>Managing big acquisitions (hundreds of megabytes, or gigabytes) requires
+some pre-allocation of the data, and sometimes this configuration happens
+at device level, so it&#8217;s good to have the information at open time. On
+the other hand a multi-shot acquisition requires all buffers to be available
+at the same time and also this may require some pre-allocation at the device
+level.</p>
+<p>The data structure returned by <a class="reference internal" href="library-api.html#_CPPv28adc_openPcjmjm" title="adc_open"><code class="xref cpp cpp-func docutils literal"><span class="pre">adc_open()</span></code></a> is an opaque pointer
+used as token to access the API functions. The user is not supposed to use
+or modify this pointer.</p>
+<p>Another kind of open function has been provided to satisfy CERN&#8217;s developers
+needs. Function <a class="reference internal" href="library-api.html#_CPPv215adc_open_by_lunPcimjm" title="adc_open_by_lun"><code class="xref cpp cpp-func docutils literal"><span class="pre">adc_open_by_lun()</span></code></a>  is the open by LUN
+(<em>Logic Unit Number</em>); here the LUN concept reflects the <em>CERN BE-CO</em> one.
+The usage is exactly the same as <a class="reference internal" href="library-api.html#_CPPv28adc_openPcjmjm" title="adc_open"><code class="xref cpp cpp-func docutils literal"><span class="pre">adc_open()</span></code></a> only that it uses
+the LUN instead of the device ID.</p>
+</div>
+<div class="section" id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h2>
+<p>Configuration is the most intensive part of the library, because
+there are a number of parameters that can be set or retrieved and
+it tries to provide a generic approach while we all know that the
+configuration is something specific to each board.</p>
+<p>Configuration is performed by passing parameters as 32-bit numbers.
+The library defines arrays of such parameters, one for each
+aspect of the overall problem (triggers, data, and so on)
+<a class="reference internal" href="library-api.html#_CPPv222adc_configuration_type" title="adc_configuration_type"><code class="xref cpp cpp-type docutils literal"><span class="pre">adc_configuration_type</span></code></a>.</p>
+<p>Each item in the array has a symbolic name, and each array is associated
+with a bit-mask that specifies which parameters have been set.
+The choice of arrays is driven by the need for generic structures
+that can be used unchanged with different hardware cards.
+The position of each parameter in the array is fixed, and as boards are added
+to this library we may need to add new values for unforeseen requirements.
+For each type in <a class="reference internal" href="library-api.html#_CPPv222adc_configuration_type" title="adc_configuration_type"><code class="xref cpp cpp-type docutils literal"><span class="pre">adc_configuration_type</span></code></a> there is a set of
+defined options: <a class="reference internal" href="library-api.html#_CPPv223adc_configuration_board" title="adc_configuration_board"><code class="xref cpp cpp-type docutils literal"><span class="pre">adc_configuration_board</span></code></a>,
+<a class="reference internal" href="library-api.html#_CPPv225adc_configuration_channel" title="adc_configuration_channel"><code class="xref cpp cpp-type docutils literal"><span class="pre">adc_configuration_channel</span></code></a>,
+<a class="reference internal" href="library-api.html#_CPPv229adc_configuration_acquisition" title="adc_configuration_acquisition"><code class="xref cpp cpp-type docutils literal"><span class="pre">adc_configuration_acquisition</span></code></a>,
+<code class="xref cpp cpp-type docutils literal"><span class="pre">adc_configuration_custom</span></code>,
+<a class="reference internal" href="library-api.html#_CPPv229adc_configuration_trigger_ext" title="adc_configuration_trigger_ext"><code class="xref cpp cpp-type docutils literal"><span class="pre">adc_configuration_trigger_ext</span></code></a>,
+<a class="reference internal" href="library-api.html#_CPPv229adc_configuration_trigger_thr" title="adc_configuration_trigger_thr"><code class="xref cpp cpp-type docutils literal"><span class="pre">adc_configuration_trigger_thr</span></code></a>,
+<a class="reference internal" href="library-api.html#_CPPv229adc_configuration_trigger_tim" title="adc_configuration_trigger_tim"><code class="xref cpp cpp-type docutils literal"><span class="pre">adc_configuration_trigger_tim</span></code></a>.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Rembember that most options have device-specific meaning.
+When unsure, refer to the driver manual for their meaning.</p>
+</div>
+<p><a class="reference internal" href="library-api.html#_CPPv220adc_trigger_polarity" title="adc_trigger_polarity"><code class="xref cpp cpp-type docutils literal"><span class="pre">adc_trigger_polarity</span></code></a></p>
+<p>While there is a little overhead in parsing the generic structures,
+configuration is not something that happens in hot paths, and we see
+no problems in that. Also, please note that setting the configuration
+and applying it are different steps, and the configuration data structures
+can be prepared and saved for later use.</p>
+<p>Users are free to access the <a class="reference internal" href="library-api.html#_CPPv28adc_conf" title="adc_conf"><code class="xref cpp cpp-type docutils literal"><span class="pre">adc_conf</span></code></a> structure to set up the
+configuration. To help a bit this configuration process, especially when
+it is done dynamically, the library offers some helpers to <em>touch</em> this
+data structure. The main problem that the following functions solve is the
+fact that for eack value you have also to set a bit in the configuration
+bitmask. If this is not done correctly the result can be unpredictable.</p>
+<ul class="simple">
+<li><a class="reference internal" href="library-api.html#_CPPv217adc_set_conf_maskP8adc_confj" title="adc_set_conf_mask"><code class="xref cpp cpp-func docutils literal"><span class="pre">adc_set_conf_mask()</span></code></a></li>
+<li><a class="reference internal" href="library-api.html#_CPPv221adc_set_conf_mask_allP8adc_confP7adc_dev" title="adc_set_conf_mask_all"><code class="xref cpp cpp-func docutils literal"><span class="pre">adc_set_conf_mask_all()</span></code></a></li>
+<li><a class="reference internal" href="library-api.html#_CPPv212adc_set_confP8adc_confj8uint32_t" title="adc_set_conf"><code class="xref cpp cpp-func docutils literal"><span class="pre">adc_set_conf()</span></code></a></li>
+<li><a class="reference internal" href="library-api.html#_CPPv212adc_get_confP8adc_confjP8uint32_t" title="adc_get_conf"><code class="xref cpp cpp-func docutils literal"><span class="pre">adc_get_conf()</span></code></a></li>
+<li><a class="reference internal" href="library-api.html#_CPPv214adc_reset_confP7adc_devjP8adc_conf" title="adc_reset_conf"><code class="xref cpp cpp-func docutils literal"><span class="pre">adc_reset_conf()</span></code></a></li>
+<li><a class="reference internal" href="library-api.html#_CPPv220adc_get_capabilitiesP7adc_dev22adc_configuration_type" title="adc_get_capabilities"><code class="xref cpp cpp-func docutils literal"><span class="pre">adc_get_capabilities()</span></code></a></li>
+</ul>
+<p>Once the configuration structure <a class="reference internal" href="library-api.html#_CPPv28adc_conf" title="adc_conf"><code class="xref cpp cpp-type docutils literal"><span class="pre">adc_conf</span></code></a> is can be sent
+to the hardware with <a class="reference internal" href="library-api.html#_CPPv216adc_apply_configP7adc_devjP8adc_conf" title="adc_apply_config"><code class="xref cpp cpp-func docutils literal"><span class="pre">adc_apply_config()</span></code></a>. The hardware configuration
+can be read back with <a class="reference internal" href="library-api.html#_CPPv219adc_retrieve_configP7adc_devP8adc_conf" title="adc_retrieve_config"><code class="xref cpp cpp-func docutils literal"><span class="pre">adc_retrieve_config()</span></code></a>. If one of these
+functions fail while configuring some values, then the flag
+<a class="reference internal" href="library-api.html#_CPPv216ADC_CONF_F_ERROR" title="ADC_CONF_F_ERROR"><code class="xref cpp cpp-any docutils literal"><span class="pre">ADC_CONF_F_ERROR</span></code></a> will be set in <a class="reference internal" href="library-api.html#_CPPv2N8adc_conf5flagsE" title="adc_conf::flags"><code class="xref cpp cpp-member docutils literal"><span class="pre">adc_conf::flags</span></code></a></p>
+<p>Following an example from the <code class="docutils literal"><span class="pre">example.c</span></code> code available under <code class="docutils literal"><span class="pre">tools</span></code></p>
+<div class="highlight-c"><div class="highlight"><pre><span></span>	<span class="n">memset</span><span class="p">(</span><span class="o">&amp;</span><span class="n">cfg</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="k">struct</span> <span class="nc">adc_conf</span><span class="p">));</span>
+	<span class="n">cfg</span><span class="p">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">ADC_CONF_TYPE_ACQ</span><span class="p">;</span>
+	<span class="n">adc_set_conf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">cfg</span><span class="p">,</span> <span class="n">ADC_CONF_ACQ_N_SHOTS</span><span class="p">,</span> <span class="n">NSHOT</span><span class="p">);</span>
+	<span class="n">adc_set_conf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">cfg</span><span class="p">,</span> <span class="n">ADC_CONF_ACQ_POST_SAMP</span><span class="p">,</span> <span class="n">POSTSAMPLES</span><span class="p">);</span>
+	<span class="n">adc_set_conf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">cfg</span><span class="p">,</span> <span class="n">ADC_CONF_ACQ_PRE_SAMP</span><span class="p">,</span> <span class="n">PRESAMPLES</span><span class="p">);</span>
+	<span class="n">err</span> <span class="o">=</span> <span class="n">adc_apply_config</span><span class="p">(</span><span class="n">adc</span><span class="p">,</span> <span class="mi">0</span> <span class="p">,</span> <span class="o">&amp;</span><span class="n">cfg</span><span class="p">);</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">err</span><span class="p">)</span> <span class="p">{</span>
+		<span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&quot;%s: Cannot configure acquisition: (%d) %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span>
+			<span class="n">prog_name</span><span class="p">,</span> <span class="n">errno</span><span class="p">,</span> <span class="n">adc_strerror</span><span class="p">(</span><span class="n">errno</span><span class="p">));</span>
+		<span class="k">return</span> <span class="n">err</span><span class="p">;</span>
+	<span class="p">}</span>
+</pre></div>
+</div>
+<p>Following an example from the <code class="docutils literal"><span class="pre">example.c</span></code> code available under <code class="docutils literal"><span class="pre">tools</span></code></p>
+<div class="highlight-c"><div class="highlight"><pre><span></span>	<span class="n">memset</span><span class="p">(</span><span class="o">&amp;</span><span class="n">cfg</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="k">struct</span> <span class="nc">adc_conf</span><span class="p">));</span>
+	<span class="n">cfg</span><span class="p">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">ADC_CONF_TYPE_ACQ</span><span class="p">;</span>
+	<span class="n">adc_set_conf_mask</span><span class="p">(</span><span class="o">&amp;</span><span class="n">cfg</span><span class="p">,</span> <span class="n">ADC_CONF_ACQ_N_SHOTS</span><span class="p">);</span>
+	<span class="n">adc_set_conf_mask</span><span class="p">(</span><span class="o">&amp;</span><span class="n">cfg</span><span class="p">,</span> <span class="n">ADC_CONF_ACQ_POST_SAMP</span><span class="p">);</span>
+	<span class="n">adc_set_conf_mask</span><span class="p">(</span><span class="o">&amp;</span><span class="n">cfg</span><span class="p">,</span> <span class="n">ADC_CONF_ACQ_PRE_SAMP</span><span class="p">);</span>
+	<span class="n">err</span> <span class="o">=</span> <span class="n">adc_retrieve_config</span><span class="p">(</span><span class="n">adc</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">cfg</span><span class="p">);</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">err</span><span class="p">)</span> <span class="p">{</span>
+		<span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&quot;%s: Cannot configure acquisition: (%d) %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span>
+			<span class="n">prog_name</span><span class="p">,</span> <span class="n">errno</span><span class="p">,</span> <span class="n">adc_strerror</span><span class="p">(</span><span class="n">errno</span><span class="p">));</span>
+		<span class="k">return</span> <span class="n">err</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="n">adc_get_conf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">cfg</span><span class="p">,</span> <span class="n">ADC_CONF_ACQ_N_SHOTS</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">sh</span><span class="p">);</span>
+	<span class="n">fprintf</span><span class="p">(</span><span class="n">stdout</span><span class="p">,</span> <span class="s">&quot;Number of shots: %u</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">sh</span><span class="p">);</span>
+	<span class="n">adc_get_conf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">cfg</span><span class="p">,</span> <span class="n">ADC_CONF_ACQ_POST_SAMP</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">po</span><span class="p">);</span>
+	<span class="n">fprintf</span><span class="p">(</span><span class="n">stdout</span><span class="p">,</span> <span class="s">&quot;Number of post-samples: %u</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">po</span><span class="p">);</span>
+	<span class="n">adc_get_conf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">cfg</span><span class="p">,</span> <span class="n">ADC_CONF_ACQ_PRE_SAMP</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">pr</span><span class="p">);</span>
+	<span class="n">fprintf</span><span class="p">(</span><span class="n">stdout</span><span class="p">,</span> <span class="s">&quot;Number of pre-samples: %u</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">pr</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>There are also the correspondent functions to set/get more than one
+configuration at time:
+<a class="reference internal" href="library-api.html#_CPPv218adc_apply_config_nP7adc_devjP8adc_confj" title="adc_apply_config_n"><code class="xref cpp cpp-func docutils literal"><span class="pre">adc_apply_config_n()</span></code></a>, <a class="reference internal" href="library-api.html#_CPPv221adc_retrieve_config_nP7adc_devP8adc_confj" title="adc_retrieve_config_n"><code class="xref cpp cpp-func docutils literal"><span class="pre">adc_retrieve_config_n()</span></code></a>.</p>
+<p>To handle the exceptional cases where parameters are actually <em>strings</em>
+(<code class="docutils literal"><span class="pre">char</span> <span class="pre">*</span></code>) or the library does not support them (e.g. board-specific
+parameter), the library added the support to single access parameters.
+The parameter&#8217;s values can be both a <em>string</em> (<code class="docutils literal"><span class="pre">char</span> <span class="pre">*</span></code>) or a
+<em>number</em> (<code class="docutils literal"><span class="pre">int</span></code>). User can use set values with <a class="reference internal" href="library-api.html#_CPPv213adc_set_paramP7adc_devPcPcPi" title="adc_set_param"><code class="xref cpp cpp-func docutils literal"><span class="pre">adc_set_param()</span></code></a>
+and get values with  <a class="reference internal" href="library-api.html#_CPPv213adc_get_paramP7adc_devPcPcPi" title="adc_get_param"><code class="xref cpp cpp-func docutils literal"><span class="pre">adc_get_param()</span></code></a></p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>char v_str[16] = &quot;hello world\0&quot;;
+int err, v_int;
+
+/* Ask for string */
+err = adc_set_param(adc, &quot;identifier&quot;, v_str, NULL);
+err = adc_get_param(adc, &quot;identifier&quot;, v_str, NULL);
+
+/* priority to v_str, it is like if v_int is NULL */
+err = adc_set_param(adc, &quot;identifier&quot;, v_str, &amp;v_int);
+err = adc_get_param(adc, &quot;identifier&quot;, v_str, &amp;v_int);
+
+/* Ask for int */
+err = adc_set_param(adc, &quot;identifier&quot;, NULL, &amp;v_int);
+err = adc_get_param(adc, &quot;identifier&quot;, NULL, &amp;v_int);
+</pre></div>
+</div>
+<div class="section" id="offset-auto-clear">
+<span id="lib-usr-cfg-ac"></span><h3>Offset Auto Clear<a class="headerlink" href="#offset-auto-clear" title="Permalink to this headline">¶</a></h3>
+<p>It may happen that due to temperature or other external factors there are
+constant offsets on channels. This library, through function
+<a class="reference internal" href="library-api.html#_CPPv221adc_offset_auto_clearP7adc_devm" title="adc_offset_auto_clear"><code class="xref cpp cpp-func docutils literal"><span class="pre">adc_offset_auto_clear()</span></code></a> offers a mechanism to be able
+to compensate these offsets.:</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>err = adc_offset_auto_clear(adc, 0x0);
+</pre></div>
+</div>
+<p>During this procedure, by default, the library will disconnect any input
+signal and connect the channel to the local ground level. By using the flag
+<a class="reference internal" href="library-api.html#_CPPv222ADC_OFFSET_AC_F_MANUAL" title="ADC_OFFSET_AC_F_MANUAL"><code class="xref cpp cpp-any docutils literal"><span class="pre">ADC_OFFSET_AC_F_MANUAL</span></code></a> it is possible to use the current input signal
+and compensate it.</p>
+<p>During this process, the library may change the ADC configuration.
+It is possible to ask the library to restore any previous configuration by
+using the flag <a class="reference internal" href="library-api.html#_CPPv223ADC_OFFSET_AC_F_RESTORE" title="ADC_OFFSET_AC_F_RESTORE"><code class="xref cpp cpp-any docutils literal"><span class="pre">ADC_OFFSET_AC_F_RESTORE</span></code></a>.</p>
+<p>If this feature is not supported in hardware or in the driver, it is possible
+to ask for a software implementation by using the flag
+<a class="reference internal" href="library-api.html#_CPPv224ADC_OFFSET_AC_F_SOFTWARE" title="ADC_OFFSET_AC_F_SOFTWARE"><code class="xref cpp cpp-any docutils literal"><span class="pre">ADC_OFFSET_AC_F_SOFTWARE</span></code></a>. In this case the idea is to run some
+acquisitions, compute the average and apply this value as offset compensation.</p>
+<p>If on a particular board the offset auto-clear needs extra parameters, you
+have to set them using <a class="reference internal" href="#lib-usr-cfg-cus"><span class="std std-ref">board specific configurations</span></a>.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">For some boards, once this offset has been configured and
+applied, it will stay as long as the ADC <em>session</em> is alive. This means
+that on <a class="reference internal" href="library-api.html#_CPPv29adc_closeP7adc_dev" title="adc_close"><code class="xref cpp cpp-func docutils literal"><span class="pre">adc_close()</span></code></a> the configuration is lost.</p>
+</div>
+</div>
+<div class="section" id="board-specific-configuration">
+<span id="lib-usr-cfg-cus"></span><h3>Board Specific Configuration<a class="headerlink" href="#board-specific-configuration" title="Permalink to this headline">¶</a></h3>
+<p>The library tries to be generic and at the same time being able to satisfy most
+of the needs, but sometimes it fails in this and some board-specific
+configuration is necessary. This is the pupose of the
+<a class="reference internal" href="library-api.html#_CPPv217ADC_CONF_TYPE_CUS" title="ADC_CONF_TYPE_CUS"><code class="xref cpp cpp-any docutils literal"><span class="pre">ADC_CONF_TYPE_CUS</span></code></a> configuration type.  When a board has some
+specificity it shall provide a dedicated header in order to export them;
+this shall include an <code class="docutils literal"><span class="pre">enum</span></code> describing the configuration values.</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>#include &lt;special-adc.h&gt;
+
+/* ... */
+
+struct adc_conf cfg;
+uint32_t opt1, opt2, opt3;
+int err;
+
+memset(&amp;cfg, 0, sizeof(struct adc_conf));
+cfg.type = ADC_CONF_TYPE_CUS;
+cfg.route_to = 2; /* the meaning depends on the board type */
+adc_set_conf_mask_all(&amp;cfg, adc);
+err = adc_retrive_config(adc, 0 , &amp;cfg);
+err = adc_get_conf(&amp;cfg, ADC_SPECIAL_CUS_OPT1, &amp;opt1);
+err = adc_get_conf(&amp;cfg, ADC_SPECIAL_CUS_OPT2, &amp;opt2);
+err = adc_get_conf(&amp;cfg, ADC_SPECIAL_CUS_OPT3, &amp;opt3);
+</pre></div>
+</div>
+<p>As described above, for a board specific configuration it is reccomended to use
+the functions <a class="reference internal" href="library-api.html#_CPPv213adc_set_paramP7adc_devPcPcPi" title="adc_set_param"><code class="xref cpp cpp-func docutils literal"><span class="pre">adc_set_param()</span></code></a> and <a class="reference internal" href="library-api.html#_CPPv213adc_get_paramP7adc_devPcPcPi" title="adc_get_param"><code class="xref cpp cpp-func docutils literal"><span class="pre">adc_get_param()</span></code></a>.
+But anyway, the library includes dedicated header files for each board type
+that exports helpers for the most common parameters.</p>
+<div class="section" id="fmc-adc-100m-14-bit-4-channel">
+<h4>FMC ADC 100M 14 bit 4 Channel<a class="headerlink" href="#fmc-adc-100m-14-bit-4-channel" title="Permalink to this headline">¶</a></h4>
+<p>This card has some parameters which are not described in the generic API. In
+order to use them you shall include the header file <code class="docutils literal"><span class="pre">fmc-adc-100m14b4cha.h</span></code>.
+Here you can get the dedicated symbols for the custom configuration options
+<code class="xref cpp cpp-type docutils literal"><span class="pre">adc_configuration_100m14b4cha</span></code></p>
+<p>Today, within this context, the <code class="docutils literal"><span class="pre">route_to</span></code> options does not have any meaning
+since the specifc parameters for this card are global, so there is no need for
+any routing mechanism.</p>
+<p>Following some special values defined for this board.</p>
+<dl class="type">
+<dt id="_CPPv243adc_configuration_100m14b4cha_channel_range">
+<span id="adc_configuration_100m14b4cha_channel_range"></span><span class="target" id="d6/d48/adc-lib-100m14b4cha_8h_1a04b14eea1e0d22cdcd16cbc7bdc498d7"></span><em class="property">enum </em><code class="descclassname"></code><code class="descname">adc_configuration_100m14b4cha_channel_range</code><a class="headerlink" href="#_CPPv243adc_configuration_100m14b4cha_channel_range" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of known voltage ranges to be used with the configuration option ADC_CONF_CHN_RANGE </p>
+<p><em>Values:</em></p>
+<dl class="enumerator">
+<dt id="_CPPv241ADC_CONF_100M14B4CHA_CHN_RANGE_OPEN_DRAIN">
+<span class="target" id="d6/d48/adc-lib-100m14b4cha_8h_1a04b14eea1e0d22cdcd16cbc7bdc498d7a53f2c72efd44ae79f2df5fb22fc7ce84"></span><code class="descname">ADC_CONF_100M14B4CHA_CHN_RANGE_OPEN_DRAIN</code> = 0<a class="headerlink" href="#_CPPv241ADC_CONF_100M14B4CHA_CHN_RANGE_OPEN_DRAIN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv236ADC_CONF_100M14B4CHA_CHN_RANGE_100mV">
+<span class="target" id="d6/d48/adc-lib-100m14b4cha_8h_1a04b14eea1e0d22cdcd16cbc7bdc498d7a7a947540b97e318f7e73b2b83c65a3c5"></span><code class="descname">ADC_CONF_100M14B4CHA_CHN_RANGE_100mV</code> = 0x23<a class="headerlink" href="#_CPPv236ADC_CONF_100M14B4CHA_CHN_RANGE_100mV" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv233ADC_CONF_100M14B4CHA_CHN_RANGE_1V">
+<span class="target" id="d6/d48/adc-lib-100m14b4cha_8h_1a04b14eea1e0d22cdcd16cbc7bdc498d7ac0ca08ea272a20c144db38120cb637dd"></span><code class="descname">ADC_CONF_100M14B4CHA_CHN_RANGE_1V</code> = 0x11<a class="headerlink" href="#_CPPv233ADC_CONF_100M14B4CHA_CHN_RANGE_1V" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv234ADC_CONF_100M14B4CHA_CHN_RANGE_10V">
+<span class="target" id="d6/d48/adc-lib-100m14b4cha_8h_1a04b14eea1e0d22cdcd16cbc7bdc498d7af4fa870b9960617c4acd97660227574a"></span><code class="descname">ADC_CONF_100M14B4CHA_CHN_RANGE_10V</code> = 0x45<a class="headerlink" href="#_CPPv234ADC_CONF_100M14B4CHA_CHN_RANGE_10V" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv240ADC_CONF_100M14B4CHA_CHN_RANGE_100mV_CAL">
+<span class="target" id="d6/d48/adc-lib-100m14b4cha_8h_1a04b14eea1e0d22cdcd16cbc7bdc498d7a3a7ee9773c288eeea5da39d432e8d360"></span><code class="descname">ADC_CONF_100M14B4CHA_CHN_RANGE_100mV_CAL</code> = 0x42<a class="headerlink" href="#_CPPv240ADC_CONF_100M14B4CHA_CHN_RANGE_100mV_CAL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv237ADC_CONF_100M14B4CHA_CHN_RANGE_1V_CAL">
+<span class="target" id="d6/d48/adc-lib-100m14b4cha_8h_1a04b14eea1e0d22cdcd16cbc7bdc498d7a644136bcd1ca5d2d21559afc8e795535"></span><code class="descname">ADC_CONF_100M14B4CHA_CHN_RANGE_1V_CAL</code> = 0x40<a class="headerlink" href="#_CPPv237ADC_CONF_100M14B4CHA_CHN_RANGE_1V_CAL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv238ADC_CONF_100M14B4CHA_CHN_RANGE_10V_CAL">
+<span class="target" id="d6/d48/adc-lib-100m14b4cha_8h_1a04b14eea1e0d22cdcd16cbc7bdc498d7a2a8a01270bd834627df5fcd888c76288"></span><code class="descname">ADC_CONF_100M14B4CHA_CHN_RANGE_10V_CAL</code> = 0x44<a class="headerlink" href="#_CPPv238ADC_CONF_100M14B4CHA_CHN_RANGE_10V_CAL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<p>The <a class="reference internal" href="#lib-usr-cfg-ac"><span class="std std-ref">zero offset</span></a> value is valid only within a <em>session</em>.
+Every time you invoke <a class="reference internal" href="library-api.html#_CPPv28adc_openPcjmjm" title="adc_open"><code class="xref cpp cpp-func docutils literal"><span class="pre">adc_open()</span></code></a> this particular offset get
+reset.</p>
+</div>
+</div>
+</div>
+<div class="section" id="acquisition">
+<h2>Acquisition<a class="headerlink" href="#acquisition" title="Permalink to this headline">¶</a></h2>
+<p>As we already said, the <a class="reference internal" href="#configuration">configuration</a> is the most important step in the
+acquisition process. Once the card is configured, the actual management of an
+acquisition is limited to very few operations:</p>
+<dl class="docutils">
+<dt><em>start</em></dt>
+<dd>The ADC starts acquiring data. Depending on the board, this may means
+that the board is waiting for a trigger event to happen.
+The user can start the acquisition with <a class="reference internal" href="library-api.html#_CPPv213adc_acq_startP7adc_devjP7timeval" title="adc_acq_start"><code class="xref cpp cpp-func docutils literal"><span class="pre">adc_acq_start()</span></code></a></dd>
+<dt><em>stop</em></dt>
+<dd>The ADC stops an on going acquisition. The user can stop the acquisition
+with <a class="reference internal" href="library-api.html#_CPPv212adc_acq_stopP7adc_devj" title="adc_acq_stop"><code class="xref cpp cpp-func docutils literal"><span class="pre">adc_acq_stop()</span></code></a></dd>
+<dt><em>poll</em></dt>
+<dd>The user can check if any data is ready to be fetched. The user can use
+a special poll function <a class="reference internal" href="library-api.html#_CPPv212adc_acq_pollP7adc_devjP7timeval" title="adc_acq_poll"><code class="xref cpp cpp-func docutils literal"><span class="pre">adc_acq_poll()</span></code></a></dd>
+</dl>
+<p>The full acquisition flow is represented in the following picture</p>
+<dl class="docutils">
+<dt><em>flush</em></dt>
+<dd>The user can flush any previously acquisition from software or hardware
+buffers. This can be done with   <a class="reference internal" href="library-api.html#_CPPv213adc_acq_flushP7adc_devj" title="adc_acq_flush"><code class="xref cpp cpp-func docutils literal"><span class="pre">adc_acq_flush()</span></code></a></dd>
+</dl>
+<p>The usage of these functions depends on the configuration and the board type;
+indeed, in some cases you don&#8217;t need/want to <em>poll</em> or manually <em>stop</em> because
+those operations are automatically performed. For example, most of the ADC
+cards automatically <em>stop</em> when the number of post-samples have been acquired;
+in this case there is no need to tell the card to <em>stop</em> again. An alternative
+to <em>poll</em> is to ask the <em>start</em> function to wait until the acquisition
+complete. This does not mean that <em>poll</em> and <em>stop</em> are superfluous. If you
+want to avoid compatibility troubles, we reccomend you to implement the
+complete flow even if it is not necessary for a particular board or
+configuration.</p>
+<p>Following an example from the <code class="docutils literal"><span class="pre">example.c</span></code> code available under <code class="docutils literal"><span class="pre">tools</span></code></p>
+<div class="highlight-c"><div class="highlight"><pre><span></span>	<span class="cm">/* Start the acquisition without wait */</span>
+	<span class="n">err</span> <span class="o">=</span> <span class="n">adc_acq_start</span><span class="p">(</span><span class="n">adc</span><span class="p">,</span> <span class="n">ADC_F_FLUSH</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">tv</span><span class="p">);</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">err</span><span class="p">)</span> <span class="p">{</span>
+		<span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span>
+			<span class="s">&quot;%s: Cannot start acquisition: (%d) %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span>
+			<span class="n">prog_name</span><span class="p">,</span> <span class="n">errno</span><span class="p">,</span> <span class="n">adc_strerror</span><span class="p">(</span><span class="n">errno</span><span class="p">));</span>
+		<span class="k">return</span> <span class="n">err</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="k">for</span> <span class="p">(</span><span class="n">k</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="n">NSHOT</span><span class="p">;</span> <span class="o">++</span><span class="n">k</span><span class="p">)</span> <span class="p">{</span>
+		<span class="n">fprintf</span><span class="p">(</span><span class="n">stdout</span><span class="p">,</span> <span class="s">&quot;Shot %d/%d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">NSHOT</span><span class="p">);</span>
+		<span class="cm">/* Wait until the data is available */</span>
+		<span class="n">err</span> <span class="o">=</span> <span class="n">adc_acq_poll</span><span class="p">(</span><span class="n">adc</span><span class="p">,</span> <span class="mi">0</span> <span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+		<span class="k">if</span> <span class="p">(</span><span class="n">err</span><span class="p">)</span> <span class="p">{</span>
+			<span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&quot;Failed to wait for data: (%d) %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span>
+				<span class="n">errno</span><span class="p">,</span> <span class="n">adc_strerror</span><span class="p">(</span><span class="n">errno</span><span class="p">));</span>
+			<span class="k">break</span><span class="p">;</span>
+		<span class="p">}</span>
+		<span class="cm">/* Fill the buffer with the data */</span>
+		<span class="n">err</span> <span class="o">=</span> <span class="n">adc_fill_buffer</span><span class="p">(</span><span class="n">adc</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+		<span class="k">if</span> <span class="p">(</span><span class="n">err</span><span class="p">)</span> <span class="p">{</span>
+			<span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&quot;Failed to retrieve for data: (%d) %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span>
+				<span class="n">errno</span><span class="p">,</span> <span class="n">adc_strerror</span><span class="p">(</span><span class="n">errno</span><span class="p">));</span>
+			<span class="k">break</span><span class="p">;</span>
+		<span class="p">}</span>
+		<span class="n">process_buffer</span><span class="p">(</span><span class="n">buf</span><span class="p">);</span>
+	<span class="p">}</span>
+
+	<span class="cm">/* stop the acquisition on the device */</span>
+	<span class="n">err</span> <span class="o">=</span> <span class="n">adc_acq_stop</span><span class="p">(</span><span class="n">adc</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">err</span><span class="p">)</span> <span class="p">{</span>
+		<span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span>
+			<span class="s">&quot;%s: cannot stop the acquisition: (%d) %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span>
+			<span class="n">prog_name</span><span class="p">,</span> <span class="n">errno</span><span class="p">,</span> <span class="n">adc_strerror</span><span class="p">(</span><span class="n">errno</span><span class="p">));</span>
+		<span class="k">return</span> <span class="n">err</span><span class="p">;</span>
+	<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="buffers">
+<h2>Buffers<a class="headerlink" href="#buffers" title="Permalink to this headline">¶</a></h2>
+<p>Each acquisition run is relying on a buffer. Buffers are described
+by the data structure <a class="reference internal" href="library-api.html#_CPPv210adc_buffer" title="adc_buffer"><code class="xref cpp cpp-type docutils literal"><span class="pre">adc_buffer</span></code></a>. This includes both
+<em>data</em> and <em>meta-data</em>. The layout of data is depending on the
+card and its configuration; the meta-data part depends on the type of
+driver currently running for the card. For example, if the driver is
+based on the <a class="reference external" href="http://www.ohwr.org/projects/zio">ZIO framework</a>, the <em>meta-data</em> part of the buffer refers
+to a ZIO control block. The idea is that all information is available
+to the user, who can use it at will or ignore it and just use generic
+interfaces.</p>
+<p>Buffers are generally allocated by the library with
+<a class="reference internal" href="library-api.html#_CPPv218adc_request_bufferP7adc_deviPFPv6size_tEj" title="adc_request_buffer"><code class="xref cpp cpp-func docutils literal"><span class="pre">adc_request_buffer()</span></code></a> and released with
+<a class="reference internal" href="library-api.html#_CPPv218adc_release_bufferP7adc_devP10adc_bufferPFvPvE" title="adc_release_buffer"><code class="xref cpp cpp-func docutils literal"><span class="pre">adc_release_buffer()</span></code></a>, but the application can provide its
+own allocator if it really wants to. The reason for using library-driven
+allocation is that the library knows better. If, for example, the driver
+offers <em>mmap</em> support, the library can choose to map acquired data
+instead of calling <em>malloc</em>. However, for the rare case where
+the application knows better, it can override this. Also, the application
+should tell the number of buffers and expected data size at the beginning,
+so the library can properly configure the underlying driver, if this is needed.</p>
+<p>By accepting a user-defined allocator, we allow customized management
+of the data area in the most flexible way. The application may have
+special needs that are unforeseeable by the driver.In the simplest
+case, the application needs to send out or save the data with its own
+ancillary information: the custom allocator in this case can return
+the pointer inside the pre-built structure. If the driver retrieves
+data using the <code class="docutils literal"><span class="pre">read</span></code> system call, this trick can save a data copy
+overall &#8211; if the driver would see data through <code class="docutils literal"><span class="pre">mmap</span></code>, there is no
+saving in using the custom allocator but no additional cost, either.</p>
+<p>The number of samples associated with a buffer (the size of each sample
+is known by the device type) represents the total number of sample that
+can be stored. So a 4-multiplexed acquisition of 10 samples requires 40
+samples here.  If the application plans to run several acquisitions
+(even of different sizes), it can allocate the buffers beforehand. Thus,
+the driver can&#8217;t know the <code class="docutils literal"><span class="pre">nsamples</span></code> value in advance. The number of
+samples in the buffer may be bigger than the number of samples that will
+actually be acquired later.</p>
+<p>Once an acquisition successfully complete it is possible to fill the buffer
+with the acquisition data and its meta-data (if any) with
+<a class="reference internal" href="library-api.html#_CPPv215adc_fill_bufferP7adc_devP10adc_bufferjP7timeval" title="adc_fill_buffer"><code class="xref cpp cpp-func docutils literal"><span class="pre">adc_fill_buffer()</span></code></a>. It is also possible to extract
+the acquisition timestamp <a class="reference internal" href="library-api.html#_CPPv213adc_timestamp" title="adc_timestamp"><code class="xref cpp cpp-type docutils literal"><span class="pre">adc_timestamp</span></code></a> with
+<a class="reference internal" href="library-api.html#_CPPv217adc_tstamp_bufferP10adc_bufferP13adc_timestamp" title="adc_tstamp_buffer"><code class="xref cpp cpp-func docutils literal"><span class="pre">adc_tstamp_buffer()</span></code></a></p>
+<p>Following an example from the <code class="docutils literal"><span class="pre">example.c</span></code> code available under <code class="docutils literal"><span class="pre">tools</span></code></p>
+<div class="highlight-c"><div class="highlight"><pre><span></span>	<span class="n">buf</span> <span class="o">=</span> <span class="n">adc_request_buffer</span><span class="p">(</span><span class="n">adc</span><span class="p">,</span> <span class="n">NSHOT</span> <span class="o">*</span> <span class="p">(</span><span class="n">PRESAMPLES</span> <span class="o">+</span> <span class="n">POSTSAMPLES</span><span class="p">),</span>
+				 <span class="nb">NULL</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+	<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">buf</span><span class="p">)</span> <span class="p">{</span>
+		<span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&quot;%s: Cannot allocate buffer: (%d) %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span>
+			<span class="n">prog_name</span><span class="p">,</span> <span class="n">errno</span><span class="p">,</span> <span class="n">adc_strerror</span><span class="p">(</span><span class="n">errno</span><span class="p">));</span>
+		<span class="k">return</span> <span class="mi">-1</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="n">err</span> <span class="o">=</span> <span class="n">config_and_acquire</span><span class="p">(</span><span class="n">adc</span><span class="p">,</span> <span class="n">buf</span><span class="p">);</span>
+
+	<span class="n">adc_release_buffer</span><span class="p">(</span><span class="n">adc</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="section" id="meta-data">
+<h3>Meta-Data<a class="headerlink" href="#meta-data" title="Permalink to this headline">¶</a></h3>
+<p>Typically, each acquisition buffer carries with it metadata that describes
+the available samples. Some meta-data can be extracted directly using the API,
+for most of them the extraction is driver-specific.</p>
+</div>
+<div class="section" id="fixup">
+<h3>Fixup<a class="headerlink" href="#fixup" title="Permalink to this headline">¶</a></h3>
+<p>It may happen that low-level (HDL, hardware) bugs are found and they cannot
+be fixed. This library offers the possibility to compensate for those errors.
+For each type of board we can have, or not, a <em>fixup</em> algorithm that is able
+to fix the data in the buffer and compensate the bugs.</p>
+<p>There two possibilities to run the <em>fixup</em> algorithm over a given buffer.
+The first one is to pass the flag <code class="xref cpp cpp-any docutils literal"><span class="pre">ADC_F_FIXUP</span></code> to
+<a class="reference internal" href="library-api.html#_CPPv215adc_fill_bufferP7adc_devP10adc_bufferjP7timeval" title="adc_fill_buffer"><code class="xref cpp cpp-func docutils literal"><span class="pre">adc_fill_buffer()</span></code></a>.:</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>err = adc_fill_buffer(adc, buff, ADC_F_FIXUP, &amp;timeout);
+</pre></div>
+</div>
+<p>The second one is to run it explicitly by invoking
+<a class="reference internal" href="library-api.html#_CPPv216adc_buffer_fixupP10adc_buffer" title="adc_buffer_fixup"><code class="xref cpp cpp-func docutils literal"><span class="pre">adc_buffer_fixup()</span></code></a>.:</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>err = adc_buffer_fixup(buf);
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="time-stamps">
+<h2>Time Stamps<a class="headerlink" href="#time-stamps" title="Permalink to this headline">¶</a></h2>
+<p>The time-stamp structure is defined by <a class="reference internal" href="library-api.html#_CPPv213adc_timestamp" title="adc_timestamp"><code class="xref cpp cpp-type docutils literal"><span class="pre">adc_timestamp</span></code></a></p>
+<p>This is the same structure as used by the <a class="reference external" href="http://www.ohwr.org/projects/zio">ZIO framework</a>, but it is not
+specific to ZIO &#8211; the choice made there was just the best of breed,
+agreed upon in a discussion held at CERN within the BE-CO-HT section.</p>
+<p>Currently, time-stamps are only used in association with buffers: after
+an acquisition is over and saved to a buffer, the user can ask for</p>
+<p>Following an example from the <code class="docutils literal"><span class="pre">example.c</span></code> code available under <code class="docutils literal"><span class="pre">tools</span></code></p>
+<div class="highlight-c"><div class="highlight"><pre><span></span>	<span class="n">adc_tstamp_buffer</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ts</span><span class="p">);</span>
+	<span class="n">fprintf</span><span class="p">(</span><span class="n">stdout</span><span class="p">,</span>
+		<span class="s">&quot;time: {secs:%&quot;</span><span class="n">PRIu64</span><span class="s">&quot; ticks:%&quot;</span><span class="n">PRIu64</span><span class="s">&quot; bins:%&quot;</span><span class="n">PRIu64</span><span class="s">&quot;}</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span>
+		<span class="n">ts</span><span class="p">.</span><span class="n">secs</span><span class="p">,</span> <span class="n">ts</span><span class="p">.</span><span class="n">ticks</span><span class="p">,</span> <span class="n">ts</span><span class="p">.</span><span class="n">bins</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="software-trigger">
+<h2>Software Trigger<a class="headerlink" href="#software-trigger" title="Permalink to this headline">¶</a></h2>
+<p>The software trigger is something that people may need for testing and many
+cards provide support for it. Since this is pure software, there is no need
+for this library to handle the configuration which is left to its users.
+The user will define all the triggering criteria and then it will use this
+library to actually do the trigger by invoking <a class="reference internal" href="library-api.html#_CPPv216adc_trigger_fireP7adc_dev" title="adc_trigger_fire"><code class="xref cpp cpp-func docutils literal"><span class="pre">adc_trigger_fire()</span></code></a>.</p>
+<p>It is also possible to check if software triggering is actually supported
+by the board in use by calling  <a class="reference internal" href="library-api.html#_CPPv220adc_has_trigger_fireP7adc_dev" title="adc_has_trigger_fire"><code class="xref cpp cpp-func docutils literal"><span class="pre">adc_has_trigger_fire()</span></code></a>.</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>/* all the triggering criteria */
+if (adc_has_trigger_fire(adc))
+    err = adc_trigger_fire(adc);
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="library-devel.html" class="btn btn-neutral float-right" title="The Library For Developers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to the ADC library documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright CERN 2018, Federico Vaga &lt;federico.vaga@cern.ch&gt;.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
