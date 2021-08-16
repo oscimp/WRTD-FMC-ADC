@@ -275,3 +275,6 @@ static void write_csv(struct adc_buffer *buffer, char *filename)
 	fclose(file);
 }
 ```
+
+`adc-test.c` will perform an acquisition and write the result to a file in CSV format.
+I you want to try it out, edit the ZIO_ID, SW_TRG and CSV_FILE macros at the start of the file before compiling.
