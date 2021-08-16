@@ -1,5 +1,10 @@
 # How to use WRTD with the FMC ADC
 
+We will be using the C libraries provided by the WRTD repository as well as the ADC-lib to interact with the SPEC board.
+
+To facilitate basic compilation for a single source file, the script `compile.sh` can be used to automatically load the relevent libraries and include the headers.
+It takes the input file as its first command line parameter, and output file as second.
+
 ## 1. Acquiring data without WRTD
 
 The ADC has actually very few connections with WRTD.
@@ -13,7 +18,8 @@ To use adc-lib, you have to include the following headers:
 #include <adc-lib.h>
 #include <adc-lib-100m14b4cha.h>
 ```
-You may also need to specify the path to these headers when compiling (`-I` option for gcc). These are located inside your build directory at `$BUILD_DIR/adc-lib/lib`.
+You will also need to specify the path to these headers when compiling (`-I` option for gcc).
+These are located inside your build directory at `$BUILD_DIR/adc-lib/lib`.
 Finally you want to tell gcc to load the library using the `-ladc` option.
 
 The Documentation for adc-lib was provided in html format in this repository to avoid having to build it from sources.
@@ -71,6 +77,25 @@ int main()
 }
 ```
 
+### Error checking
+
+adc-lib uses `errno` to track errors (from the `errno.h` header).
+Thus we can check after each adc-lib function call if it went fine.
+
+There is also a function to get a string from an error code: `adc_strerror`.
+
+I like to write and use the following function, and call after any adc-lib function call where I want to check for errors:
+```c
+static void adc_check_error(char *message)
+{
+	if (errno) {
+		fprintf(stderr, "ADC-LIB ERROR: %s: %s", message, adc_strerror(errno));
+		adc_exit();
+		exit(errno);
+	}
+}
+```
+
 ### Configuring the ADC
 
 The first step before acquiring any data is to configure the ADC.
@@ -101,3 +126,25 @@ adc_apply_config(adc, 0, &config);
 ```
 
 The most important parameters for our purposes are the number of samples to be acquired and the various triggers we would want to use.
+
+### Acquiring data
+
+To acquire data, we first need to allocate a buffer using `adc_request_buffer`.
+
+TODO
+
+#### Software trigger
+
+We can trigger manually a trigger in software, which is very handy for testing.
+Normally we should be able to use `adc_trigger_fire` according to the documentation.
+Unfortunately this function does not work so a workaround is needed.
+
+My workaround was to manually write to a sysfs file using the following function:
+```c
+static void trigger_fire()
+{
+	int fd = open("/sys/bus/zio/devices/adc-100m14b-<ZIO ID>/cset0/trigger/sw-trg-fire", O_WRONLY);
+	write(fd, "1", 1);
+	close(fd);
+}
+```
