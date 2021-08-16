@@ -244,3 +244,34 @@ nano_seconds = 0;
 `adc-time.c` is a test program which prints the time in seconds of the ADC clock.
 It was used to test timing triggers with the `adc-acq` tool provided with adc-lib.
 If you want to use it, make sure to modify the ZIO_ID macro to the correct value.
+
+#### Processing data
+
+To read from a buffer, use `adc_buffer_get_sample`:
+```c
+int adc_buffer_get_sample(struct adc_buffer *buf,
+                          unsigned int chan,
+                          unsigned int acq_sample,
+                          int32_t *value)
+```
+`buf` is your buffer, `chan` is the channel number from 0 to 3 (corresponding to channels labelled from 1 to 4 on the board), `acq_sample` is the index of the sample to get from 0 to `PRESAMPLES + POSTSAMPLES - 1`, and `value` is a pointer to a variable where to write the sample.
+
+Here is a simple function to write the content of a buffer to a CSV file:
+```c
+static void write_csv(struct adc_buffer *buffer, char *filename)
+{
+	int32 value1, value2, value3, value4;
+
+	FILE *file = fopen(filename, "w");
+	for (int i = 0; i < PRESAMPLE + POSTSAMPLE; i++) {
+		adc_buffer_get_sample(buffer, 0, i, &value1);
+		adc_buffer_get_sample(buffer, 1, i, &value2);
+		adc_buffer_get_sample(buffer, 2, i, &value3);
+		adc_buffer_get_sample(buffer, 3, i, &value4);
+
+		fprintf("%i,%i,%i,%i,%i\n", i, value1, value2, value3, value4);
+	}
+
+	fclose(file);
+}
+```
