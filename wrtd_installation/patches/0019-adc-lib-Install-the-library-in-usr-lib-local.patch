@@ -1,0 +1,26 @@
+From cc5fe4c4f66278893fcc8085c68c74f88cfbdfa8 Mon Sep 17 00:00:00 2001
+From: Mathis MARION <mathis.marion@grenoble-inp.org>
+Date: Mon, 16 Aug 2021 10:11:49 +0200
+Subject: [PATCH 19/19] [adc-lib] Install the library in /usr/lib/local
+
+---
+ scripts/adc_lib_build.sh | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/scripts/adc_lib_build.sh b/scripts/adc_lib_build.sh
+index 0105750..97d9066 100644
+--- a/scripts/adc_lib_build.sh
++++ b/scripts/adc_lib_build.sh
+@@ -16,6 +16,9 @@ export ZIO=$BUILD_DIR/zio
+ export FMCADC100M=$BUILD_DIR/fmc-adc-100m14b4cha-sw
+ [ $SKIP_BUILD ] || make
+ [ $SKIP_INSTALL ] || sudo -E make install
++[ $SKIP_INSTALL ] || sudo -E install -m 0755 $BUILD_DIR/$PROJECT/lib/libadc.so /usr/local/lib
++[ $SKIP_INSTALL ] || sudo -E sh -c 'echo "/usr/local/lib" > /etc/ld.so.conf.d/adc.conf'
++[ $SKIP_INSTALL ] || sudo -E ldconfig
+ [ $SKIP_INSTALL ] || sudo -E make -C lib/PyAdcLib install
+ 
+ . $SCRIPT_DIR/post_script
+-- 
+2.27.0
+
