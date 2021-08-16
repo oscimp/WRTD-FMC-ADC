@@ -286,9 +286,9 @@ To do so we will need to include the following header:
 ```c
 #include <libwrtd.h>
 ```
-We also need to include the relevent repositories with `-I` when using gcc: `$BUILD_DIR/wrtd/software/lib` and `$BUILD_DIR/wrtd/software/include`.
-The option `-lwrtd` also needs to be specified.
-(These script `compile.sh` already has these options set)
+We also need to specify the relevent directories with `-I` when using gcc: `$BUILD_DIR/wrtd/software/lib` and `$BUILD_DIR/wrtd/software/include`.
+The option `-lwrtd` also needs to be used.
+(The script `compile.sh` already has these options set)
 
 The documentation for WRTD is available online at https://wrtd.readthedocs.io/en/latest
 
@@ -332,4 +332,65 @@ int main()
 	wrtd_close(wrtd);
 	return EXIT_SUCCESS;
 }
+```
+
+### Configuring a rule
+
+Before declaring your first rule, I would suggest disabling and removing all existing rules in case there are any:
+```c
+wrtd_disable_all_rules(wrtd);
+wrtd_remove_all_rules(wrtd);
+```
+
+Each rule will have an ID associated with it in the form of a string (in the documentation it may be refered as a repeated capability ID but I feel like it over complicates things).
+In the same fashion, events also have a string to identidy them.
+To configure a rule, we need to set the value for some parameters called "attributes" using functions from the `wrtd_set_attr_<type>` family.
+We will be interested in setting a parameter for the input event, one for the output event, one for enabling the rule, and most likely one to add a delay (more on that later).
+
+Here is a typical rule declaration:
+```c
+// Create rule
+wrtd_add_rule(wrtd, rule_id);
+
+// Configure input event
+wrtd_set_attr_string(wrtd, rule_id, WRTD_ATTR_RULE_SOURCE, input_event_id);
+
+// Configure output event
+wrtd_set_attr_string(wrtd, rule_id, WRTD_ATTR_RULE_DESTINATION, output_event_id);
+
+// Configure delay to 500µs
+struct wrtd_tstamp delay = { .seconds = 0, .ns = 500e3, .frac = 0};
+wrtd_set_attr_tstamp(wrtd, rule_id, WRTD_ATTR_RULE_DELAY, &delay);
+
+// Enable rule
+wrtd_set_attr_bool(wrtd, rule_id, WRTD_ATTR_RULE_ENABLED, true);
+```
+
+### Event IDs
+
+As mentionned, events are identified by a string. Some strings are reserved for special events:
+- `LC-I<x>` and `LC-O<x>` where x is an integer are reserved for local channels
+- strings prefixed with `alarm` or `ALARM` are reserved... well for alarms which we will discuss later
+- `LXI<x>`, `LAN<x>` and `LXIERROR` are reserved by the LXI protocol.
+
+Any string that is not one of these will correspond to a "message", that is to say a packet sent through the White Rabbit network conveiving this ID.
+If a node outputs an event with ID `foo`, then all other nodes will receive an input event with ID `foo`.
+
+But then how do we trigger the ADC, and how do we generate an event from the computer if no IDs are made for that?
+
+#### Triggering the ADC
+
+This one is pretty simple: in the design for the SPEC and FMC ADC, the WRTD local channel 1 is mapped to the ADC's external trigger. This means that the event ID `LC-O1` corresponds to the ADC trigger!
+
+#### Creating an event from the computer
+
+Unfortunately, there is not a direct way to generate an event from software. What we can do, is to use alarms.
+
+The concept of an alarm is simple: you configure a date at which an event will be created, with an ID prefixed by `alarm` or `ALARM`.
+You can also do more with alarms such as generating a periodic event.
+However it must be noted that the SPEC150T design only allows for a single alarm.
+
+As for rules, we use attributes to configure what we need.
+```c
+TODO
 ```
