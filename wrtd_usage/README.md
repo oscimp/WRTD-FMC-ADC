@@ -145,7 +145,34 @@ We will need to free the buffer once we are done with the acquisition using `adc
 Then we can start the acquisition by calling `adc_acq_start`. The ADC will then wait for a trigger before acquiring samples.
 It may be good practice to stop any pending acquisition before starting one by calling `adc_acq_stop`.
 
+To fill your buffer with the acquired data, use `adc_fill_buffer`. If no trigger has happened before this function is called, it will wait until one happens, or until the specified timeout is passed.
 
+Finally, here is an example of how an acquisition looks in code:
+```c
+// Allocating a buffer
+struct adc_buffer *buffer;
+buffer = adc_request_buffer(adc, NSHOTS * (PRESAMPLES + POSTSAMPLES), NULL, 0);
+
+// Time struct to specify timeouts
+struct timeval timeout = { 0, 0 };
+
+// Stopping any pending acquisition
+adc_acq_stop(adc, 0);
+// Starting a new acquisition immediately (timeout = 0)
+adc_acq_start(adc, ADC_F_FLUSH, &timeout);
+
+// Setting a 5s timeout for trigger waiting
+timeout.tv_sec = 5;
+
+for (int i = 0; i < NSHOTS; i++) {
+	adc_fill_buffer(adc, buffer, ADC_F_FIXUP, &timeout);
+
+	process_buffer(buffer);
+}
+
+// Freeing the buffer
+adc_release_buffer(adc, buffer, NULL);
+```
 
 #### Software triggers
 
@@ -216,3 +243,4 @@ nano_seconds = 0;
 
 `adc-time.c` is a test program which prints the time in seconds of the ADC clock.
 It was used to test timing triggers with the `adc-acq` tool provided with adc-lib.
+If you want to use it, make sure to modify the ZIO_ID macro to the correct value.
