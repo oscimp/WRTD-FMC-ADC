@@ -511,7 +511,7 @@ If you want to use it, modify the macros `ZIO_ID` and `CSV_FILE` at the beginnin
 In this example we have a master and one (or more) slave(s).
 The master will first configure an alarm which will trigger at time _t_.
 When the alarm triggers, the master will immediately send a message into the White Rabbit network with one rule with a timestamp of _t + Δt_, and wait for time _t + Δt_ before it triggers its own ADC with a second rule.
-The slave will trigger it ADC once it receives the message, and the timestamp is reached.
+The slave will trigger its ADC once it receives the message, and the timestamp is reached.
 
 Here is an image of the whole process:
 ![Master/Slave setup](master-slave.png)
