@@ -16,7 +16,7 @@ After doing your modifications to the source files, you will need to recompile t
 Comment out the 2 lines that checkout a branch and patch files in the script `fmc_adc_100m_build.sh` located in the ohwr-build-scripts repository used to intall WRTD.
 Place your terminal at the scripts directory of the ohwr-build-script repository and run the following commands.
 ```bash
-rm $BUILD_DIR/buildt.fmc-adc-100m14b4cha-sw
+rm $BUILD_DIR/built.fmc-adc-100m14b4cha-sw
 sh fmc_adc_100m_build.sh
 ```
 Now reboot, flash the FPGA, and you should get access to some of the Si570 registers if you look inside `/sys/bus/zio/devices/adc-100m-<ZIO_ID>/cset0`>.
@@ -30,9 +30,9 @@ It rather uses a wrapper over this component, and it must also be noted that the
 
 #### Accessing the I2C master
 
-This component is wired on a Wishbone bus that also allows to the ADC's registers and various other interfaces available through the FMC connector.
+This component is wired on a Wishbone bus that also allows access to the ADC's registers and various other interfaces available through the FMC connector.
 If we take a look at the `fmc-adc-100m14b4cha.h` header, we can see it defines offsets for some of the interfaces available, but not for the I2C one.
-We can just add a macro `ADC_I2C_OFF` as we can find out the offset of the I2C component by investigating the HDL code (`0x1600`).
+We can just add a macro `ADC_I2C_OFF` with the correct offset that can be found by investigating the HDL code (`0x1600`).
 
 However, the kernel uses its own virtual address space to access these hardware parts.
 Looking at the driver probe function in `fa-core.c`, we can see a base address is attributed in the `fa_top_level` member of the device structure.
@@ -43,6 +43,19 @@ We can then add a member called `fa_i2c_base` in the definition of `struct fa_de
 
 Now we can communicate with the I2C master component using `fa_readl`/`fa_writel` and the address stored in the `fa_i2c_base`.
 We just need to figure out the register addresses of this component, and the series of instructions to use to read or write from the clock's registers.
+
+There are 5 registers of interest for the I2C master component, which are labelled `CTR`, `TXR`, `RXR`, `CR`, and `TR`.
+We can add these in the `zfadc_dregs_enum` enumeration defined in `fmc-adc-100m14b4cha`.
+These are all 8bit registers, which we can describe in the `zfa_regs` array defined inside `fa-regtable.c`.
+Since the addresses provided by the official OpenCores documentation are wrong, I had to manually find them in the HDL code.
+
+Some of these registers are bitfields so I defined a few macros inside `fmc-adc-100m14b4cha.h` to help masking individual bits.
+
+Finally, reading and writing to the Si570 clock registers is done thanks to two functions that perform the right sequence of register accesses to the I2C master.
+These are named `zfad_i2c_read` and `zfad_i2c_write` and are written inside the `fa-zio-drv.c` file.
+Read the comments of these functions if you want to undersand the sequence of instructions that is done.
+
+### Interacting with sysfs
 
 TODO
 
