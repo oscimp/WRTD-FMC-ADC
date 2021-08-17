@@ -1,5 +1,21 @@
 # Experiments to synchronize the Si570 clock of the ADC to White Rabbit
 
+## Accessing the Si570 registers from userspace
+
+This section will cover a way to access registers (read and write) using sysfs (the Linux virtual file system at /sys).
+This may or may not be useful towards the goal of disciplining the clock since we will necessarely need to modify the FPGA design.
+It at least proves that we can change the frequency of the ADC clock using the I2C interface that is accessible trough the FMC connector.
+
+TODO
+
+### RFREQ conversion
+
+The Si570 documentation describes the RFREQ value as a 38 bits fixed point number.
+The 10 most significant bits are the decimal part and the 28 remaining are the fractionnal part.
+This is not a usual format to work with so I wrote two conversion functions, transforming the 38 bits number (stored inside a 64bit unsigned integer as the lower bits) to a double precision floating point number from the IEEE norm, and the reverse operation.
+
+These function can be accessed with the `rfreq.h` header and are named respectively `rfreq_to_float` and `float_to_rfreq`.
+
 ## Recompiling the bitstream
 
 If modifications are to be made to the FPGA design, it will be necessary to resynthetize the bitstream.
