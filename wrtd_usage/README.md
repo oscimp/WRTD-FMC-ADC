@@ -2,8 +2,8 @@
 
 We will be using the C libraries provided by the WRTD repository as well as the ADC-lib to interact with the SPEC board.
 
-To facilitate basic compilation for a single source file, the script `compile.sh` can be used to automatically load the relevent libraries and include the headers.
-It takes the input file as its first command line parameter, and output file as second.
+To facilitate basic compilation for a single source file, a Makefile was provided to automatically load the relevent libraries and include the headers.
+Just run `make <your source file witout the file extension>` to generate an executable from a single source.
 
 ## 1. Acquiring data without WRTD
 
@@ -20,7 +20,8 @@ To use adc-lib, you have to include the following headers:
 ```
 You will also need to specify the path to these headers when compiling (`-I` option for gcc).
 These are located inside your build directory at `$BUILD_DIR/adc-lib/lib`.
-Finally you want to tell gcc to load the library using the `-ladc` option. (The script `compile.sh` already has these options set)
+Finally you want to tell gcc to load the library using the `-ladc` option.
+(The Makefile provided already has these options set)
 
 The Documentation for adc-lib was provided in html format in this repository to avoid having to build it from sources.
 
@@ -244,6 +245,7 @@ nano_seconds = 0;
 `adc-time.c` is a test program which prints the time in seconds of the ADC clock.
 It was used to test timing triggers with the `adc-acq` tool provided with adc-lib.
 If you want to use it, make sure to modify the `ZIO_ID` macro to the correct value.
+You can compile it by running `make adc-time`.
 
 #### Processing data
 
@@ -277,7 +279,7 @@ static void write_csv(struct adc_buffer *buffer, char *filename)
 ```
 
 `adc-test.c` will perform an acquisition and write the result to a file in CSV format.
-I you want to try it out, edit the `ZIO_ID`, `SW_TRG` and `CSV_FILE` macros at the start of the file before compiling.
+I you want to try it out, edit the `ZIO_ID`, `SW_TRG` and `CSV_FILE` macros at the start of the file before compiling with `make adc-test`.
 
 ADC-lib buffers also contain a timestamp for each shot (not for each sample).
 That means we can get the time at which the trigger was received using `adc_tstamp_buffer`:
@@ -295,7 +297,7 @@ static uint32_t adc_ticks_to_ns(uint32_t ticks)
 	return ticks * FA100M14B4C_UTC_CLOCK_NS;
 }
 ```
-You need to include `fmc-adc-100m14b4cha.h` to use this constant, which also requires giving the option `-I$BUILD_DIR/fmc-adc-100m14b4cha-sw/kernel` to gcc when compiling (again already provided if you use `compile.sh`).
+You need to include `fmc-adc-100m14b4cha.h` to use this constant, which also requires giving the option `-I$BUILD_DIR/fmc-adc-100m14b4cha-sw/kernel` to gcc when compiling (again already provided if you use the Makefile).
 
 ## 2. How to use WRTD
 
@@ -306,7 +308,7 @@ To do so we will need to include the following header:
 ```
 We also need to specify the relevent directories with `-I` when using gcc: `$BUILD_DIR/wrtd/software/lib` and `$BUILD_DIR/wrtd/software/include`.
 The option `-lwrtd` also needs to be used.
-(The script `compile.sh` already has these options set)
+(The script Makefile already has these options set)
 
 The documentation for WRTD is available online at https://wrtd.readthedocs.io/en/latest
 
@@ -385,6 +387,7 @@ else
 ```
 
 You can compile and use `wrtd-sync.c` to check if your board is properly connected to White Rabbit.
+Run `make wrtd-sync` to generate the executable.
 
 ### Configuring a rule
 
@@ -522,7 +525,7 @@ This means we will still only be using one board and one computer for this exper
 We create a rule that takes an input signal from the computer (which is actually an alarm as discussed earlier), and outputs into the ADC's external trigger.
 
 The code for this example is provided in `wrtd-test.c`.
-If you want to use it, modify the macros `ZIO_ID` and `CSV_FILE` at the beginning of the file before compiling.
+If you want to use it, modify the macros `ZIO_ID` and `CSV_FILE` at the beginning of the file before compiling using `make wrtd-test`.
 
 ### Master/Slave setup
 
@@ -541,3 +544,4 @@ The two programs `wrtd-master.c` and `wrtd_slave.c` will do exactly that.
 To use them you first need to launch the slave program on your slave computer, which will wait for a trigger to happen.
 Then you launch the master program on the master computer.
 Both programs should terminate after a few seconds, and you should get a CSV file on each machine where you specified the location (`CSV_FILE` macro).
+You can compile the programs by running `make wrtd-master` and `make wrtd-slave`.
