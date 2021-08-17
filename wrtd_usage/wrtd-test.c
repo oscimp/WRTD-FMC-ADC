@@ -21,28 +21,19 @@ static char *rule_id = "RULE-1";
 static char *alarm_id = "ALARM-1";
 static char *trigger_id = "LC-O1";
 
-void wrtd_check_status(wrtd_status status, int line) {
+static void wrtd_check_status(wrtd_status status, int line)
+{
 	char status_str[256];
 	if (status != WRTD_SUCCESS) {
 		wrtd_error_message(NULL, status, status_str);
-		printf("WRTD ERROR: Line %i, %s\n", line,  status_str);
+		fprintf(stderr, "WRTD ERROR: Line %i, %s\n", line,  status_str);
 		exit(status);
 	}
 	errno = 0;
 }
 
-void wrtd_check_error(wrtd_dev *wrtd, wrtd_status status) {
-	if (status != WRTD_SUCCESS) {
-		int buf_size = wrtd_get_error(wrtd, NULL, 0, NULL);
-		wrtd_status err_code;
-		char err_msg[buf_size];
-		wrtd_get_error(wrtd, &err_code, buf_size, err_msg);
-		printf("WRTD ERROR: %d, %s\n", err_code,  err_msg);
-		exit(status);
-	}
-}
-
-static void adc_check_error(char *message) {
+static void adc_check_error(char *message)
+{
 	if (errno) {
 		fprintf(stderr, "ADC-LIB ERROR: %s: %s\n", message, adc_strerror(errno));
 		adc_exit();
@@ -51,10 +42,26 @@ static void adc_check_error(char *message) {
 }
 
 /**
-  * Creates an alarm which will 
-  * trigger the acquisition in 2s
-  */
-void config_alarm(struct wrtd_dev *wrtd) {
+ * Checks if time is synchronized to White Rabbit
+ */
+static void check_sync(struct wrtd_dev *wrtd)
+{
+	bool is_synced;
+	wrt_check_status(wrtd_get_attr_bool(wrtd, WRTD_GLOBAL_REP_CAP_ID, WRTD_ATTR_IS_TIME_SYNCHRONIZED, &is_synced), __LINE__);
+	if (is_synced)
+		printf("WRTD time is synchronized.\n");
+	else {
+		fprintf(stderr, "WRTD time is not synchronized");
+		exit(EXIT_FAILURE);
+	}
+}
+
+/**
+ * Creates an alarm which will 
+ * trigger the acquisition in 2s
+ */
+void config_alarm(struct wrtd_dev *wrtd)
+{
 	// Remove all existing alarms
 	wrtd_check_status(wrtd_disable_all_alarms(wrtd), __LINE__);
 	wrtd_check_status(wrtd_remove_all_alarms(wrtd), __LINE__);
@@ -75,10 +82,11 @@ void config_alarm(struct wrtd_dev *wrtd) {
 }
 
 /**
-  * Creates a rule which will trigger the ADC
-  * once the alarm rings.
-  */
-void config_rule(struct wrtd_dev *wrtd) {
+ * Creates a rule which will trigger the ADC
+ * once the alarm rings.
+ */
+void config_rule(struct wrtd_dev *wrtd)
+{
 	// Remove all existing rules
 	wrtd_check_status(wrtd_disable_all_rules(wrtd), __LINE__);
 	wrtd_check_status(wrtd_remove_all_rules(wrtd), __LINE__);
@@ -94,10 +102,11 @@ void config_rule(struct wrtd_dev *wrtd) {
 }
 
 /**
-  * Sets up the paramaters of the ADC for
-  * acquisition and external trigger
-  */
-static void config_adc(struct adc_dev *adc) {
+ * Sets up the paramaters of the ADC for
+ * acquisition and external trigger
+ */
+static void config_adc(struct adc_dev *adc)
+{
 	struct adc_conf config;
 
 	// Acquisition setup
@@ -122,15 +131,15 @@ static void config_adc(struct adc_dev *adc) {
 
 
 /**
-  * Writes the data from a buffer into a file in csv format
-  */
-void write_acq(struct adc_dev *adc, struct adc_buffer *buffer) {
+ * Writes the data from a buffer into a file in csv format
+ */
+void write_acq(struct adc_buffer *buffer)
+{
 	int value1, value2, value3, value4;
-	double time = 0;
 	FILE *file = fopen(CSV_FILE, "w");
-	adc_check_error("Failed to open file for writting data");
+	adc_check_error("Failed to open file for writing data");
 	
-	for (int i = 0; i < PRESAMLPLES + POSTSAMPLES; i++) {
+	for (int i = 0; i < PRESAMPLES + POSTSAMPLES; i++) {
 		adc_buffer_get_sample(buffer, 0, i, &value1);
 		adc_buffer_get_sample(buffer, 1, i, &value2);
 		adc_buffer_get_sample(buffer, 2, i, &value3);
@@ -145,9 +154,10 @@ void write_acq(struct adc_dev *adc, struct adc_buffer *buffer) {
 }
 
 /**
-  * Acquires data from the ADC
-  */
-void acquire(struct adc_dev *adc) {
+ * Acquires data from the ADC
+ */
+void acquire(struct adc_dev *adc)
+{
 	struct adc_buffer *buffer = adc_request_buffer(adc, SAMPLES, NULL,  0);
 	adc_check_error("Failed to allocate buffer");
 
@@ -165,13 +175,14 @@ void acquire(struct adc_dev *adc) {
 		adc_check_error("Failed to fill buffer");
 	}
 
-	write_acq(adc, buffer);
+	write_acq(buffer);
 
 	adc_release_buffer(adc, buffer, NULL);
 	adc_check_error("Failed to release buffer");
 }
 
-int main() {
+int main()
+{
 	struct wrtd_dev *wrtd;
 	uint32_t node_id;
 	struct adc_dev *adc;
@@ -179,7 +190,8 @@ int main() {
 	// Initialize WRTD
 	wrtd_check_status(wrtd_get_node_id(1, &node_id), __LINE__);
 	wrtd_check_status(wrtd_init(node_id, false, NULL, &wrtd), __LINE__);
-	
+
+	check_sync(wrtd);	
 	config_alarm(wrtd);
 	config_rule(wrtd);
 

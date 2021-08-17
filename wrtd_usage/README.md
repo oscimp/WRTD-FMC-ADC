@@ -334,6 +334,38 @@ int main()
 }
 ```
 
+### Verifying White Rabbit synchronization
+
+We can easily check if time is synchronized by reading a global attribute (more on attributes in the next paragraph).
+```c
+bool is_synced;
+wrtd_get_attr_bool(wrtd, WRTD_GLOBAL_REP_CAP_ID, WRTD_ATTR_IS_TIME_SYNCHRONIZED, &is_synced);
+if (is_synced)
+	printf("WRTD is synchronized.\n");
+else
+	printf("WRTD is not synchronized.\n");
+```
+
+### Error checking
+
+The WRTD API also provides a way to check for errors.
+Most functions will return a status value which can be checked against `WRTD_SUCCESS`.
+The function `wrtd_error_message` can also be used to get a string for the error.
+
+I like to write and use the following function:
+```c
+static void wrtd_check_status(wrtd_status status, int line)
+{
+	char status_str[256];
+	if (status != WRTD_SUCCESS) {
+		wrtd_error_message(NULL, status, status_str);
+		fprintf(stderr, "WRTD ERROR: Line %i, %s\n", line,  status_str);
+		exit(status);
+	}
+	errno = 0;
+}
+```
+
 ### Configuring a rule
 
 Before declaring your first rule, I would suggest disabling and removing all existing rules in case there are any:
@@ -397,7 +429,7 @@ adc_set_conf(&config, ADC_CONF_TRG_EXT_ENABLE, true);
 // Set the polarity
 adc_set_conf(&config, ADC_CONF_TRG_EXT_POLARITY, ADC_TRG_POL_POS);
 // No delay
-adc_set_conf(&config, ADC_CONF_TRG_EXT_DELAY, delay);
+adc_set_conf(&config, ADC_CONF_TRG_EXT_DELAY, 0);
 
 // Applying the configuration
 adc_apply_config(adc, 0, &config);
@@ -450,20 +482,23 @@ wrtd_set_attr_bool(wrtd, alarm_id, WRTD_ATTR_ALARM_ENABLE, true);
 
 ### Understanding delays
 
-We know all nodes have synchronized clocks, however transmission and processing times may vary between events.
-The key to synchronized events is delay.
+We know all nodes have synchronized clocks, thanks to the White Rabbit network and the SPEC FPGA design.
+However, transmission and processing times may vary between events.
+Thus the key to synchronized events is delay.
 
 The solution is that every event contains a timestamp.
 This way when a rule receives an event, it will wait until this timestamp is reached before sending the output event.
 
-The output event will have the same timestamp as the input one, with the delay specified by the rule added.
+The output event will have the same timestamp as the input one, with the additional delay specified by the rule.
 If no delay is set, there is no way that the output event can be processed in time by a receiving node as we have to account for transmission and processing times.
 
 ## 3. Examples
 
 ### Simple acquisition
 
-The goal here is to reproduce the test acquisition described it part 1 and coded `adc-test.c`, but to use the ADC's external trigger coming from WRTD instead of a software trigger.
+The goal here is to reproduce the test acquisition described it part 1 and coded in `adc-test.c`, but to use the ADC's external trigger coming from WRTD instead of a software trigger.
 This means we will still only be using one board and one computer for this experiment.
 
-We will create a rule that takes an input signal from the computer (which will actually be an alamr as discussed earlier), and outputs into the ADC's external trigger.
+We will create a rule that takes an input signal from the computer (which will actually be an alarm as discussed earlier), and outputs into the ADC's external trigger.
+
+The code for this example is provided in `wrtd-test.c`.
