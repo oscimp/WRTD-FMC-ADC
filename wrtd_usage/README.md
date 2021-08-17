@@ -514,4 +514,4 @@ When the alarm triggers, the master will immediately send a message into the Whi
 The slave will trigger its ADC once it receives the message, and the timestamp is reached.
 
 Here is an image of the whole process:
-![Master/Slave setup](master-slave.png)
+<img src="master-slave.png">
