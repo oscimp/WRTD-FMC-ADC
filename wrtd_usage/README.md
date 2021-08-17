@@ -426,3 +426,14 @@ wrtd_set_attr_tstamp(wrtd, alarm_id, WRTD_ATTR_ALARM_TIME, &time);
 // Enable alarm
 wrtd_set_attr_bool(wrtd, alarm_id, WRTD_ATTR_ALARM_ENABLE, true);
 ```
+
+### Understanding delays
+
+We know all nodes have synchronized clocks, however transmission and processing times may vary between events.
+The key to synchronized events is delay.
+
+The solution is that every event contains a timestamp.
+This way when a rule receives an event, it will wait until this timestamp is reached before sending the output event.
+
+The output event will have the same timestamp as the input one, with the delay specified by the rule added.
+If no delay is set, there is no way that the output event can be processed in time by a receiving node as we have to account for transmission times.
