@@ -279,6 +279,24 @@ static void write_csv(struct adc_buffer *buffer, char *filename)
 `adc-test.c` will perform an acquisition and write the result to a file in CSV format.
 I you want to try it out, edit the `ZIO_ID`, `SW_TRG` and `CSV_FILE` macros at the start of the file before compiling.
 
+ADC-lib buffer also contain a timestamp for each shot (not for each sample).
+That means we can get the time at which the acquisition started using `adc_tstamp_buffer`:
+```c
+struct adc_timestamp timestamp;
+adc_tstamp_buffer(buffer, &timestamp);
+```
+
+This function fills up a `struct adc_timestamp` which contains 3 members: `.secs`, `.ticks` and `.bins`.
+`.bins` seems to always be zero in our case, and we can extract nanoseconds from `.ticks` using a multiplication factor (I had to search in the source code to find that out...).
+Here is a conversion function:
+```c
+static uint32_t adc_ticks_to_ns(uint32_t ticks)
+{
+	return ticks * FA100M14B4C_UTC_CLOCK_NS;
+}
+```
+You need to include `fmc-adc-100m14b4cha.h` to use this constant, which also requires giving the option `-I$BUILD_DIR/fmc-adc-100m14b4cha-sw/kernel` to gcc when compiling (again already provided if you use `compile.sh`).
+
 ## 2. How to use WRTD
 
 We will be using the C library provided by WRTD to interact with the SPEC board.
