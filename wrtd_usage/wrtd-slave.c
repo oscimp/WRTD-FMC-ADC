@@ -96,8 +96,8 @@ static void config_adc(struct adc_dev *adc)
 	memset(&config, 0, sizeof(struct adc_conf));
 	config.type = ADC_CONF_TYPE_ACQ;
 	adc_set_conf(&config, ADC_CONF_ACQ_N_SHOTS, NSHOTS);
-	adc_set_conf(&config, ADC_CONF_ACQ_POST_SAMP, POSTSAMPLE);
-	adc_set_conf(&config, ADC_CONF_ACQ_PRE_SAMP, PRESAMPLE);
+	adc_set_conf(&config, ADC_CONF_ACQ_POST_SAMP, POSTSAMPLES);
+	adc_set_conf(&config, ADC_CONF_ACQ_PRE_SAMP, PRESAMPLES);
 	adc_set_conf(&config, ADC_CONF_ACQ_UNDERSAMPLE, 0);
 	adc_apply_config(adc, 0, &config);
 	adc_check_error("Failed to apply acquisition configuration");
