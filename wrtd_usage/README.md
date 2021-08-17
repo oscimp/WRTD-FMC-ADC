@@ -334,18 +334,6 @@ int main()
 }
 ```
 
-### Verifying White Rabbit synchronization
-
-We can easily check if time is synchronized by reading a global attribute (more on attributes in the next paragraph).
-```c
-bool is_synced;
-wrtd_get_attr_bool(wrtd, WRTD_GLOBAL_REP_CAP_ID, WRTD_ATTR_IS_TIME_SYNCHRONIZED, &is_synced);
-if (is_synced)
-	printf("WRTD is synchronized.\n");
-else
-	printf("WRTD is not synchronized.\n");
-```
-
 ### Error checking
 
 The WRTD API also provides a way to check for errors.
@@ -365,6 +353,20 @@ static void wrtd_check_status(wrtd_status status, int line)
 	errno = 0;
 }
 ```
+
+### Verifying White Rabbit synchronization
+
+We can easily check if time is synchronized by reading a global attribute (more on attributes in the next paragraph).
+```c
+bool is_synced;
+wrtd_get_attr_bool(wrtd, WRTD_GLOBAL_REP_CAP_ID, WRTD_ATTR_IS_TIME_SYNCHRONIZED, &is_synced);
+if (is_synced)
+	printf("WRTD is synchronized.\n");
+else
+	printf("WRTD is not synchronized.\n");
+```
+
+You can compile and use `wrtd-sync.c` to check if your board is properly connected to White Rabbit.
 
 ### Configuring a rule
 
@@ -502,3 +504,4 @@ This means we will still only be using one board and one computer for this exper
 We will create a rule that takes an input signal from the computer (which will actually be an alarm as discussed earlier), and outputs into the ADC's external trigger.
 
 The code for this example is provided in `wrtd-test.c`.
+If you want to use it, modify the macros `ZIO_ID` and `CSV_FILE` at the beginning of the file before compiling.

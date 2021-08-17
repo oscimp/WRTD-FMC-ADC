@@ -52,6 +52,7 @@ static void check_sync(struct wrtd_dev *wrtd)
 		printf("WRTD time is synchronized.\n");
 	else {
 		fprintf(stderr, "WRTD time is not synchronized");
+		wrtd_close(wrtd);
 		exit(EXIT_FAILURE);
 	}
 }
