@@ -61,7 +61,7 @@ Read the comments of these functions if you want to undersand the sequence of in
 For every register we want to access, we can add an entry in the `zfad_cset_ext_zattr` array defined inside `fa-zio-drv.c`.
 For each entry, we need to specify a string that will appear as the filename in sysfs, the read/write permissions, and a unique ID that should be defined in the `zfadc_dregs_enum` enumeration mentionned earlier.
 
-Then we can modify the two functions `zfad_conf_set` (write) and `zfad_info_get` to tell the kernel what to do when a pseudo file from sysfs is read or written to.
+Then we can modify the two functions `zfad_conf_set` (for writing) and `zfad_info_get` (for reading) to tell the kernel what to do when a pseudo file from sysfs is read or written to.
 In our case we want to add special cases for I2C registers.
 We don't want the default case to happen, and instead call `zfad_i2c_read` or `zfad_i2c_write`.
 As described in the Si570 documentation, the clock registers can contain several information, so it is neccessary to reconstruct the wanted value by masking and bit shifting.
@@ -85,6 +85,11 @@ The 10 most significant bits are the decimal part and the 28 remaining are the f
 This is not a usual format to work with so I wrote two conversion functions, transforming the 38bit number (stored inside a 64bit unsigned integer as the lower bits) to a double precision floating point number from the IEEE norm, and the reverse operation.
 
 These function can be accessed with the `rfreq.h` header and are named respectively `rfreq_to_float` and `float_to_rfreq`.
+
+If you have two 32bit unsigned integer containing the decimal and fractionnal part of RFREQ, you can reconstruct a 64bit unsigned integer using this formula:
+```c
+uint64_t rfreq = (((uint64_t) rfreq_int) << 28) | rfreq_frac;
+```
 
 ## Recompiling the bitstream
 
