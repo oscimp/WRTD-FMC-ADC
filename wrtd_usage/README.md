@@ -379,7 +379,7 @@ wrtd_remove_all_rules(wrtd);
 Each rule will have an ID associated with it in the form of a string (in the documentation it may be refered as a repeated capability ID but I feel like it over complicates things).
 In the same fashion, events also have a string to identidy them.
 To configure a rule, we need to set the value for some parameters called "attributes" using functions from the `wrtd_set_attr_<type>` family.
-We will be interested in setting a parameter for the input event, one for the output event, one for enabling the rule, and most likely one to add a delay (more on that later).
+We will be interested in setting a parameter for the input event, one for the output event, one for enabling the rule, and most likely one to add a delay (more on delays later).
 
 Here is a typical rule declaration:
 ```c
@@ -498,10 +498,20 @@ If no delay is set, there is no way that the output event can be processed in ti
 
 ### Simple acquisition
 
-The goal here is to reproduce the test acquisition described it part 1 and coded in `adc-test.c`, but to use the ADC's external trigger coming from WRTD instead of a software trigger.
+The goal here is to reproduce the test acquisition described it part 1 and coded in `adc-test.c`, but instead of using a software trigger, we will use the external trigger that is mapped to a WRTD local channel.
 This means we will still only be using one board and one computer for this experiment.
 
-We will create a rule that takes an input signal from the computer (which will actually be an alarm as discussed earlier), and outputs into the ADC's external trigger.
+We create a rule that takes an input signal from the computer (which is actually an alarm as discussed earlier), and outputs into the ADC's external trigger.
 
 The code for this example is provided in `wrtd-test.c`.
 If you want to use it, modify the macros `ZIO_ID` and `CSV_FILE` at the beginning of the file before compiling.
+
+### Master/Slave setup
+
+In this example we have a master and one (or more) slave(s).
+The master will first configure an alarm which will trigger at time _t_.
+When the alarm triggers, the master will immediately send a message into the White Rabbit network with one rule with a timestamp of _t + Δt_, and wait for time _t + Δt_ before it triggers its own ADC with a second rule.
+The slave will trigger it ADC once it receives the message, and the timestamp is reached.
+
+Here is an image of the whole process:
+![Master/Slave setup](master-slave.png)
