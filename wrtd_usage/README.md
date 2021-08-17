@@ -154,7 +154,7 @@ struct adc_buffer *buffer;
 buffer = adc_request_buffer(adc, NSHOTS * (PRESAMPLES + POSTSAMPLES), NULL, 0);
 
 // Time struct to specify timeouts
-struct timeval timeout = { 0, 0 };
+struct timeval timeout = { .tv_sec = 0, tv_usec = 0 };
 
 // Stopping any pending acquisition
 adc_acq_stop(adc, 0);
@@ -359,7 +359,7 @@ wrtd_set_attr_string(wrtd, rule_id, WRTD_ATTR_RULE_SOURCE, input_event_id);
 wrtd_set_attr_string(wrtd, rule_id, WRTD_ATTR_RULE_DESTINATION, output_event_id);
 
 // Configure delay to 500µs
-struct wrtd_tstamp delay = { .seconds = 0, .ns = 500e3, .frac = 0};
+struct wrtd_tstamp delay = { .seconds = 0, .ns = 500e3, .frac = 0 };
 wrtd_set_attr_tstamp(wrtd, rule_id, WRTD_ATTR_RULE_DELAY, &delay);
 
 // Enable rule
@@ -390,7 +390,39 @@ The concept of an alarm is simple: you configure a date at which an event will b
 You can also do more with alarms such as generating a periodic event.
 However it must be noted that the SPEC150T design only allows for a single alarm.
 
-As for rules, we use attributes to configure what we need.
+We can first remove any existing alarm:
 ```c
-TODO
+wrtd_disable_all_alarms(wrtd);
+wrtd_remove_all_alarms(wrtd);
+```
+
+Like for rules, we use attributes to configure what we need.
+To define a date at which the alarm first triggers, we need to know the time of the WRTD clock.
+Thankfully it can be easily read with a global attribute.
+```c
+// Create alarm
+wrtd_add_alarm(wrtd, alarm_id);
+
+// Structure used to define precise time values
+struct tstamp time = { .seconds = 0, .ns = 0, .frac = 0 };
+
+// Set period to 0 (the alarm triggers only once)
+wrtd_set_attr_tstamp(wrtd, alarm_id, WRTD_ATTR_ALARM_PERIOD, &time);
+
+// Reading the current time of the clock
+wrtd_get_attr_tstamp(wrtd, WRTD_GLOBAL_REP_CAP_ID, WRTD_ATTR_SYS_TIME, &time);
+
+// The alarm signal needs to be sent before it has to be processed by the receiver
+// This tells to send the alarm in one second
+time.seconds += 1;
+wrtd_set_attr_tstamp(wrtd, alarm_id, WRTD_ATTR_ALARM_SETUP_TIME, &time);
+
+// This is the time at which the rule receiving the alarm as its input event will need to process it.
+// The node should receive the event before this date so transmission times do not interfere.
+// (the delay between setup time and trigger time can be much less than a second)
+time.seconds += 1;
+wrtd_set_attr_tstamp(wrtd, alarm_id, WRTD_ATTR_ALARM_TIME, &time);
+
+// Enable alarm
+wrtd_set_attr_bool(wrtd, alarm_id, WRTD_ATTR_ALARM_ENABLE, true);
 ```
