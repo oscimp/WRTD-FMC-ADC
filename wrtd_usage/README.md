@@ -380,7 +380,28 @@ But then how do we trigger the ADC, and how do we generate an event from the com
 
 #### Triggering the ADC
 
-This one is pretty simple: in the design for the SPEC and FMC ADC, the WRTD local channel 1 is mapped to the ADC's external trigger. This means that the event ID `LC-O1` corresponds to the ADC trigger!
+This one is pretty simple: in the design for the SPEC and FMC ADC, the WRTD local channel 1 is mapped to the ADC's external trigger.
+This means that the event ID `LC-O1` corresponds to the ADC trigger!
+
+We also need to configure a few ADC parameters:
+```c
+// Initializing the configuration to default
+struct adc_conf config;
+memset(&config, 0, sizeof(struct adc_conf));
+
+// Setting the category (external trigger in this case)
+config.type = ADC_CONF_TYPE_TRG_EXT;
+
+// Enable the external trigger
+adc_set_conf(&config, ADC_CONF_TRG_EXT_ENABLE, true);
+// Set the polarity
+adc_set_conf(&config, ADC_CONF_TRG_EXT_POLARITY, ADC_TRG_POL_POS);
+// No delay
+adc_set_conf(&config, ADC_CONF_TRG_EXT_DELAY, delay);
+
+// Applying the configuration
+adc_apply_config(adc, 0, &config);
+```
 
 #### Creating an event from the computer
 
@@ -436,4 +457,13 @@ The solution is that every event contains a timestamp.
 This way when a rule receives an event, it will wait until this timestamp is reached before sending the output event.
 
 The output event will have the same timestamp as the input one, with the delay specified by the rule added.
-If no delay is set, there is no way that the output event can be processed in time by a receiving node as we have to account for transmission times.
+If no delay is set, there is no way that the output event can be processed in time by a receiving node as we have to account for transmission and processing times.
+
+## 3. Examples
+
+### Simple acquisition
+
+The goal here is to reproduce the test acquisition described it part 1 and coded `adc-test.c`, but to use the ADC's external trigger coming from WRTD instead of a software trigger.
+This means we will still only be using one board and one computer for this experiment.
+
+We will create a rule that takes an input signal from the computer (which will actually be an alamr as discussed earlier), and outputs into the ADC's external trigger.
