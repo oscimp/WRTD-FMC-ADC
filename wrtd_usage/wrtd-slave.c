@@ -10,8 +10,9 @@
 #include <fmc-adc-100m14b4cha.h>
 
 #define NSHOTS 1
-#define PRESAMPLE 0
-#define POSTSAMPLE 100
+#define PRESAMPLES 0
+#define POSTSAMPLES 100
+#define SAMPLES (NSHOTS * (PRESAMPLES + POSTSAMPLES))
 
 #define ZIO_ID 0x0000
 
@@ -147,7 +148,7 @@ void write_acq(struct adc_dev *adc, struct adc_buffer *buffer)
  */
 void acquire(struct adc_dev *adc)
 {
-	struct adc_buffer *buffer = adc_request_buffer(adc, NSHOTS * (PRESAMPLE + POSTSAMPLE), NULL,  0);
+	struct adc_buffer *buffer = adc_request_buffer(adc, SAMPLES, NULL,  0);
 	adc_check_error("Failed to allocate buffer");
 
 	struct timeval timeout = { .tv_sec = 0, .tv_usec = 0 };
@@ -188,7 +189,7 @@ int main()
 	adc_init();
 	adc_check_error("Failed to initialize the library");
 
-	adc = adc_open("fmc-adc-100m14b4cha", ZIO_ID, 0, 0, ADC_F_FLUSH);
+	adc = adc_open("fmc-adc-100m14b4cha", ZIO_ID, SAMPLES, NSHOTS, ADC_F_FLUSH);
 	adc_check_error("Failed to open device");
 	config_adc(adc);
 	acquire(adc);
