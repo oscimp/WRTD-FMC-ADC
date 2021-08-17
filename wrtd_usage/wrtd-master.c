@@ -17,11 +17,14 @@
 
 #define CSV_FILE "/tmp/data.csv"
 
-static char *rule_id = "RULE-1";
-static char *message_id = "MSG";
+static char *rule_msg_id = "RULE-MSG";
+static char *rule_trg_id = "RULE-TRG";
+static char *alarm_id = "ALARM-1";
+static char *message_id = "MESSAGE";
 static char *trigger_id = "LC-O1";
 
-void wrtd_check_status(wrtd_status status, int line) {
+void wrtd_check_status(wrtd_status status, int line)
+{
 	char status_str[256];
 	if (status != WRTD_SUCCESS) {
 		wrtd_error_message(NULL, status, status_str);
@@ -31,7 +34,8 @@ void wrtd_check_status(wrtd_status status, int line) {
 	errno = 0;
 }
 
-static void adc_check_error(char *message) {
+static void adc_check_error(char *message)
+{
 	if (errno) {
 		fprintf(stderr, "ADC-LIB ERROR: %s: %s\n", message, adc_strerror(errno));
 		adc_exit();
@@ -39,7 +43,8 @@ static void adc_check_error(char *message) {
 	}
 }
 
-static inline uint32_t adc_ticks_to_ns(uint32_t ticks) {
+static inline uint32_t adc_ticks_to_ns(uint32_t ticks)
+{
 	return ticks * FA100M14B4C_UTC_CLOCK_NS;
 }
 
@@ -53,15 +58,39 @@ static void check_sync(struct wrtd_dev *wrtd)
 	if (is_synced)
 		printf("WRTD time is synchronized.\n");
 	else {
-		fprintf(stderr, "WRTD time is not synchronized");
+		fprintf(stderr, "WRTD time is not synchronized.\n");
 		wrtd_close(wrtd);
 		exit(EXIT_FAILURE);
 	}
 }
 
 /**
- * Creates a rule which will trigger the ADC
- * once the alarm rings.
+ * Creates an alarm which will 
+ * trigger the acquisition in 2s
+ */
+void config_alarm(struct wrtd_dev *wrtd)
+{
+	// Remove all existing alarms
+	wrtd_check_status(wrtd_disable_all_alarms(wrtd), __LINE__);
+	wrtd_check_status(wrtd_remove_all_alarms(wrtd), __LINE__);
+
+	wrtd_check_status(wrtd_add_alarm(wrtd, alarm_id), __LINE__);
+	// Set repeat to only once
+	struct wrtd_tstamp tstamp = { .seconds = 0, .ns = 0, .frac = 0 };
+	wrtd_check_status(wrtd_set_attr_tstamp(wrtd, alarm_id, WRTD_ATTR_ALARM_PERIOD, &tstamp), __LINE__);
+	// Set time for alarm triggering 2s after current time
+	wrtd_check_status(wrtd_get_attr_tstamp(wrtd, WRTD_GLOBAL_REP_CAP_ID, WRTD_ATTR_SYS_TIME, &tstamp), __LINE__);
+	tstamp.seconds += 1;
+	wrtd_check_status(wrtd_set_attr_tstamp(wrtd, alarm_id, WRTD_ATTR_ALARM_SETUP_TIME, &tstamp), __LINE__);
+	tstamp.seconds += 1;
+	wrtd_check_status(wrtd_set_attr_tstamp(wrtd, alarm_id, WRTD_ATTR_ALARM_TIME, &tstamp), __LINE__);
+	// Enable alarm
+	wrtd_check_status(wrtd_set_attr_bool(wrtd, alarm_id, WRTD_ATTR_ALARM_ENABLED, true), __LINE__);
+}
+
+/**
+ * Creates two rules which will trigger the ADC
+ * once the alarm rings and send a message to the slave(s).
  */
 void config_rule(struct wrtd_dev *wrtd)
 {
@@ -70,17 +99,22 @@ void config_rule(struct wrtd_dev *wrtd)
 	wrtd_check_status(wrtd_remove_all_rules(wrtd), __LINE__);
 
 	// Create rule
-	wrtd_check_status(wrtd_add_rule(wrtd, rule_id), __LINE__);
-	// Set input event as a message
-	wrtd_check_status(wrtd_set_attr_string(wrtd, rule_id, WRTD_ATTR_RULE_SOURCE, message_id), __LINE__);
-	// Set output event as the local channel which triggers the ADC
-	wrtd_check_status(wrtd_set_attr_string(wrtd, rule_id, WRTD_ATTR_RULE_DESTINATION, trigger_id), __LINE__);
-	// Add 500µs delay to the event timestamp
-	struct wrtd_tstamp delay = { .seconds = 0, .ns = 500e3, .frac = 0 };
-	wrtd_check_status(wrtd_set_attr_tstamp(wrtd, rule_id, WRTD_ATTR_RULE_DELAY, &delay), __LINE__);
-
-	// Enable rule
-	wrtd_check_status(wrtd_set_attr_bool(wrtd, rule_id, WRTD_ATTR_RULE_ENABLED, true), __LINE__);
+	wrtd_check_status(wrtd_add_rule(wrtd, rule_msg_id), __LINE__);
+	wrtd_check_status(wrtd_add_rule(wrtd, rule_trg_id), __LINE__);
+	// Set input events
+	wrtd_check_status(wrtd_set_attr_string(wrtd, rule_msg_id, WRTD_ATTR_RULE_SOURCE, alarm_id), __LINE__);
+	wrtd_check_status(wrtd_set_attr_string(wrtd, rule_trg_id, WRTD_ATTR_RULE_SOURCE, alarm_id), __LINE__);
+	// Set output events
+	wrtd_check_status(wrtd_set_attr_string(wrtd, rule_msg_id, WRTD_ATTR_RULE_DESTINATION, message_id), __LINE__);
+	wrtd_check_status(wrtd_set_attr_string(wrtd, rule_trg_id, WRTD_ATTR_RULE_DESTINATION, trigger_id), __LINE__);
+	// Add delay to the event timestamp
+	struct wrtd_tstamp delay = { .seconds = 0, .ns = 0, .frac = 0 };
+	wrtd_check_status(wrtd_set_attr_tstamp(wrtd, rule_msg_id, WRTD_ATTR_RULE_DELAY, &delay), __LINE__);
+	delay.ns = 500e3;
+	wrtd_check_status(wrtd_set_attr_tstamp(wrtd, rule_trg_id, WRTD_ATTR_RULE_DELAY, &delay), __LINE__);
+	// Enable rules
+	wrtd_check_status(wrtd_set_attr_bool(wrtd, rule_msg_id, WRTD_ATTR_RULE_ENABLED, true), __LINE__);
+	wrtd_check_status(wrtd_set_attr_bool(wrtd, rule_trg_id, WRTD_ATTR_RULE_ENABLED, true), __LINE__);
 }
 
 /**
@@ -113,7 +147,7 @@ static void config_adc(struct adc_dev *adc)
 
 
 /**
- * Writes the data from a buffer into a file in CSV format
+ * Writes the data from a buffer into a file in csv format
  */
 void write_acq(struct adc_dev *adc, struct adc_buffer *buffer)
 {
@@ -157,9 +191,10 @@ void acquire(struct adc_dev *adc)
 	adc_acq_start(adc, ADC_F_FLUSH, &timeout);
 	adc_check_error("Failed to start acquisition");
 
+	timeout.tv_sec = 5;
+
 	for (int i = 0; i < NSHOTS; i++) {
-		// No timeout since we are waiting for the master
-		adc_fill_buffer(adc, buffer, ADC_F_FIXUP, NULL);
+		adc_fill_buffer(adc, buffer, ADC_F_FIXUP, &timeout);
 		adc_check_error("Failed to fill buffer");
 	}
 
@@ -172,7 +207,7 @@ void acquire(struct adc_dev *adc)
 int main()
 {
 	struct wrtd_dev *wrtd;
-	uint32_t node_count, node_id;
+	uint32_t node_id;
 	struct adc_dev *adc;
 
 	// WRTD initialization
@@ -180,8 +215,9 @@ int main()
 	wrtd_check_status(wrtd_init(node_id, false, NULL, &wrtd), __LINE__);
 	
 	check_sync(wrtd);
+	config_alarm(wrtd);
 	config_rule(wrtd);
-	printf("Slave configured.\n");
+	printf("Master configured.\n");
 	wrtd_check_status(wrtd_close(wrtd), __LINE__);
 	
 	// ADC-lib initialization

@@ -23,7 +23,7 @@ static void wrtd_check_status(wrtd_status status, int line)
 static void check_sync(struct wrtd_dev *wrtd)
 {
 	bool is_synced;
-	wrt_check_status(wrtd_get_attr_bool(wrtd, WRTD_GLOBAL_REP_CAP_ID, WRTD_ATTR_IS_TIME_SYNCHRONIZED, &is_synced), __LINE__);
+	wrtd_check_status(wrtd_get_attr_bool(wrtd, WRTD_GLOBAL_REP_CAP_ID, WRTD_ATTR_IS_TIME_SYNCHRONIZED, &is_synced), __LINE__);
 	if (is_synced)
 		printf("WRTD time is synchronized.\n");
 	else {

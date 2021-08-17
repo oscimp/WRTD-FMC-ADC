@@ -279,8 +279,8 @@ static void write_csv(struct adc_buffer *buffer, char *filename)
 `adc-test.c` will perform an acquisition and write the result to a file in CSV format.
 I you want to try it out, edit the `ZIO_ID`, `SW_TRG` and `CSV_FILE` macros at the start of the file before compiling.
 
-ADC-lib buffer also contain a timestamp for each shot (not for each sample).
-That means we can get the time at which the acquisition started using `adc_tstamp_buffer`:
+ADC-lib buffers also contain a timestamp for each shot (not for each sample).
+That means we can get the time at which the trigger was received using `adc_tstamp_buffer`:
 ```c
 struct adc_timestamp timestamp;
 adc_tstamp_buffer(buffer, &timestamp);
