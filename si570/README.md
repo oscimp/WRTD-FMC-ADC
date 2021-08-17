@@ -26,7 +26,7 @@ Now for some explanation of what the patch does to achieve this access:
 ### I2C communication
 
 To communicate with the Si570 clock via I2C, the FPGA design uses a component from OpenCores called "I2C master" available here: https://opencores.org/projects/i2c .
-It rather uses a wrapper over this component, and it must also be noted that the documentation found on OpenCores for the component has errors in it (notably the register adresses that are wrong).
+To be more exact, it rather uses a wrapper over this component, and it must also be noted that the documentation found on OpenCores for the component has errors in it (notably the register adresses that are wrong).
 
 #### Accessing the I2C master
 
@@ -48,6 +48,7 @@ There are 5 registers of interest for the I2C master component, which are labell
 We can add these in the `zfadc_dregs_enum` enumeration defined in `fmc-adc-100m14b4cha`.
 These are all 8bit registers, which we can describe in the `zfa_regs` array defined inside `fa-regtable.c`.
 Since the addresses provided by the official OpenCores documentation are wrong, I had to manually find them in the HDL code.
+One oddity is also that register addresses need to bit-shifted twice to the left because of granularity issues caused by the wrapper used.
 
 Some of these registers are bitfields so I defined a few macros inside `fmc-adc-100m14b4cha.h` to help masking individual bits.
 
@@ -57,7 +58,25 @@ Read the comments of these functions if you want to undersand the sequence of in
 
 ### Interacting with sysfs
 
-TODO
+For every register we want to access, we can add an entry in the `zfad_cset_ext_zattr` array defined inside `fa-zio-drv.c`.
+For each entry, we need to specify a string that will appear as the filename in sysfs, the read/write permissions, and a unique ID that should be defined in the `zfadc_dregs_enum` enumeration mentionned earlier.
+
+Then we can modify the two functions `zfad_conf_set` (write) and `zfad_info_get` to tell the kernel what to do when a pseudo file from sysfs is read or written to.
+In our case we want to add special cases for I2C registers.
+We don't want the default case to happen, and instead call `zfad_i2c_read` or `zfad_i2c_write`.
+As described in the Si570 documentation, the clock registers can contain several information, so it is neccessary to reconstruct the wanted value by masking and bit shifting.
+
+In the case of RFREQ (see the Si570 documentation), the 38bit value does not fit in the 32bit unsigned integer used by the driver to read/write from sysfs.
+To compensate for that fact, I provided two pseudo files to read the decimal part and the fractionnal part separately (see the next paragraph for more details).
+
+Here is how to interact with sysfs from your shell:
+```bash
+# To read just use cat
+cat /sys/bus/zio/devices/adc-100m14b-XXXX/cset0/si570-hsdiv
+
+# To write use echo and output redirection
+echo 1 > /sys/bus/zio/devices/adc-100m14b-XXXX/cset0/si570-hsdiv
+```
 
 ### RFREQ conversion
 
