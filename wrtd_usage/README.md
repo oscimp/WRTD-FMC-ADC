@@ -514,4 +514,12 @@ When the alarm triggers, the master will immediately send a message into the Whi
 The slave will trigger its ADC once it receives the message, and the timestamp is reached.
 
 Here is an image of the whole process:
+
 <img src="master-slave.png">
+
+The blue arrow represents the message sent by the master into the White Rabbit network.
+
+The two programs `wrtd-master.c` and `wrtd_slave.c` will do exactly that.
+To use them you first need to launch the slave program on your slave computer, which will wait for a trigger to happen.
+Then you launch the master program on the master computer.
+Both programs should terminate after a few seconds, and you should get a CSV file on each machine where you specified the location (`CSV_FILE` macro).
