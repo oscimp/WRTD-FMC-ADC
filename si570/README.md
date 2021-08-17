@@ -4,15 +4,53 @@
 
 This section will cover a way to access registers (read and write) using sysfs (the Linux virtual file system at /sys).
 This may or may not be useful towards the goal of disciplining the clock since we will necessarely need to modify the FPGA design.
-It at least proves that we can change the frequency of the ADC clock using the I2C interface that is accessible trough the FMC connector.
+It at least proves that we can change the frequency of the ADC clock using the I2C interface that is accessible through the FMC connector.
+
+To access the registers, we will be modifying the fmc-adc-100m14bcha driver.
+The patch provided should be applied using the following commands:
+```bash
+cd $BUILD_DIR/fmc-adc-100m14b4cha-sw
+patch -p 1 < <path to this repository>/si570/TODO.patch
+```
+After doing your modifications to the source files, you will need to recompile the driver.
+Comment out the 2 lines that checkout a branch and patch files in the script `fmc_adc_100m_build.sh` located in the ohwr-build-scripts repository used to intall WRTD.
+Place your terminal at the scripts directory of the ohwr-build-script repository and run the following commands.
+```bash
+rm $BUILD_DIR/buildt.fmc-adc-100m14b4cha-sw
+sh fmc_adc_100m_build.sh
+```
+Now reboot, flash the FPGA, and you should get access to some of the Si570 registers if you look inside `/sys/bus/zio/devices/adc-100m-<ZIO_ID>/cset0`>.
+
+Now for some explanation of what the patch does to achieve this access:
+
+### I2C communication
+
+To communicate with the Si570 clock via I2C, the FPGA design uses a component from OpenCores called "I2C master" available here: https://opencores.org/projects/i2c .
+It rather uses a wrapper over this component, and it must also be noted that the documentation found on OpenCores for the component has errors in it (notably the register adresses that are wrong).
+
+#### Accessing the I2C master
+
+This component is wired on a Wishbone bus that also allows to the ADC's registers and various other interfaces available through the FMC connector.
+If we take a look at the `fmc-adc-100m14b4cha.h` header, we can see it defines offsets for some of the interfaces available, but not for the I2C one.
+We can just add a macro `ADC_I2C_OFF` as we can find out the offset of the I2C component by investigating the HDL code (`0x1600`).
+
+However, the kernel uses its own virtual address space to access these hardware parts.
+Looking at the driver probe function in `fa-core.c`, we can see a base address is attributed in the `fa_top_level` member of the device structure.
+And this structure also has other members to store an address for each wishbone interface, which add an offset to the base address.
+We can then add a member called `fa_i2c_base` in the definition of `struct fa_dev` inside `fmc-adc-100m14b4cha-sw.h`, and set it equal to `fa->fa_top_level + ADC_I2C_OFF` in the probe function.
+
+#### Using the I2C master
+
+Now we can communicate with the I2C master component using `fa_readl`/`fa_writel` and the address stored in the `fa_i2c_base`.
+We just need to figure out the register addresses of this component, and the series of instructions to use to read or write from the clock's registers.
 
 TODO
 
 ### RFREQ conversion
 
-The Si570 documentation describes the RFREQ value as a 38 bits fixed point number.
+The Si570 documentation describes the RFREQ value as a 38bit fixed point number.
 The 10 most significant bits are the decimal part and the 28 remaining are the fractionnal part.
-This is not a usual format to work with so I wrote two conversion functions, transforming the 38 bits number (stored inside a 64bit unsigned integer as the lower bits) to a double precision floating point number from the IEEE norm, and the reverse operation.
+This is not a usual format to work with so I wrote two conversion functions, transforming the 38bit number (stored inside a 64bit unsigned integer as the lower bits) to a double precision floating point number from the IEEE norm, and the reverse operation.
 
 These function can be accessed with the `rfreq.h` header and are named respectively `rfreq_to_float` and `float_to_rfreq`.
 
