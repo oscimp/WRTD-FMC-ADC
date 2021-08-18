@@ -172,8 +172,8 @@ After completion, you should see a file named `wrtd_ref_spec150t_adc.bin`. Just 
 
 ## 3. What is left to explore
 
-To synchronize the ADC clock, we will need to modify the FPGA design in some way.
-The issue is that it is seems extremely difficult from our perspective to simulate the whole design or even some parts of it, so debugging any modifications will be a pain.
+To synchronize the ADC clock on the White Rabbit clock, we will need to modify the FPGA design in some way.
+The issue is that it seems extremely difficult from our perspective to simulate the whole design or even some parts of it, so debugging any modifications will be a pain.
 
 To explore the FPGA design, look at the code inside `wrtd/hdl/top/wrtd_ref_spec150t_adc` and inside the various dependencies inside `wrtd/dependencies`.
 Here is a general idea of what some dependencies define:
@@ -195,7 +195,7 @@ Dimitris LAMPRIDIS from CERN mentionned we could ask him by email if we have que
 Here is the component in question: https://ohwr.org/project/wr-cores/blob/proposed_master/modules/wr_si57x_interface/wr_si57x_interface.vhd
 
 Also since the Si570 is on the ADC and due to the wiring, we don't have direct access to the ADC clock signal from the FPGA.
-We will need to get a reconstructed clock signal that can be found as an output of the data deserializer, which will necessarely have a phase difference from the original signal.
+We will need to get a reconstructed clock signal that can be found as an output of the data deserializer, which will necessarily have a phase difference from the original signal.
 In short, the data sent by the ADC uses a clock signal that is 4 times the Si570 frequency, and the deserializer receives that clock to process data, which it scales to its needs.
 
 ### Phase lock loop in userspace
@@ -205,7 +205,7 @@ This means adding a component that calculates that measurement, and providing a 
 
 ### Clock domains
 
-The Si570 is supposed to run at 100Mhz, and the White Rabbit synchronized clock used in the PLL runs at 125MHz.
+The Si570 is supposed to run at 100MHz, and the White Rabbit synchronized clock used in the PLL runs at 125MHz.
 This means the PLL will divide both frequencies, and we will then have 5 different edges on which the synchronization can happen.
 Knowing which edge is the right one is not a trivial task, but if we get there we will have at least transformed a uniform random distribution of the sample delay to a discrete one which is more manageable.
 
