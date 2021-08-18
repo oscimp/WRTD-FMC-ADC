@@ -1,0 +1,78 @@
+From 163db8a6969b4c9338bfdf49cb5732131e67b072 Mon Sep 17 00:00:00 2001
+From: Mathis MARION <mathis.marion@grenoble-inp.org>
+Date: Wed, 18 Aug 2021 11:39:51 +0200
+Subject: [PATCH 3/3] Write access to some Si570 registers
+
+---
+ kernel/fa-zio-drv.c | 41 +++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 37 insertions(+), 4 deletions(-)
+
+diff --git a/kernel/fa-zio-drv.c b/kernel/fa-zio-drv.c
+index 04d389b..547fa44 100644
+--- a/kernel/fa-zio-drv.c
++++ b/kernel/fa-zio-drv.c
+@@ -126,10 +126,10 @@ static struct zio_attribute zfad_cset_ext_zattr[] = {
+ 	ZIO_PARAM_EXT("sample-counter", ZIO_RO_PERM, ZFAT_CNT, 0),
+ 	ZIO_PARAM_EXT("test-data-pattern", ZIO_RW_PERM, ZFAT_ADC_TST_PATTERN, 0),
+ 
+-	ZIO_PARAM_EXT("si570-hsdiv",      ZIO_RO_PERM, ZFA_SI570_HSDIV, 0),
+-	ZIO_PARAM_EXT("si570-n1",         ZIO_RO_PERM, ZFA_SI570_N1, 0),
+-	ZIO_PARAM_EXT("si570-rfreq-int",  ZIO_RO_PERM, ZFA_SI570_RFREQ_INT, 0),
+-	ZIO_PARAM_EXT("si570-rfreq-frac", ZIO_RO_PERM, ZFA_SI570_RFREQ_FRAC, 0),
++	ZIO_PARAM_EXT("si570-hsdiv",      ZIO_RW_PERM, ZFA_SI570_HSDIV, 0),
++	ZIO_PARAM_EXT("si570-n1",         ZIO_RW_PERM, ZFA_SI570_N1, 0),
++	ZIO_PARAM_EXT("si570-rfreq-int",  ZIO_RW_PERM, ZFA_SI570_RFREQ_INT, 0),
++	ZIO_PARAM_EXT("si570-rfreq-frac", ZIO_RW_PERM, ZFA_SI570_RFREQ_FRAC, 0),
+ };
+ 
+ #if 0 /* FIXME Unused until TLV control will be available */
+@@ -178,6 +178,7 @@ static int zfad_conf_set(struct device *dev, struct zio_attribute *zattr,
+ 	void *baseoff = fa->fa_adc_csr_base;
+ 	struct zio_channel *chan;
+ 	int i, range, err = 0, reg_index;
++	uint32_t tmp;
+ 
+ 	reg_index = zattr->id;
+ 	i = FA100M14B4C_NCHAN;
+@@ -327,6 +328,38 @@ static int zfad_conf_set(struct device *dev, struct zio_attribute *zattr,
+ 				"Cannot set the ADC test data. The driver is not in test mode\n");
+ 			return -EPERM;
+ 		}
++	case ZFA_SI570_HSDIV:
++		tmp = ((usr_val & 0b00000111) << 5) |
++		      (fa_i2c_read(fa, SI570_HSDIV_2_0_N1_6_2) & 0b00011111);
++		fa_i2c_write(fa, SI570_HSDIV_2_0_N1_6_2, tmp);
++		return 0;
++	case ZFA_SI570_N1:
++		tmp = (fa_i2c_read(fa, SI570_HSDIV_2_0_N1_6_2) & 0b11100000) |
++		      ((usr_val >> 2) & 0b00011111);
++		fa_i2c_write(fa, SI570_HSDIV_2_0_N1_6_2, tmp);
++		tmp = ((usr_val & 0b00000011) << 6) |
++		      (fa_i2c_read(fa, SI570_N1_1_0_RFREQ_37_32) & 0b00111111);
++		fa_i2c_write(fa, SI570_N1_1_0_RFREQ_37_32, tmp);
++		return 0;
++	case ZFA_SI570_RFREQ_INT:
++		tmp = (fa_i2c_read(fa, SI570_N1_1_0_RFREQ_37_32) & 0b11000000) |
++		      ((usr_val >> 4) & 0b00111111);
++		fa_i2c_write(fa, SI570_N1_1_0_RFREQ_37_32, tmp);
++		tmp = ((usr_val & 0b00001111) << 4) |
++		      (fa_i2c_read(fa, SI570_RFREQ_31_24) & 0b00001111);
++		fa_i2c_write(fa, SI570_RFREQ_31_24, tmp);
++		return 0;
++	case ZFA_SI570_RFREQ_FRAC:
++		tmp = (fa_i2c_read(fa, SI570_RFREQ_31_24) & 0b11110000) |
++		      ((usr_val >> 24) & 0b00001111);
++		fa_i2c_write(fa, SI570_RFREQ_31_24, tmp);
++		tmp = (usr_val >> 16) & 0x000000FF;
++		fa_i2c_write(fa, SI570_RFREQ_23_16, tmp);
++		tmp = (usr_val >> 8) & 0x000000FF;
++		fa_i2c_write(fa, SI570_RFREQ_15_8, tmp);
++		tmp = usr_val & 0x000000FF;
++		fa_i2c_write(fa, SI570_RFREQ_7_0, tmp);
++		return 0;
+ 	}
+ 
+ 	fa_writel(fa, baseoff, &zfad_regs[reg_index], usr_val);
+-- 
+2.27.0
+

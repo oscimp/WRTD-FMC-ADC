@@ -1,4 +1,4 @@
-From d211a9ec68416260378c03a395eaee207f0ef66d Mon Sep 17 00:00:00 2001
+From 33311ed71175eedbcd3434265b023dd4ad9054f1 Mon Sep 17 00:00:00 2001
 From: Mathis MARION <mathis.marion@grenoble-inp.org>
 Date: Wed, 18 Aug 2021 10:49:01 +0200
 Subject: [PATCH 2/2] Read access to some Si570 registers
@@ -40,7 +40,7 @@ index 9a0fbf9..ecac066 100644
  #define I2C_MASTER_CTR_EN	(1 << 7)
  
 diff --git a/kernel/fa-zio-drv.c b/kernel/fa-zio-drv.c
-index ba41928..7804a79 100644
+index ba41928..04d389b 100644
 --- a/kernel/fa-zio-drv.c
 +++ b/kernel/fa-zio-drv.c
 @@ -15,6 +15,7 @@
@@ -75,13 +75,13 @@ index ba41928..7804a79 100644
 +			   (fa_i2c_read(fa, SI570_N1_1_0_RFREQ_37_32) >> 6);
 +		return 0;
 +	case ZFA_SI570_RFREQ_INT:
-+		*usr_val = ((fa_i2c_read(fa, SI570_N1_1_0_RFREQ_37_32) & 0b00001111) << 4) |
++		*usr_val = ((fa_i2c_read(fa, SI570_N1_1_0_RFREQ_37_32) & 0b00111111) << 4) |
 +			   (fa_i2c_read(fa, SI570_RFREQ_31_24) >> 4);
 +		return 0;
 +	case ZFA_SI570_RFREQ_FRAC:
-+		*usr_val = ((fa_i2c_read(fa, SI570_RFREQ_31_24) & 0b00001111) << 20) |
-+			   (fa_i2c_read(fa, SI570_RFREQ_23_16) >> 16) |
-+			   (fa_i2c_read(fa, SI570_RFREQ_15_8) >> 8) |
++		*usr_val = ((fa_i2c_read(fa, SI570_RFREQ_31_24) & 0b00001111) << 24) |
++			   (fa_i2c_read(fa, SI570_RFREQ_23_16) << 16) |
++			   (fa_i2c_read(fa, SI570_RFREQ_15_8) << 8) |
 +			   fa_i2c_read(fa, SI570_RFREQ_7_0);
 +		return 0;
  	default:
