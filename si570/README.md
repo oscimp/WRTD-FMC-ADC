@@ -19,7 +19,7 @@ Place your terminal at the scripts directory of the ohwr-build-script repository
 rm $BUILD_DIR/built.fmc-adc-100m14b4cha-sw
 sh fmc_adc_100m_build.sh
 ```
-Now reboot, flash the FPGA, and you should get access to some of the Si570 registers if you look inside `/sys/bus/zio/devices/adc-100m-<ZIO_ID>/cset0`>.
+Now reboot, flash the FPGA, and you should get access to some of the Si570 registers if you look inside `/sys/bus/zio/devices/adc-100m-XXXX/cset0`.
 
 Now for some explanation of what the patch does to achieve this access:
 
@@ -56,9 +56,6 @@ Finally, reading and writing to the Si570 clock registers is done thanks to two 
 These are named `fa_i2c_read` and `fa_i2c_write` and are written inside an additional `fa-i2c.h` header file.
 Read the comments of these functions if you want to undersand the sequence of instructions that is done.
 
-Since the Si570 registers are arranged in a way where variables are contained in several registers, and some register contain parts of different variables, it was required to to some bit manipulations to retrieve the values wanted.
-Also when writing, it was necesary to read registers beforehand to preserve bits that should not be modified.
-
 ### Interacting with sysfs
 
 For every register we want to access, we can add an entry in the `zfad_cset_ext_zattr` array defined inside `fa-zio-drv.c`.
@@ -66,8 +63,9 @@ For each entry, we need to specify a string that will appear as the filename in 
 
 Then we can modify the two functions `zfad_conf_set` (for writing) and `zfad_info_get` (for reading) to tell the kernel what to do when a pseudo file from sysfs is read or written to.
 In our case we want to add special cases for I2C registers.
-We don't want the default case to happen, and instead call `zfad_i2c_read` or `zfad_i2c_write`.
+We don't want the default case to happen, and instead call `fa_i2c_read` or `fa_i2c_write`.
 As described in the Si570 documentation, the clock registers can contain several information, so it is neccessary to reconstruct the wanted value by masking and bit shifting.
+Also it is required to read registers before writing to them if we want to preserve bits that don not concern the variable we want to change.
 
 In the case of RFREQ (see the Si570 documentation), the 38bit value does not fit in the 32bit unsigned integer used by the driver to read/write from sysfs.
 To compensate for that fact, I provided two pseudo files to read the integer part and the fractionnal part separately (see the next paragraph for more details).
