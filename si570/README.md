@@ -176,9 +176,11 @@ To synchronize the ADC clock, we will need to modify the FPGA design in some way
 The issue is that it is seems extremely difficult from our perspective to simulate the whole design or even some parts of it, so debugging any modifications will be a pain.
 
 To explore the FPGA design, look at the code inside `wrtd/hdl/top/wrtd_ref_spec150t_adc` and inside the various dependencies inside `wrtd/dependencies`.
+Here is a general idea of what some dependencies define:
 - `general-cores` mainly provides components for wishbone connections (adapters, crossbars...)
 - `wr-cores` is where components performing clock synchronization are defined
-- `fmc-adc-100m14b4cha-gw` contains the wiring of the all the FMC pins to the SPEC design defined in `spec`.
+- `fmc-adc-100m14b4cha-gw` contains the wiring of the all the FMC pins, and the necessary components to extract the ADC data
+- `spec` contains the base design that instantiate the core components to synchronize the SPEC clock to White Rabbit
 
 ### Phase lock loop inside the FPGA
 
