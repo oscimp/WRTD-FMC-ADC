@@ -1,8 +1,11 @@
-From 163db8a6969b4c9338bfdf49cb5732131e67b072 Mon Sep 17 00:00:00 2001
+From 8dbeb1534e73f284d2ce088c85d77d7c0952487c Mon Sep 17 00:00:00 2001
 From: Mathis MARION <mathis.marion@grenoble-inp.org>
 Date: Wed, 18 Aug 2021 11:39:51 +0200
 Subject: [PATCH 3/3] Write access to some Si570 registers
 
+Added write access to HSDIV, N1 and RFREQ (integer and fractionnal parts).
+Since these variables overlap on several registers, it was needed to
+read registers beforehand to preserve bits that should not be changed.
 ---
  kernel/fa-zio-drv.c | 41 +++++++++++++++++++++++++++++++++++++----
  1 file changed, 37 insertions(+), 4 deletions(-)

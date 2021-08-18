@@ -7,10 +7,10 @@ This may or may not be useful towards the goal of disciplining the clock since w
 It at least proves that we can change the frequency of the ADC clock using the I2C interface that is accessible through the FMC connector.
 
 To access the registers, we will be modifying the fmc-adc-100m14bcha driver.
-The patch provided should be applied using the following commands:
+The patches provided in the patch directory should be applied in order using the following commands:
 ```bash
 cd $BUILD_DIR/fmc-adc-100m14b4cha-sw
-patch -p 1 < <path to this repository>/si570/TODO.patch
+patch -p 1 < <path to this repository>/si570/patch/<patch name>.patch
 ```
 After doing your modifications to the source files, you will need to recompile the driver.
 Comment out the 2 lines that checkout a branch and patch files in the script `fmc_adc_100m_build.sh` located in the ohwr-build-scripts repository used to intall WRTD.
@@ -55,6 +55,9 @@ Some of these registers are bitfields so I defined a few macros inside `fa-i2c.h
 Finally, reading and writing to the Si570 clock registers is done thanks to two functions that perform the right sequence of register accesses to the I2C master.
 These are named `fa_i2c_read` and `fa_i2c_write` and are written inside an additional `fa-i2c.h` header file.
 Read the comments of these functions if you want to undersand the sequence of instructions that is done.
+
+Since the Si570 registers are arranged in a way where variables are contained in several registers, and some register contain parts of different variables, it was required to to some bit manipulations to retrieve the values wanted.
+Also when writing, it was necesary to read registers beforehand to preserve bits that should not be modified.
 
 ### Interacting with sysfs
 
