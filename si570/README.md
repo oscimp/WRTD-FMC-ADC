@@ -173,7 +173,12 @@ After completion, you should see a file named `wrtd_ref_spec150t_adc.bin`. Just 
 ## 3. What is left to explore
 
 To synchronize the ADC clock, we will need to modify the FPGA design in some way.
-The issue is that it is seems extremely difficult from our perspective to simulate the whole design or even some parts of it, so debugging any modofocations will be a pain.
+The issue is that it is seems extremely difficult from our perspective to simulate the whole design or even some parts of it, so debugging any modifications will be a pain.
+
+To explore the FPGA design, look at the code inside `wrtd/hdl/top/wrtd_ref_spec150t_adc` and inside the various dependencies inside `wrtd/dependencies`.
+- `general-cores` mainly provides components for wishbone connections (adapters, crossbars...)
+- `wr-cores` is where components performing clock synchronization are defined
+- `fmc-adc-100m14b4cha-gw` contains the wiring of the all the FMC pins to the SPEC design defined in `spec`.
 
 ### Phase lock loop inside the FPGA
 
