@@ -1,6 +1,6 @@
 # Experiments to synchronize the Si570 clock of the ADC to White Rabbit
 
-## Accessing the Si570 registers from userspace
+## 1. Accessing the Si570 registers from userspace
 
 This section will cover a way to access registers (read and write) using sysfs (the Linux virtual file system at /sys).
 This may or may not be useful towards the goal of disciplining the clock since we will necessarely need to modify the FPGA design.
@@ -64,7 +64,7 @@ For each entry, we need to specify a string that will appear as the filename in 
 Then we can modify the two functions `zfad_conf_set` (for writing) and `zfad_info_get` (for reading) to tell the kernel what to do when a pseudo file from sysfs is read or written to.
 In our case we want to add special cases for I2C registers.
 We don't want the default case to happen, and instead call `fa_i2c_read` or `fa_i2c_write`.
-As described in the Si570 documentation, the clock registers can contain several information, so it is neccessary to reconstruct the wanted value by masking and bit shifting.
+As described in the Si570 documentation, the clock registers can contain several information, so it is necessary to reconstruct the wanted value by masking and bit shifting.
 Also it is required to read registers before writing to them if we want to preserve bits that don not concern the variable we want to change.
 
 In the case of RFREQ (see the Si570 documentation), the 38bit value does not fit in the 32bit unsigned integer used by the driver to read/write from sysfs.
@@ -92,7 +92,7 @@ If you have two 32bit unsigned integer containing the integer and fractionnal pa
 uint64_t rfreq = (((uint64_t) rfreq_int) << 28) | rfreq_frac;
 ```
 
-## Recompiling the bitstream
+## 2. Recompiling the bitstream
 
 If modifications are to be made to the FPGA design, it will be necessary to resynthetize the bitstream.
 To do so a few tools are required.
@@ -167,4 +167,38 @@ hdlmake
 make
 ```
 This will take roughly 15 minutes.
+
+After completion, you should see a file named `wrtd_ref_spec150t_adc.bin`. Just copy it to `/lib/firmware` and next time you program the FPGA it will use it.
+
+## 3. What is left to explore
+
+To synchronize the ADC clock, we will need to modify the FPGA design in some way.
+The issue is that it is basically impossible to simulate the whole design, so debugging any changes will be a pain.
+
+### Phase lock loop inside the FPGA
+
+In theory the White Rabbit core (https://ohwr.org/projects/wr-cores) provides us with a PLL component that we could use to regulate the Si570 frequency.
+It is left to understand how to use the IP and insert it into the existing design.
+Looking at what has already been done to synchronize the SPEC clock could help.
+Some documentation can be found here: https://ohwr.org/project/wr-cores/wikis/Wrpc-release-v42.
+
+A component is also provided to interface between the soft-PLL component of the WR-core, and the I2C master that communicates with the Si570.
+However it does not seem to be used in any projects from CERN, and does not seem up to date with the rest of the cores.
+Dimitris LAMPRIDIS from CERN mentionned we could ask him by email if we have questions about this component.
+Here is the component in question: https://ohwr.org/project/wr-cores/blob/proposed_master/modules/wr_si57x_interface/wr_si57x_interface.vhd
+
+Also since the Si570 is on the ADC and due to the wiring, we don't have direct access to the ADC clock signal from the FPGA.
+We will need to get a reconstructed clock signal that can be found as an output of the data deserializer, which will necessarely have a phase difference from the original signal.
+In short, the data sent by the ADC uses a clock signal that is 4 times the Si570 frequency, and the deserializer receives that clock to process data, which it scales to its needs.
+
+### Phase lock loop in userspace
+
+If we want to use the I2C access described in part 1 for a PLL, we would need a way to get a measure of the frequency difference between the Si570 and White Rabbit clocks.
+This means adding a component that calculates that measurement, and providing a way to access the result through the main Wishbone bus which could finally be read from userspace.
+
+### Clock domains
+
+The Si570 is supposed to run at 100Mhz, and the White Rabbit synchronized clock used in the PLL runs at 125MHz.
+This means the PLL will divide both frequencies, and we will then have 5 different edges on which the synchronization can happen.
+Knowing which edge is the right one is not a trivial task, but if we get there we will have at least transformed a uniform random distribution of the sample delay to a discrete one which is more manageable.
 
