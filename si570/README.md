@@ -67,7 +67,7 @@ We don't want the default case to happen, and instead call `zfad_i2c_read` or `z
 As described in the Si570 documentation, the clock registers can contain several information, so it is neccessary to reconstruct the wanted value by masking and bit shifting.
 
 In the case of RFREQ (see the Si570 documentation), the 38bit value does not fit in the 32bit unsigned integer used by the driver to read/write from sysfs.
-To compensate for that fact, I provided two pseudo files to read the decimal part and the fractionnal part separately (see the next paragraph for more details).
+To compensate for that fact, I provided two pseudo files to read the integer part and the fractionnal part separately (see the next paragraph for more details).
 
 Here is how to interact with sysfs from your shell:
 ```bash
@@ -81,12 +81,12 @@ echo 1 > /sys/bus/zio/devices/adc-100m14b-XXXX/cset0/si570-hsdiv
 ### RFREQ conversion
 
 The Si570 documentation describes the RFREQ value as a 38bit fixed point number.
-The 10 most significant bits are the decimal part and the 28 remaining are the fractionnal part.
+The 10 most significant bits are the integer part and the 28 remaining are the fractionnal part.
 This is not a usual format to work with so I wrote two conversion functions, transforming the 38bit number (stored inside a 64bit unsigned integer as the lower bits) to a double precision floating point number from the IEEE norm, and the reverse operation.
 
 These function can be accessed with the `rfreq.h` header and are named respectively `rfreq_to_float` and `float_to_rfreq`.
 
-If you have two 32bit unsigned integer containing the decimal and fractionnal part of RFREQ, you can reconstruct RFREQ into a 64bit unsigned integer using this formula:
+If you have two 32bit unsigned integer containing the integer and fractionnal part of RFREQ, you can reconstruct RFREQ into a 64bit unsigned integer using this formula:
 ```c
 uint64_t rfreq = (((uint64_t) rfreq_int) << 28) | rfreq_frac;
 ```
