@@ -38,4 +38,4 @@ uint64_t float_to_rfreq(double input)
 	return rfreq;
 }
 
-#define SI570_RFREQ_H
+#endif /* SI570_RFREQ_H */

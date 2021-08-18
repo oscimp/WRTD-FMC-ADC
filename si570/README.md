@@ -45,15 +45,15 @@ Now we can communicate with the I2C master component using `fa_readl`/`fa_writel
 We just need to figure out the register addresses of this component, and the series of instructions to use to read or write from the clock's registers.
 
 There are 5 registers of interest for the I2C master component, which are labelled `CTR`, `TXR`, `RXR`, `CR`, and `TR`.
-We can add these in the `zfadc_dregs_enum` enumeration defined in `fmc-adc-100m14b4cha`.
+We can add these in the `zfadc_dregs_enum` enumeration defined in `fmc-adc-100m14b4cha.h`.
 These are all 8bit registers, which we can describe in the `zfa_regs` array defined inside `fa-regtable.c`.
 Since the addresses provided by the official OpenCores documentation are wrong, I had to manually find them in the HDL code.
 One oddity is also that register addresses need to bit-shifted twice to the left because of granularity issues caused by the wrapper used.
 
-Some of these registers are bitfields so I defined a few macros inside `fmc-adc-100m14b4cha.h` to help masking individual bits.
+Some of these registers are bitfields so I defined a few macros inside `fa-i2c.h` to help masking individual bits.
 
 Finally, reading and writing to the Si570 clock registers is done thanks to two functions that perform the right sequence of register accesses to the I2C master.
-These are named `zfad_i2c_read` and `zfad_i2c_write` and are written inside the `fa-zio-drv.c` file.
+These are named `fa_i2c_read` and `fa_i2c_write` and are written inside an additional `fa-i2c.h` header file.
 Read the comments of these functions if you want to undersand the sequence of instructions that is done.
 
 ### Interacting with sysfs
@@ -86,7 +86,7 @@ This is not a usual format to work with so I wrote two conversion functions, tra
 
 These function can be accessed with the `rfreq.h` header and are named respectively `rfreq_to_float` and `float_to_rfreq`.
 
-If you have two 32bit unsigned integer containing the decimal and fractionnal part of RFREQ, you can reconstruct a 64bit unsigned integer using this formula:
+If you have two 32bit unsigned integer containing the decimal and fractionnal part of RFREQ, you can reconstruct RFREQ into a 64bit unsigned integer using this formula:
 ```c
 uint64_t rfreq = (((uint64_t) rfreq_int) << 28) | rfreq_frac;
 ```

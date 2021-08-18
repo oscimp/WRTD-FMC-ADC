@@ -1,0 +1,192 @@
+From 0acf4c3745b1da7c3b1e3b35571f22bc20fc4349 Mon Sep 17 00:00:00 2001
+From: Mathis MARION <mathis.marion@grenoble-inp.org>
+Date: Wed, 18 Aug 2021 09:59:24 +0200
+Subject: [PATCH] API to communicate with the Si570 via I2C
+
+Added an offset for the I2C master responsible for communication with
+the Si570.
+Added the I2C master registers in the register table.
+Added two function 'fa_i2c_read' and 'fa_i2c_write' in a new header to
+facilitate I2C transactions.
+---
+ kernel/fa-core.c             |   1 +
+ kernel/fa-i2c.h              | 102 +++++++++++++++++++++++++++++++++++
+ kernel/fa-regtable.c         |   7 +++
+ kernel/fmc-adc-100m14b4cha.h |  10 ++++
+ 4 files changed, 120 insertions(+)
+ create mode 100644 kernel/fa-i2c.h
+
+diff --git a/kernel/fa-core.c b/kernel/fa-core.c
+index 59368f6..cce1560 100644
+--- a/kernel/fa-core.c
++++ b/kernel/fa-core.c
+@@ -614,6 +614,7 @@ int fa_probe(struct platform_device *pdev)
+ 	fa->fa_ow_base =      fa->fa_top_level + ADC_OW_OFF;
+ 	fa->fa_spi_base =     fa->fa_top_level + ADC_SPI_OFF;
+ 	fa->fa_utc_base =     fa->fa_top_level + ADC_UTC_OFF;
++	fa->fa_i2c_base =     fa->fa_top_level + ADC_I2C_OFF;
+ 
+ 	slot_nr = fa_readl(fa, fa->fa_adc_csr_base,
+ 			   &zfad_regs[ZFA_STA_FMC_NR]) + 1;
+diff --git a/kernel/fa-i2c.h b/kernel/fa-i2c.h
+new file mode 100644
+index 0000000..9a0fbf9
+--- /dev/null
++++ b/kernel/fa-i2c.h
+@@ -0,0 +1,102 @@
++#ifndef FA_I2C_H
++#define FA_I2C_H
++
++// I2C master register flags
++#define I2C_MASTER_CTR_EN	(1 << 7)
++
++#define I2C_MASTER_CR_NACK	(1 << 3)
++#define I2C_MASTER_CR_WR	(1 << 4)
++#define I2C_MASTER_CR_RD	(1 << 5)
++#define I2C_MASTER_CR_STO	(1 << 6)
++#define I2C_MASTER_CR_STA	(1 << 7)
++
++#define I2C_MASTER_SR_TIP	(1 << 1)
++#define I2C_MASTER_SR_RXACK	(1 << 7)
++
++/**
++ * Writes 'value' to the I2C register with offset 'i2c_reg'
++ */
++static void fa_i2c_write(struct fa_dev *fa, uint32_t i2c_reg, uint32_t value)
++{
++	void *baseoff = fa->fa_i2c_base;
++
++	// Enable core
++	fa_writel(fa, baseoff, &zfad_regs[ZFA_I2C_MASTER_CTR], I2C_MASTER_CTR_EN);
++
++	// Write I2C address + write bit
++	fa_writel(fa, baseoff, &zfad_regs[ZFA_I2C_MASTER_TXR], (0x55 << 1) & (~1));
++	// Write command bits
++	fa_writel(fa, baseoff, &zfad_regs[ZFA_I2C_MASTER_CR], I2C_MASTER_CR_STA | I2C_MASTER_CR_WR);
++	// Wait for TIP flag to negate
++	while (fa_readl(fa, baseoff, &zfad_regs[ZFA_I2C_MASTER_SR]) & I2C_MASTER_SR_TIP);
++
++	// Check for ACK
++	if (fa_readl(fa, baseoff, &zfad_regs[ZFA_I2C_MASTER_SR]) & I2C_MASTER_SR_RXACK) {
++		dev_err(fa->msgdev, "No ACK received after I2C transaction");
++		return;
++	}
++	// Write rfreq_i register address
++	fa_writel(fa, baseoff, &zfad_regs[ZFA_I2C_MASTER_TXR], i2c_reg);
++	// Write command bits
++	fa_writel(fa, baseoff, &zfad_regs[ZFA_I2C_MASTER_CR], I2C_MASTER_CR_WR);
++	// Wait for TIP flag to negate
++	while (fa_readl(fa, baseoff, &zfad_regs[ZFA_I2C_MASTER_SR]) & I2C_MASTER_SR_TIP);
++
++	// Write value
++	fa_writel(fa, baseoff, &zfad_regs[ZFA_I2C_MASTER_TXR], value);
++	// Write command bits
++	fa_writel(fa, baseoff, &zfad_regs[ZFA_I2C_MASTER_CR], I2C_MASTER_CR_STO | I2C_MASTER_CR_WR);
++	// Wait for TIP flag to negate
++	while (fa_readl(fa, baseoff, &zfad_regs[ZFA_I2C_MASTER_SR]) & I2C_MASTER_SR_TIP);
++}
++
++/**
++ * Reads and returns the value of the I2C register with offset 'i2c_reg'
++ */
++static uint32_t fa_i2c_read(struct fa_dev *fa, uint32_t i2c_reg)
++{
++	void *baseoff = fa->fa_i2c_base;
++
++	// Enable core
++	fa_writel(fa, baseoff, &zfad_regs[ZFA_I2C_MASTER_CTR], I2C_MASTER_CTR_EN);
++
++	// Write I2C address + write bit
++	fa_writel(fa, baseoff, &zfad_regs[ZFA_I2C_MASTER_TXR], (0x55 << 1) & (~1));
++	// Write command bits
++	fa_writel(fa, baseoff, &zfad_regs[ZFA_I2C_MASTER_CR], I2C_MASTER_CR_STA | I2C_MASTER_CR_WR);
++	// Wait for TIP flag to negate
++	while (fa_readl(fa, baseoff, &zfad_regs[ZFA_I2C_MASTER_SR]) & I2C_MASTER_SR_TIP);
++
++	// Check for ACK
++	if (fa_readl(fa, baseoff, &zfad_regs[ZFA_I2C_MASTER_SR]) & I2C_MASTER_SR_RXACK) {
++		dev_err(fa->msgdev, "No ACK received after I2C transaction");
++		return 0;
++	}
++	// Write rfreq_i register address
++	fa_writel(fa, baseoff, &zfad_regs[ZFA_I2C_MASTER_TXR], i2c_reg);
++	// Write command bits
++	fa_writel(fa, baseoff, &zfad_regs[ZFA_I2C_MASTER_CR], I2C_MASTER_CR_STO | I2C_MASTER_CR_WR);
++	// Wait for TIP flag to negate
++	while (fa_readl(fa, baseoff, &zfad_regs[ZFA_I2C_MASTER_SR]) & I2C_MASTER_SR_TIP);
++
++	// Write I2C address + read bit
++	fa_writel(fa, baseoff, &zfad_regs[ZFA_I2C_MASTER_TXR], (0x55 << 1) | 1);
++	// Write command bits
++	fa_writel(fa, baseoff, &zfad_regs[ZFA_I2C_MASTER_CR], I2C_MASTER_CR_STA | I2C_MASTER_CR_WR);
++	// Wait for TIP flag to negate
++	while (fa_readl(fa, baseoff, &zfad_regs[ZFA_I2C_MASTER_SR]) & I2C_MASTER_SR_TIP);
++
++	// Check for ACK
++	if (fa_readl(fa, baseoff, &zfad_regs[ZFA_I2C_MASTER_SR]) & I2C_MASTER_SR_RXACK) {
++		dev_err(fa->msgdev, "No ACK received after I2C transaction");
++		return 0;
++	}
++	// Write command bits
++	fa_writel(fa, baseoff, &zfad_regs[ZFA_I2C_MASTER_CR], I2C_MASTER_CR_STO | I2C_MASTER_CR_RD | I2C_MASTER_CR_NACK);
++	// Wait for TIP flag to negate
++	while (fa_readl(fa, baseoff, &zfad_regs[ZFA_I2C_MASTER_SR]) & I2C_MASTER_SR_TIP);
++	// Retrieve value
++	return fa_readl(fa, baseoff, &zfad_regs[ZFA_I2C_MASTER_RXR]);
++}
++
++#endif /* FA_I2C_H */
+diff --git a/kernel/fa-regtable.c b/kernel/fa-regtable.c
+index 0d6c476..a90fcf6 100644
+--- a/kernel/fa-regtable.c
++++ b/kernel/fa-regtable.c
+@@ -130,4 +130,11 @@ const struct zfa_field_desc zfad_regs[] = {
+ 	[ZFA_UTC_ACQ_END_SECONDS_U] =	{0x3C, ~0x0, 0},
+ 	[ZFA_UTC_ACQ_END_SECONDS_L] =	{0x40, ~0x0, 0},
+ 	[ZFA_UTC_ACQ_END_COARSE] =	{0x44, ~0x0, 0},
++
++	/* I2C Master registers */
++	[ZFA_I2C_MASTER_CTR] =		{0x02 << 2, 0x000000FF, 0},
++	[ZFA_I2C_MASTER_TXR] =		{0x03 << 2, 0x000000FF, 0},
++	[ZFA_I2C_MASTER_RXR] =		{0x03 << 2, 0x000000FF, 0},
++	[ZFA_I2C_MASTER_CR] =		{0x04 << 2, 0x000000FF, 0},
++	[ZFA_I2C_MASTER_SR] =		{0x04 << 2, 0x000000FF, 0},
+ };
+diff --git a/kernel/fmc-adc-100m14b4cha.h b/kernel/fmc-adc-100m14b4cha.h
+index 8a4e1b2..88ff8ba 100644
+--- a/kernel/fmc-adc-100m14b4cha.h
++++ b/kernel/fmc-adc-100m14b4cha.h
+@@ -172,6 +172,7 @@ struct fa_calib {
+ 
+ #define ADC_CSR_OFF 0x1000
+ #define ADC_EIC_OFF 0x1500
++#define ADC_I2C_OFF 0x1600
+ #define ADC_OW_OFF  0x1700
+ #define ADC_SPI_OFF 0x1800
+ #define ADC_UTC_OFF 0x1900
+@@ -362,6 +363,14 @@ enum zfadc_dregs_enum {
+ 	ZFA_UTC_ACQ_END_SECONDS_U,
+ 	ZFA_UTC_ACQ_END_SECONDS_L,
+ 	ZFA_UTC_ACQ_END_COARSE,
++
++	/* I2C Master registers */
++	ZFA_I2C_MASTER_CTR,
++	ZFA_I2C_MASTER_TXR,
++	ZFA_I2C_MASTER_RXR,
++	ZFA_I2C_MASTER_CR,
++	ZFA_I2C_MASTER_SR,
++
+ 	ZFA_HW_PARAM_COMMON_LAST,
+ };
+ 
+@@ -436,6 +445,7 @@ struct fa_dev {
+ 	void *fa_irq_vic_base;
+ 	void *fa_irq_adc_base;
+ 	void *fa_utc_base;
++	void *fa_i2c_base;
+ 
+ 	/* DMA description */
+ 	struct zio_dma_sgt *zdma;
+-- 
+2.27.0
+
