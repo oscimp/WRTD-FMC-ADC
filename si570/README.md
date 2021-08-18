@@ -173,7 +173,7 @@ After completion, you should see a file named `wrtd_ref_spec150t_adc.bin`. Just 
 ## 3. What is left to explore
 
 To synchronize the ADC clock, we will need to modify the FPGA design in some way.
-The issue is that it is basically impossible to simulate the whole design, so debugging any changes will be a pain.
+The issue is that it is seems extremely difficult from our perspective to simulate the whole design or even some parts of it, so debugging any modofocations will be a pain.
 
 ### Phase lock loop inside the FPGA
 
@@ -201,4 +201,7 @@ This means adding a component that calculates that measurement, and providing a 
 The Si570 is supposed to run at 100Mhz, and the White Rabbit synchronized clock used in the PLL runs at 125MHz.
 This means the PLL will divide both frequencies, and we will then have 5 different edges on which the synchronization can happen.
 Knowing which edge is the right one is not a trivial task, but if we get there we will have at least transformed a uniform random distribution of the sample delay to a discrete one which is more manageable.
+
+During a meeting with CERN engineers, some potential changes to the PTP core were mentioned to account for clock domain crossing issues.
+However this is not yet implemented so we need to find our own way for now.
 
