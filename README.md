@@ -9,7 +9,13 @@ White Rabbit Trigger Distribution (WRTD) for the reference design SPEC150T + FMC
 ## List of abbreviations:
 
 - ADC: **A**nalog to **D**igital **C**onverter, system used to acquire data from sensors and process it digitally. We are using this ADC card for this project: https://ohwr.org/project/fmc-adc-100m14b4cha/wikis/home.
+
+- CM4: **C**ompute **M**odule **4**, a board model from Raspberry Pi that can be used for this project.
+
 - FMC: **F**PGA **M**ezzanine **C**ard, a standard used to communicate between an FPGA and an extension card. The ADC used for this project is plugged in the FMC slot of the SPEC board.
-- SPEC: **S**imple **P**CI **E**xpress FMC **C**arrier, name of the board this we use as our WRTD node. The model that we use (SPEC150T) is the same as the SPEC but with a bigger FPGA chip: https://ohwr.org/project/spec150/wikis/home.
-- PCI: `P`eripheral `C`omponent `Interconnect`, a computer bus commonly used to plug extension boards to a computer. PCI express (often written PCIe) is an evolution of PCI.
+
+- SPEC: **S**imple **P**CI **E**xpress FMC **C**arrier, name of the board that we use as our WRTD node. The SPEC150T model is the same as the SPEC but with a bigger FPGA chip: https://ohwr.org/project/spec150/wikis/home.
+
+- PCI: **P**eripheral **C**omponent **I**nterconnect, a computer bus commonly used to plug extension boards to a computer. PCI express (often written PCIe) is an evolution of PCI.
+
 - WRTD: **W**hite **R**abbit **T**rigger **D**istribution, a project from CERN to distribute triggers between hosts connected to a White Rabbit network.
