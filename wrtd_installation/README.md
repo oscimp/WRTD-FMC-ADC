@@ -81,7 +81,7 @@ To do so, look into the `change_pci_class` directory.
 If you want to explore other solutions, see this discussion:
 https://forums.ohwr.org/t/spec-pci-class-code/848718
 
-## 5. Intallation on a Rapberry Pi CM4 with Buildroot
+## 5. Intallation on a Raspberry Pi CM4 with Buildroot
 
 The userspace tools provided by the project were implemented into Buildroot packages here:
 https://github.com/oscimp/oscimp_br2_external.
@@ -99,6 +99,6 @@ If you provide a `BUILDROOT` variable, you can just run `source cm4/build_settin
 After exporting these variables, you can execute the `wrtd_ref_spec150t_adc_install.sh` scripts which will build everything into `BUILD_DIR`.
 
 After building, do the following steps to insert the kernel modules into the CM4:
-- Extract all the modules files (`.ko`) from the build directory and copy them to your board. The script `extract_modules.sh` inside the `cm4` folder will copy all the relevent files into a `modules` folder, with the same folder structure as the normal installation would do.
-- Copy the content of the `modules` folder located inside `cm4` onto your CM4 board file system at `/lib/modules/<Linux version>`.
+- Extract all the modules files (`.ko`) from the build directory. The script `extract_modules.sh` inside the `cm4` folder will copy all the relevent files into a `modules` folder, with the same folder structure as the normal installation would do.
+- Copy the content of the `modules` folder located inside `cm4` onto your CM4 board file system at `/lib/modules/<Linux version>`. You can use `scp` if your CM4 board is connected to your network.
 - Activate the modules using the `insmod` command manually, or run the `activate_modules.sh` script on the CM4.
