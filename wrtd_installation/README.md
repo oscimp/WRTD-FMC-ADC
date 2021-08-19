@@ -84,7 +84,7 @@ https://forums.ohwr.org/t/spec-pci-class-code/848718
 ## 5. Intallation on a Rapberry Pi CM4 with Buildroot
 
 The userspace tools provided by the project were implemented into Buildroot packages here:
-https://github.com/oscimp/oscimp_br2_external
+https://github.com/oscimp/oscimp_br2_external.
 
 However you will need to cross-compile the kernel modules and copy the relevent file onto your board manually for the time being.
 Before executing the build scripts, provide the following environment variables:
@@ -101,4 +101,4 @@ After exporting these variables, you can execute the `wrtd_ref_spec150t_adc_inst
 Now you need to extract all the modules files (`.ko`) from the build directory and copy them to your board.
 The script `extract_modules.sh` inside the `cm4` folder will copy all the relevent file into a `modules` folder, with the same folder structure as the normal installation would do.
 After this is done, you can copy the content of the `modules` folder located inside `cm4` onto your CM4 board file system at `/lib/modules/<Linux version>`.
-Finally you will need to activate the modules using the `insmod` command.
+Finally you will need to activate the modules using the `insmod` command manually, or running the `activate_modules.sh` script on the CM4.
