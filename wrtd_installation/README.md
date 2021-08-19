@@ -98,7 +98,7 @@ If you provide a `BUILDROOT` variable, you can just run `source cm4/build_settin
 
 After exporting these variables, you can execute the `wrtd_ref_spec150t_adc_install.sh` scripts which will build everything into `BUILD_DIR`.
 
-Now you need to extract all the modules files (`.ko`) from the build directory and copy them to your board.
-The script `extract_modules.sh` inside the `cm4` folder will copy all the relevent file into a `modules` folder, with the same folder structure as the normal installation would do.
-After this is done, you can copy the content of the `modules` folder located inside `cm4` onto your CM4 board file system at `/lib/modules/<Linux version>`.
-Finally you will need to activate the modules using the `insmod` command manually, or running the `activate_modules.sh` script on the CM4.
+After building, do the following steps to insert the kernel modules into the CM4:
+- Extract all the modules files (`.ko`) from the build directory and copy them to your board. The script `extract_modules.sh` inside the `cm4` folder will copy all the relevent files into a `modules` folder, with the same folder structure as the normal installation would do.
+- Copy the content of the `modules` folder located inside `cm4` onto your CM4 board file system at `/lib/modules/<Linux version>`.
+- Activate the modules using the `insmod` command manually, or run the `activate_modules.sh` script on the CM4.
