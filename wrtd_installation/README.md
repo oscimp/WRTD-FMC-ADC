@@ -7,7 +7,7 @@ Here is a graph of most repositories that are used, and their dependencies:
 
 Finding manually the right versions that are compatible with each other is out of question.
 Until CERN provides a packaging with links to all the most up-to-date and compatible repositories, will be using the scripts provided by Dimitrios Lampridis to build and install everything:
-https://gitlab.cern.ch/dlamprid/ohwr-build-scripts
+https://gitlab.cern.ch/dlamprid/ohwr-build-scripts.
 
 ## 1. Installing dependencies 
 
@@ -85,6 +85,8 @@ https://forums.ohwr.org/t/spec-pci-class-code/848718
 
 The userspace tools provided by the project were implemented into Buildroot packages here:
 https://github.com/oscimp/oscimp_br2_external.
+
+The packages to activate from `make menuconfig` in order are `wishbone-gen -> mock-turtle -> wrtd`, `wrtd-binaries`, and `zio -> fmc-adc-100m -> adc-lib`.
 
 However you will need to cross-compile the kernel modules and copy the relevent file onto your board manually for the time being.
 Before executing the build scripts, provide the following environment variables:
