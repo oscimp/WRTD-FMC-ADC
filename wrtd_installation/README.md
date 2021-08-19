@@ -1,6 +1,12 @@
 # Installing WRTD for the SPEC150T and FMC ADC
 
-We will be using the scripts provided by Dimitrios Lampridis to build and install all necessary CERN repositories:
+There are a lot lot of software dependencies needed for this project to work.
+Here is a graph of most repositories that are used, and their dependencies:
+
+<img src="dependencies.png">
+
+Finding manually the right versions that are compatible with each other is out of question.
+Until CERN provides a packaging with links to all the most up-to-date and compatible repositories, will be using the scripts provided by Dimitrios Lampridis to build and install everything:
 https://gitlab.cern.ch/dlamprid/ohwr-build-scripts
 
 ## 1. Installing dependencies 

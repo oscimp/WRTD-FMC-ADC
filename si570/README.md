@@ -191,7 +191,7 @@ Some documentation can be found here: https://ohwr.org/project/wr-cores/wikis/Wr
 
 A component is also provided to interface between the soft-PLL component of the WR-core, and the I2C master that communicates with the Si570.
 However it does not seem to be used in any projects from CERN, and does not seem up to date with the rest of the cores.
-Dimitris LAMPRIDIS from CERN mentionned we could ask him by email if we have questions about this component.
+Dimitrios Lampridis from CERN mentionned we could ask him by email if we have questions about this component.
 Here is the component in question: https://ohwr.org/project/wr-cores/blob/proposed_master/modules/wr_si57x_interface/wr_si57x_interface.vhd
 
 Also since the Si570 is on the ADC and due to the wiring, we don't have direct access to the ADC clock signal from the FPGA.
