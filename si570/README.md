@@ -10,16 +10,16 @@ We would acquire a few samples by triggering the two ADCs at a common date using
 
 The expected results should look like the following:
 
-<img src="acquisition.png" width="100">
+<img src="acquisition.png" width="1000">
 
 However, we would often get a time offset between the two measures as shown here:
 
-<img src="acquisition_delay.png" width="100">
+<img src="acquisition_delay.png" width="1000">
 
 This offset would range from -10ns to +10ns (a sampling period since we acquire at 100MHz).
 We repeated the experiment to look at the repartition of the delay in probability terms:
 
-<img src="correlation_histogram.png" width="100">
+<img src="correlation_histogram.png" width="1000">
 
 It turns out the repartition seems continuous, which makes it very difficult to counter.
 Ideally we would like no delay (this mean about 60ps for us, which is what White Rabbit promisses).
