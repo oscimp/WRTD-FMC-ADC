@@ -1,5 +1,36 @@
 # Experiments to synchronize the Si570 clock of the ADC to White Rabbit
 
+When experimenting with data acquisition with the FMC ADC 100M and WRTD, we realized that acquisition timing were not as tight as we expected.
+Here is a description of the experiment that was conduced:
+
+We had 2 SPEC boards installed inside two different computers, both connected to the same White Rabbit network.
+The two ADCs were capturing a signal from a broadband noise generator, with the same cable length on both sides.
+This way we would know that our 2 two acquisitions are synchronized if the data matched between the two.
+We would acquire a few samples by triggering the two ADCs at a common date using WRTD functionnalities.
+
+The expected results should look like the following:
+
+<img src="acquisition.png">
+
+However, we would often get a time offset between the two measures as shown here:
+
+<img src="acquisition_delay.png">
+
+This offset would range from -10ns to +10ns (a sampling period since we acquire at 100MHz).
+We repeated the experiment to look at the repartition of the delay in probability terms:
+
+<img src="correlation_histogram.png">
+
+It turns out the repartition seems continuous, which makes it very difficult to counter.
+Ideally we would like no delay (this mean about 60ps for us, which is what White Rabbit promisses).
+But if we had a discrete repartition, we could at least find a way to handle cases in software (see the end of this document for why we would need to do that).
+
+After discussing on CERN's forums (https://forums.ohwr.org/t/is-the-fmc-adc-100m-14b-4cha-clock-synchronized-with-white-rabbit-on-the-spec150/848703), it was certain that the cause of these delays was the fact that the ADC clock (Si570) was not disciplined to White Rabbit.
+To be clear, there is a clock disciplined to White Rabbit on the SPEC for WRTD, but the ADC does not use it.
+Researchers from CERN did not care about this precision loss for their measurements, but it is much more critical in our case.
+
+This documents synthetizes our researches towards the goal of discipling the ADC clock to White Rabbit.
+
 ## 1. Accessing the Si570 registers from userspace
 
 This section will cover a way to access registers (read and write) using sysfs (the Linux virtual file system at /sys).
