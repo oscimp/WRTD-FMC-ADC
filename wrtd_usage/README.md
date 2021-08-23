@@ -23,7 +23,8 @@ These are located inside your build directory at `$BUILD_DIR/adc-lib/lib`.
 Finally you want to tell gcc to load the library using the `-ladc` option.
 (The Makefile provided already has these options set)
 
-The Documentation for adc-lib was provided in html format in this repository to avoid having to build it from sources.
+The Documentation for adc-lib was provided in html format in this repository under `adc_lib_doc` to avoid having to build it from sources.
+You can still build your own documentation from the official repository if you want: https://ohwr.org/project/adc-lib.
 
 ### ZIO device ID
 
