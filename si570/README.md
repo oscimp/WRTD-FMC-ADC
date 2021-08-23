@@ -21,11 +21,11 @@ We repeated the experiment to look at the repartition of the delay in probabilit
 
 <img src="correlation_histogram.png" width="500">
 
-It turns out the repartition seems continuous, which makes it very difficult to counter.
-Ideally we would like no delay (this mean about 60ps for us, which is what White Rabbit promisses).
+It turns out the repartition seems continuous, which makes it difficult to counter.
+Ideally we would like no delay (this means about 60ps for us, which is what White Rabbit promises).
 But if we had a discrete repartition, we could at least find a way to handle cases in software (see the end of this document for why we would need to do that).
 
-After discussing on CERN's forums (https://forums.ohwr.org/t/is-the-fmc-adc-100m-14b-4cha-clock-synchronized-with-white-rabbit-on-the-spec150/848703), it was certain that the cause of these delays was the fact that the ADC clock (Si570) was not disciplined to White Rabbit.
+After discussing on CERN's forums (https://forums.ohwr.org/t/is-the-fmc-adc-100m-14b-4cha-clock-synchronized-with-white-rabbit-on-the-spec150/848703), it became certain that the cause of these delays is the fact that the ADC clock (Si570) is not disciplined to White Rabbit.
 To be clear, there is a clock disciplined to White Rabbit on the SPEC for WRTD, but the ADC does not use it.
 Researchers from CERN did not care about this precision loss for their measurements, but it is much more critical in our case.
 
