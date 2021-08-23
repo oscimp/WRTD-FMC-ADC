@@ -14,8 +14,8 @@ White Rabbit Trigger Distribution (WRTD) for the reference design SPEC150T + FMC
 
 - FMC: **F**PGA **M**ezzanine **C**ard, a standard used to communicate between an FPGA and an extension card. The ADC used for this project is plugged in the FMC slot of the SPEC board.
 
-- SPEC: **S**imple **P**CI **E**xpress FMC **C**arrier, name of the board that we use as our WRTD node. The SPEC150T model is the same as the SPEC but with a bigger FPGA chip: https://ohwr.org/project/spec150/wikis/home.
+- PCI: **P**eripheral **C**omponent **I**nterconnect, a computer bus commonly used to plug extension boards (graphics card, sound card, or the SPEC in our case) to a computer. PCI express (often written PCIe) is an evolution of PCI.
 
-- PCI: **P**eripheral **C**omponent **I**nterconnect, a computer bus commonly used to plug extension boards to a computer. PCI express (often written PCIe) is an evolution of PCI.
+- SPEC: **S**imple **P**CI **E**xpress FMC **C**arrier, name of the board that we use as our WRTD node. The SPEC150T model is the same as the SPEC but with a bigger FPGA chip: https://ohwr.org/project/spec150/wikis/home.
 
 - WRTD: **W**hite **R**abbit **T**rigger **D**istribution, a project from CERN to distribute triggers between hosts connected to a White Rabbit network.
