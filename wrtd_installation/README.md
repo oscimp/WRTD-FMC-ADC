@@ -65,8 +65,7 @@ You may receive an error message saying `Failed to abort DMA transfer`. Accordin
 
 ## 4. PCI class code issue
 
-When installing everything on a Raspberry Pi CM4 (ARM processor), we get an error when the SPEC driver is loaded.
-
+You may encounter an error on some machines when the SPEC driver is loaded (it is the case for the Raspberry Pi CM4 for example).
 If you see a similar log in `dmesg`, read the following solution:
 ```
 spec-fmc-carrier 0000:01:00.0 can't enable device: BAR 0 [mem 0x00000000-0x000fffff 64bit] not claimed
