@@ -234,6 +234,19 @@ In short, the data sent by the ADC uses a clock signal that is 4 times the Si570
 If we want to use the I2C access described in part 1 for a PLL, we would need a way to get a measure of the frequency difference between the Si570 and White Rabbit clocks.
 This means adding a component that calculates that measurement, and providing a way to access the result through the main Wishbone bus which could finally be read from userspace.
 
+### Starting point
+
+In the SPEC driver, we can spot a macro defining an offset for White Rabbit Core (WRC) registers in `spec_core_fpga.h`, but which isn't used anywhere.
+This header is generated using cheby and the source file `spec_base_regs.cheby`.
+This should in theory allow us to access the existing soft-PLL registers in a similar way to what we did for the I2C.
+Some of the addresses defined in the header are used (thermometer ID for example) and can be used as references.
+
+However the cheby description defines a `0x1000` sized memory space for WRC registers, and when looking at the FPGA design we see two Wishbone crossbars leading from the SPEC register block to the soft-PLL.
+These crossbar notably define an offset of `0x0002_0000` from the first to the second, which supposedly overflows the allocated memory space.
+For now I am unsure what addresses to use within the driver in order to read anything from the soft-PLL registers.
+
+<img src="register_access.png">
+
 ### Clock domains
 
 The Si570 is supposed to run at 100MHz, and the White Rabbit synchronized clock used in the PLL runs at 125MHz.
