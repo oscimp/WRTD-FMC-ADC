@@ -1,3 +1,5 @@
+cd $(dirname $0)
+
 # Search for PCI device ID
 DEV_ID="$(lspci | grep CERN | awk '{print substr($1, 1, 5)}')"
 if [ -z "$DEV_ID" ]; then
@@ -11,8 +13,12 @@ fi
 
 # Search for ht-flasher executable
 if [ -z "$HT_FLASHER" ]; then
-	HT_FLASHER=$(pwd)/ht-flasher/src/ht-flasher
-	echo No ht-flasher path specified, searching at $HT_FLASHER.
+	if [ -e ht-flasher ]; then
+		HT_FLASHER=ht-flasher
+	else
+		HT_FLASHER=$(pwd)/ht-flasher/src/ht-flasher
+		echo No ht-flasher path specified, searching at $HT_FLASHER.
+	fi
 fi
 if [ -e $HT_FLASHER ]; then
 	echo Successfully found ht-flasher executable.
