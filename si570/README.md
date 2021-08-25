@@ -234,7 +234,7 @@ In short, the data sent by the ADC uses a clock signal that is 4 times the Si570
 If we want to use the I2C access described in part 1 for a PLL, we would need a way to get a measure of the frequency difference between the Si570 and White Rabbit clocks.
 This means adding a component that calculates that measurement, and providing a way to access the result through the main Wishbone bus which could finally be read from userspace.
 
-### Starting point
+#### Starting point
 
 In the SPEC driver, we can spot a macro defining an offset for White Rabbit Core (WRC) registers in `spec_core_fpga.h`, but which isn't used anywhere.
 This header is generated using cheby and the source file `spec_base_regs.cheby`.
