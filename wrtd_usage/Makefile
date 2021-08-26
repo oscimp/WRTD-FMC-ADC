@@ -1,6 +1,6 @@
 EXEC=$(patsubst %.c,%,$(wildcard *.c))
 
-CC=gcc
+CC=$(CROSS_COMPILE)gcc
 
 LDFLAGS=-lwrtd -ladc
 

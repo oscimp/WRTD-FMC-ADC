@@ -13,7 +13,7 @@ fi
 
 # Search for ht-flasher executable
 if [ -z "$HT_FLASHER" ]; then
-	if [ -e ht-flasher ]; then
+	if [ -f ht-flasher ]; then
 		HT_FLASHER=ht-flasher
 	else
 		HT_FLASHER=$(pwd)/ht-flasher/src/ht-flasher
@@ -39,8 +39,8 @@ fi
 
 
 echo Modifying the class code
-# Write 0xFF at 0x17 = 23
-printf '\xff' | dd of=eeprom.img bs=1 seek=23 count=1 conv=notrunc
+# Write 0xFF00 at 0x16 = 22
+printf '\00\xff' | dd of=eeprom.img bs=1 seek=22 count=2 conv=notrunc
 
 
 echo Writing back to the EEPROM
