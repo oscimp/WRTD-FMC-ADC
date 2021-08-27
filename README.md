@@ -1,10 +1,12 @@
 # WRTD-FMC-ADC
 White Rabbit Trigger Distribution (WRTD) for the reference design SPEC150T + FMC ADC 100MHz 14 bits 4 channels
 
+The documentation includes, and should be read in the following order:
+
 - `qemu_setup` describes how to configure QEMU to be used with this project (completely optionnal)
 - `wrtd_installation` covers how to install all the dependencies needed for this application
 - `wrtd_usage` explains how to use the project and provides some examples
-- `si570` synthetizes the researches that were made to synchronize the ADC clock to White Rabbit
+- `si570` synthetizes the researches that were made to synchronize the ADC clock to White Rabbit. This document concludes with work in progress and perspectives on locking the ADC clock on the White Rabbit referenced oscillators, which is currently (Aug. 2021) not the case.
 
 ## List of abbreviations:
 
