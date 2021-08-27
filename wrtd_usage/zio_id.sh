@@ -5,8 +5,8 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
-ZIO_ID="$(find . -maxdepth 1 -regextype posix-extended -regex '\./adc-100m14b-[0-9a-f]{4}')"
-ZIO_ID="$(echo "$ZIO_ID" | sed 's:./adc-100m14b-::')"
+ZIO_ID="$(ls | grep ^adc)"
+ZIO_ID="$(echo "$ZIO_ID" | sed 's:adc-100m14b-::')"
 if [ -z "$ZIO_ID" ]; then
 	echo Could not find the FMC ADC device in ZIO sysfs.
 	exit 1
