@@ -32,6 +32,8 @@ Reboot using CentOS Plus.
 sudo yum install gcc git patch curl python-setuptools python-decorator python-yaml readline-devel
 ```
 
+For cross-compiling to a target with a different architecture than the host (e.g. Compute Module 4 based ARM processor), refer to the environment variables to be set prior to running the scripts (section 2, Running the scripts), assuming a functional Buildroot is already available on the host.
+
 ## 2. Running the scripts
 
 Start by cloning the scripts:
