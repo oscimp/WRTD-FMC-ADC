@@ -300,6 +300,10 @@ static uint32_t adc_ticks_to_ns(uint32_t ticks)
 ```
 You need to include `fmc-adc-100m14b4cha.h` to use this constant, which also requires giving the option `-I$BUILD_DIR/fmc-adc-100m14b4cha-sw/kernel` to gcc when compiling (again already provided if you use the Makefile).
 
+### Intel IOMMU issue
+
+If the data you get is all zeros, you will need to disable a Linux boot parameter by adding `intel_iommu=off` in your `grub.cfg` file, or to whatever is used to boot your Linux distribution.
+
 ## 2. How to use WRTD
 
 We will be using the C library provided by WRTD to interact with the SPEC board.
