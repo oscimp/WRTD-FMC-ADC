@@ -45,7 +45,8 @@ patch -p 1 < ../ohwr-build-scripts-patch.patch
 
 You should set the variable `BUILD_DIR` to a directory where all sources and built files will end up.
 
-Finally, you just need to run the installation script and reboot:
+Finally, you need to run the installation script (lua related errors might be related to versions newer than 5.1: make sure to have this version
+installed) and reboot:
 ```bash
 cd scripts
 sh wrtd_ref_spec150t_adc_install.sh
