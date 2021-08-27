@@ -63,7 +63,7 @@ The script `load_bitstream.sh` will run that command for you.
 
 You may receive an error message saying `Failed to abort DMA transfer`. According to CERN, this does not cause any issue and the FPGA still receives the bitstream.
 
-If the command says `noexistent directory`, then you need to mount the debufs file system by running `mount -t debugfs none /sys/kernel/debug`.
+If the command says `noexistent directory`, then you need to mount the debugfs file system by running `mount -t debugfs none /sys/kernel/debug`.
 
 ## 4. PCI class code issue
 
@@ -87,10 +87,10 @@ https://forums.ohwr.org/t/spec-pci-class-code/848718
 The userspace tools provided by the project were implemented into Buildroot packages here:
 https://github.com/oscimp/oscimp_br2_external.
 
-The packages to activate from `make menuconfig` in order are `wrtd`, `wrtd-binaries`, and `adc-lib`.
+The packages to activate from `make menuconfig` are `wrtd`, `wrtd-binaries`, and `adc-lib`.
 These should automatically select `mock-turtle`, `zio` and `fmc-adc-100m`.
 
-However you will need to cross-compile the kernel modules and copy the relevent file onto your board manually for the time being.
+However you will need to cross-compile the kernel modules and copy the relevent files onto your board manually for the time being.
 Before executing the build scripts, provide the following environment variables:
 ```bash
 export ARCH=arm64
@@ -100,7 +100,7 @@ export SKIP_INSTALL=yes
 ```
 If you provide a `BUILDROOT` variable, you can just run `source cm4/build_settings.sh`.
 
-After exporting these variables, you can execute the `wrtd_ref_spec150t_adc_install.sh` scripts which will build everything into `BUILD_DIR`.
+After exporting these variables, you can execute the `wrtd_ref_spec150t_adc_install.sh` scripts from ohwr-build-scripts which will build everything into `BUILD_DIR`.
 
 After building, do the following steps to insert the kernel modules into the CM4:
 - Extract all the modules files (`.ko`) from the build directory. The script `extract_modules.sh` inside the `cm4` folder will copy all the relevent files into a `modules` folder, with the same folder structure as the normal installation would do.
