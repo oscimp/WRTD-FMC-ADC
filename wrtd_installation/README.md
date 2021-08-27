@@ -17,6 +17,8 @@ sudo apt install linux-headers-amd64 build-essential gcc git patch sudo curl lua
 ```
 You may need to install `python-is-python3` so Python works properly when running the scripts later.
 
+Note: You will need LUA 5.1 and no other version for one of the tools to work.
+
 ---
 
 With `yum` for CentOS:

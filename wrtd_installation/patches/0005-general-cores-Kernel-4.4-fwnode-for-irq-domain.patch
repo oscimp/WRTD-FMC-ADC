@@ -1,7 +1,7 @@
-From 82606ed05599753dec20ffe95719ceacedf3673b Mon Sep 17 00:00:00 2001
-From: Mathis MARION <mathis.marion@grenoble-inp.org>
-Date: Thu, 29 Jul 2021 16:16:46 +0200
-Subject: [PATCH 05/18] [general-cores] Kernel 4.4: fwnode for irq domain
+From a2e1e1f7d83e4a37efef0a709eb7a7e27d531517 Mon Sep 17 00:00:00 2001
+From: marionm <mathis.marion@grenoble-inp.org>
+Date: Fri, 27 Aug 2021 15:16:49 +0200
+Subject: [PATCH] [general-cores] Kernel 4.4: fwnode for irq domain
 
 When creating an IRQ domain, the code used to store a device struct
 pointer in the `of_node` field of the irq_domain struct returned by
@@ -33,17 +33,20 @@ this fwnode. I also took care of disallocating the fwnode_handle.
 
 On the other end, we can just call `irq_find_matching_fwnode` and pass
 dev.fwnode as a parameter.
+
+Signed-off-by: Gwenhael GOAVEC <gwenhael.goavec@femto-st.fr>
+Signed-off-by: marionm <mathis.marion@grenoble-inp.org>
 ---
- patches/general-cores.diff | 91 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 91 insertions(+)
+ patches/general-cores.diff | 94 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 94 insertions(+)
 
 diff --git a/patches/general-cores.diff b/patches/general-cores.diff
-index dbf77a5..08ad541 100644
+index dbf77a5..8af962c 100644
 --- a/patches/general-cores.diff
 +++ b/patches/general-cores.diff
-@@ -1,3 +1,94 @@
+@@ -1,3 +1,97 @@
 +diff --git a/software/htvic/drivers/htvic.c b/software/htvic/drivers/htvic.c
-+index 2f87aa7..76490f0 100644
++index 2f87aa7..ce6b2b6 100644
 +--- a/software/htvic/drivers/htvic.c
 ++++ b/software/htvic/drivers/htvic.c
 +@@ -269,29 +269,6 @@ static struct irq_chip htvic_chip = {
@@ -114,7 +117,7 @@ index dbf77a5..08ad541 100644
 + #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0)
 + 	htvic->domain->name = kasprintf(GFP_KERNEL, "%s",
 + 					dev_name(&htvic->pdev->dev));
-+@@ -362,6 +351,10 @@ static int htvic_irq_mapping(struct htvic_device *htvic)
++@@ -362,6 +352,10 @@ static int htvic_irq_mapping(struct htvic_device *htvic)
 + 
 + out:
 + 	irq_domain_remove(htvic->domain);
@@ -125,7 +128,7 @@ index dbf77a5..08ad541 100644
 + 	return -EPERM;
 + }
 + 
-+@@ -613,6 +605,10 @@ static int htvic_remove(struct platform_device *pdev)
++@@ -613,6 +607,10 @@ static int htvic_remove(struct platform_device *pdev)
 + 	 * Clear the memory and restore flags when needed
 + 	 */
 + 	irq_domain_remove(htvic->domain);
@@ -140,5 +143,5 @@ index dbf77a5..08ad541 100644
  index 12465de..6941bc8 100644
  --- a/software/i2c-ocores/drivers/i2c/busses/i2c-ocores.c
 -- 
-2.27.0
+2.30.2
 

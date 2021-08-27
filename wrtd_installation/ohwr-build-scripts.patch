@@ -1,3 +1,176 @@
+From 378dfc77d62e5c66680e8c43bac52c22e3660de2 Mon Sep 17 00:00:00 2001
+From: marionm <mathis.marion@grenoble-inp.org>
+Date: Fri, 27 Aug 2021 15:21:33 +0200
+Subject: [PATCH] Compatibility for newer kernels
+
+---
+ patches/fmc-adc-100m14b4cha-sw.diff | 147 +++++++++++++++++
+ patches/fmc-sw.diff                 |  65 ++++++--
+ patches/general-cores.diff          | 110 +++++++++++++
+ patches/mock-turtle.diff            |  55 +++++++
+ patches/spec.diff                   | 238 ++++++++++++++++++++++++++++
+ patches/zio.diff                    |  39 +++++
+ scripts/adc_lib_build.sh            |   3 +
+ scripts/mockturtle_build.sh         |   1 +
+ 8 files changed, 644 insertions(+), 14 deletions(-)
+ create mode 100644 patches/fmc-adc-100m14b4cha-sw.diff
+ create mode 100644 patches/general-cores.diff
+ create mode 100644 patches/mock-turtle.diff
+ create mode 100644 patches/spec.diff
+
+diff --git a/patches/fmc-adc-100m14b4cha-sw.diff b/patches/fmc-adc-100m14b4cha-sw.diff
+new file mode 100644
+index 0000000..d5041fd
+--- /dev/null
++++ b/patches/fmc-adc-100m14b4cha-sw.diff
+@@ -0,0 +1,147 @@
++diff --git a/kernel/fa-core.c b/kernel/fa-core.c
++index 6e1eb6d..59368f6 100644
++--- a/kernel/fa-core.c
+++++ b/kernel/fa-core.c
++@@ -10,6 +10,7 @@
++ #include <linux/version.h>
++ #include <linux/dmaengine.h>
++ #include <linux/mod_devicetable.h>
+++#include <linux/io.h>
++ #include "linux/ipmi-fru.h"
++ #include "linux/fmc.h"
++ 
++@@ -38,6 +39,28 @@ static const int zfad_hw_range[] = {
++ struct workqueue_struct *fa_workqueue;
++ 
++ 
+++static int fa_sg_alloc_table_from_pages(struct sg_table *sgt,
+++						struct page **pages,
+++						unsigned int n_pages,
+++						unsigned int offset,
+++						unsigned long size,
+++						unsigned int max_segment,
+++						gfp_t gfp_mask)
+++{
+++#if KERNEL_VERSION(5, 10, 0) <= LINUX_VERSION_CODE
+++	struct scatterlist *sg;
+++	sg =  __sg_alloc_table_from_pages(sgt, pages, n_pages, offset, size,
+++			max_segment, NULL, 0, gfp_mask);
+++	if (IS_ERR(sg))
+++		return PTR_ERR(sg);
+++	else
+++		return 0;
+++#else
+++	return __sg_alloc_table_from_pages(sgt, pages, n_pages, offset, size,
+++			max_segment, gfp_mask);
+++#endif
+++}
+++
++ /**
++  * Description:
++  *    The version from the Linux kernel automatically squash contiguous pages.
++@@ -374,7 +397,11 @@ static void fa_init_timetag(struct fa_dev *fa)
++ {
++ 	unsigned long seconds;
++ 
+++#if KERNEL_VERSION(5, 11, 0) <= LINUX_VERSION_CODE
+++	seconds = ktime_get_real_seconds();
+++#else
++ 	seconds = get_seconds();
+++#endif
++ 	fa_writel(fa, fa->fa_utc_base, &zfad_regs[ZFA_UTC_SECONDS_U],
++ 		  (seconds >> 32) & 0xFFFFFFFF);
++ 	fa_writel(fa, fa->fa_utc_base, &zfad_regs[ZFA_UTC_SECONDS_L],
++@@ -553,12 +580,21 @@ int fa_probe(struct platform_device *pdev)
++ 	fa->pdev = pdev;
++ 	fa->msgdev = &fa->pdev->dev;
++ 
+++	/* DMA mask initialization */
+++	if (!pdev->dev.dma_mask)
+++		pdev->dev.dma_mask = &pdev->dev.coherent_dma_mask;
+++
+++	if (dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64))) {
+++		if (dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32)))
+++			dev_err(fa->msgdev, "Could not configure DMA mask");
+++	}
+++
++ 	/* Assign IO operation */
++ 	switch (pdev->id_entry->driver_data) {
++ 	case ADC_VER_SPEC:
++ 		fa->memops.read = ioread32;
++ 		fa->memops.write = iowrite32;
++-		fa->sg_alloc_table_from_pages = __sg_alloc_table_from_pages;
+++		fa->sg_alloc_table_from_pages = fa_sg_alloc_table_from_pages;
++ 		break;
++ 	case ADC_VER_SVEC:
++ 		fa->memops.read = ioread32be;
++diff --git a/kernel/fa-debug.c b/kernel/fa-debug.c
++index 7478641..3e99eb6 100644
++--- a/kernel/fa-debug.c
+++++ b/kernel/fa-debug.c
++@@ -179,14 +179,7 @@ int fa_debug_init(struct fa_dev *fa)
++ 	fa->dbg_reg32.regs = fa_debugfs_reg32;
++ 	fa->dbg_reg32.nregs = ARRAY_SIZE(fa_debugfs_reg32);
++ 	fa->dbg_reg32.base = fa->fa_top_level;
++-	fa->dbg_reg = debugfs_create_regset32("regs", 0200, fa->dbg_dir,
++-					      &fa->dbg_reg32);
++-	if (IS_ERR_OR_NULL(fa->dbg_reg)) {
++-		err = PTR_ERR(fa->dbg_reg);
++-		dev_warn(fa->msgdev,
++-			"Cannot create debugfs file \"regs\" (%d)\n",
++-			 err);
++-	}
+++	debugfs_create_regset32("regs", 0200, fa->dbg_dir, &fa->dbg_reg32);
++ 
++ 	fa->dbg_reg_spi = debugfs_create_file("spi-regs", 0444,
++ 					      fa->dbg_dir, fa,
++diff --git a/kernel/fmc-adc-100m14b4cha.h b/kernel/fmc-adc-100m14b4cha.h
++index 089e5e1..8a4e1b2 100644
++--- a/kernel/fmc-adc-100m14b4cha.h
+++++ b/kernel/fmc-adc-100m14b4cha.h
++@@ -159,6 +159,7 @@ struct fa_calib {
++ #include <linux/workqueue.h>
++ #include <linux/debugfs.h>
++ #include <linux/platform_device.h>
+++#include <linux/version.h>
++ #include "linux/fmc.h"
++ 
++ #include <linux/zio.h>
++@@ -189,9 +190,30 @@ enum fa_bus_resource {
++ 	ADC_CARR_VME_ADDR,
++ };
++ 
+++#ifndef CONFIG_GENERIC_IOMAP
+++static inline u32 (ioread32be)(const volatile void __iomem *addr)
+++{
+++	return ioread32be(addr);
+++}
+++
+++static inline void (iowrite32be)(u32 value, volatile void __iomem *addr)
+++{
+++	iowrite32be(value, addr);
+++}
+++#endif
+++
++ struct fa_memory_ops {
+++#ifdef CONFIG_GENERIC_IOMAP
+++#if KERNEL_VERSION(5, 8, 0) <= LINUX_VERSION_CODE
+++	u32 (*read)(const void *addr);
+++#else
++ 	u32 (*read)(void *addr);
+++#endif
++ 	void (*write)(u32 value, void *addr);
+++#else
+++	u32 (*read)(const volatile void *addr);
+++	void (*write)(u32 value, volatile void *addr);
+++#endif
++ };
++ 
++ /*
++@@ -451,7 +473,6 @@ struct fa_dev {
++ 
++ 	struct dentry *dbg_dir;
++ 	struct debugfs_regset32 dbg_reg32;
++-	struct dentry *dbg_reg;
++ 	struct dentry *dbg_reg_spi;
++ 
++ 	/* Operations */
 diff --git a/patches/fmc-sw.diff b/patches/fmc-sw.diff
 index 9a084e1..6e6539a 100644
 --- a/patches/fmc-sw.diff
@@ -121,6 +294,427 @@ index 9a084e1..6e6539a 100644
  --- a/drivers/fmc/fru-parse.c
  +++ b/drivers/fmc/fru-parse.c
  @@ -5,12 +5,6 @@
+diff --git a/patches/general-cores.diff b/patches/general-cores.diff
+new file mode 100644
+index 0000000..8af962c
+--- /dev/null
++++ b/patches/general-cores.diff
+@@ -0,0 +1,110 @@
++diff --git a/software/htvic/drivers/htvic.c b/software/htvic/drivers/htvic.c
++index 2f87aa7..ce6b2b6 100644
++--- a/software/htvic/drivers/htvic.c
+++++ b/software/htvic/drivers/htvic.c
++@@ -269,29 +269,6 @@ static struct irq_chip htvic_chip = {
++ 	.irq_set_type = htvic_irq_set_type,
++ };
++ 
++-#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,7,0)
++-static int htvic_irq_domain_select(struct irq_domain *d, struct irq_fwspec *fwspec,
++-		      enum irq_domain_bus_token bus_token)
++-{
++-	struct htvic_device *htvic = d->host_data;
++-	/*
++-	 * FIXME this should point to htvic->pdev->dev.parent. Today it is not
++-	 * a problem for CERN-like installations, so we leave it like this
++-	 * so that the WR-stating kit works.
++-	 */
++-	struct device *dev = &htvic->pdev->dev;
++-	struct device *req_dev;
++-
++-	if(fwspec->param_count != 2)
++-		return 0;
++-
++-	req_dev = (struct device *) ((((unsigned long) fwspec->param[0]) << 32) |
++-		(((unsigned long) fwspec->param[1]) & 0xFFFFFFFF));
++-
++-	return (dev == req_dev);
++-}
++-#endif
++-
++ /**
++  * Given the hardware IRQ and the Linux IRQ number (virtirq), configure the
++  * Linux IRQ number in order to handle properly the incoming interrupts
++@@ -321,9 +298,6 @@ static int htvic_irq_domain_map(struct irq_domain *h,
++ 
++ 
++ static struct irq_domain_ops htvic_irq_domain_ops = {
++-#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,7,0)
++-	.select = htvic_irq_domain_select,
++-#endif
++ 	.map = htvic_irq_domain_map,
++ };
++ 
++@@ -335,11 +309,27 @@ static int htvic_irq_mapping(struct htvic_device *htvic)
++ {
++ 	int i, irq;
++ 
+++#if KERNEL_VERSION(4, 4, 0) <= LINUX_VERSION_CODE
+++	htvic->pdev->dev.fwnode = irq_domain_alloc_fwnode(NULL);
+++	if (!htvic->pdev->dev.fwnode) {
+++		dev_err(&htvic->pdev->dev, "Could not allocate fwnode");
+++		return -ENOMEM;
+++	}
+++	htvic->domain = irq_domain_create_linear(htvic->pdev->dev.fwnode,
+++					      VIC_MAX_VECTORS,
+++					      &htvic_irq_domain_ops, htvic);
+++	if (!htvic->domain) {
+++		irq_domain_free_fwnode(htvic->pdev->dev.fwnode);
+++		htvic->pdev->dev.fwnode = NULL;
+++		return -ENOMEM;
+++	}
+++#else
++ 	htvic->domain = irq_domain_add_linear((void *)&htvic->pdev->dev,
++ 					      VIC_MAX_VECTORS,
++ 					      &htvic_irq_domain_ops, htvic);
++ 	if (!htvic->domain)
++ 		return -ENOMEM;
+++#endif
++ #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0)
++ 	htvic->domain->name = kasprintf(GFP_KERNEL, "%s",
++ 					dev_name(&htvic->pdev->dev));
++@@ -362,6 +352,10 @@ static int htvic_irq_mapping(struct htvic_device *htvic)
++ 
++ out:
++ 	irq_domain_remove(htvic->domain);
+++#if KERNEL_VERSION(4, 4, 0) <= LINUX_VERSION_CODE
+++	irq_domain_free_fwnode(htvic->pdev->dev.fwnode);
+++	htvic->pdev->dev.fwnode = NULL;
+++#endif
++ 	return -EPERM;
++ }
++ 
++@@ -613,6 +607,10 @@ static int htvic_remove(struct platform_device *pdev)
++ 	 * Clear the memory and restore flags when needed
++ 	 */
++ 	irq_domain_remove(htvic->domain);
+++#if KERNEL_VERSION(4, 4, 0) <= LINUX_VERSION_CODE
+++	irq_domain_free_fwnode(htvic->pdev->dev.fwnode);
+++	htvic->pdev->dev.fwnode = NULL;
+++#endif
++ 	kfree(htvic);
++ 	dev_set_drvdata(&pdev->dev, NULL);
++ 
++diff --git a/software/i2c-ocores/drivers/i2c/busses/i2c-ocores.c b/software/i2c-ocores/drivers/i2c/busses/i2c-ocores.c
++index 12465de..6941bc8 100644
++--- a/software/i2c-ocores/drivers/i2c/busses/i2c-ocores.c
+++++ b/software/i2c-ocores/drivers/i2c/busses/i2c-ocores.c
++@@ -982,7 +982,11 @@ static int ocores_i2c_probe(struct platform_device *pdev)
++ 	/* add in known devices to the bus */
++ 	if (pdata) {
++ 		for (i = 0; i < pdata->num_devices; i++)
+++#if KERNEL_VERSION(5, 2, 0) <= LINUX_VERSION_CODE
+++			i2c_new_client_device(&i2c->adap, pdata->devices + i);
+++#else
++ 			i2c_new_device(&i2c->adap, pdata->devices + i);
+++#endif
++ 	}
++ 
++ 	return 0;
+diff --git a/patches/mock-turtle.diff b/patches/mock-turtle.diff
+new file mode 100644
+index 0000000..6ebdab9
+--- /dev/null
++++ b/patches/mock-turtle.diff
+@@ -0,0 +1,55 @@
++diff --git a/software/kernel/mockturtle-core.c b/software/kernel/mockturtle-core.c
++index 65c1167..13e596a 100644
++--- a/software/kernel/mockturtle-core.c
+++++ b/software/kernel/mockturtle-core.c
++@@ -28,6 +28,7 @@
++ #include <linux/mod_devicetable.h>
++ #include <linux/uaccess.h>
++ #include <linux/version.h>
+++#include <linux/io.h>
++ 
++ #include <mockturtle/hw/mockturtle_cpu_csr.h>
++ #include <mockturtle/hw/mockturtle_queue.h>
++diff --git a/software/kernel/mockturtle-drv.h b/software/kernel/mockturtle-drv.h
++index 75e3929..352b407 100644
++--- a/software/kernel/mockturtle-drv.h
+++++ b/software/kernel/mockturtle-drv.h
++@@ -12,6 +12,7 @@
++ #include <linux/irqreturn.h>
++ #include <linux/circ_buf.h>
++ #include <linux/tty.h>
+++#include <linux/version.h>
++ 
++ #include "mockturtle/hw/mockturtle_addresses.h"
++ #include "mockturtle/hw/mockturtle_queue.h"
++@@ -75,9 +76,30 @@ static inline uint32_t trtl_get_sequence(struct trtl_msg *msg)
++ 	return msg->data[1];
++ }
++ 
+++#ifndef CONFIG_GENERIC_IOMAP
+++static inline u32 (ioread32be)(const volatile void __iomem *addr)
+++{
+++	return ioread32be(addr);
+++}
+++
+++static inline void (iowrite32be)(u32 value, volatile void __iomem *addr)
+++{
+++	iowrite32be(value, addr);
+++}
+++#endif
+++
++ struct trtl_memory_ops {
+++#ifdef CONFIG_GENERIC_IOMAP
+++#if KERNEL_VERSION(5, 8, 0) <= LINUX_VERSION_CODE
+++	u32 (*read)(const void *addr);
+++#else
++ 	u32 (*read)(void *addr);
+++#endif
++ 	void (*write)(u32 value, void *addr);
+++#else
+++	u32 (*read)(const volatile void *addr);
+++	void (*write)(u32 value, volatile void *addr);
+++#endif
++ };
++ 
++ extern struct trtl_memory_ops memops;
+diff --git a/patches/spec.diff b/patches/spec.diff
+new file mode 100644
+index 0000000..6fad436
+--- /dev/null
++++ b/patches/spec.diff
+@@ -0,0 +1,238 @@
++diff --git a/software/kernel/gn412x-fcl.c b/software/kernel/gn412x-fcl.c
++index cfd7c98..472f53e 100644
++--- a/software/kernel/gn412x-fcl.c
+++++ b/software/kernel/gn412x-fcl.c
++@@ -177,7 +177,10 @@ static const struct debugfs_reg32 gn412x_debugfs_reg32[] = {
++ static int gn4124_dbg_init(struct platform_device *pdev)
++ {
++ 	struct gn412x_fcl_dev *gn412x = platform_get_drvdata(pdev);
++-	struct dentry *dir, *file;
+++	struct dentry *dir;
+++#if KERNEL_VERSION(5, 6, 0) > LINUX_VERSION_CODE
+++	struct dentry *file;
+++#endif
++ 	int err;
++ 
++ 	dir = debugfs_create_dir(dev_name(&pdev->dev), NULL);
++@@ -192,6 +195,10 @@ static int gn4124_dbg_init(struct platform_device *pdev)
++ 	gn412x->dbg_reg32.regs = gn412x_debugfs_reg32;
++ 	gn412x->dbg_reg32.nregs = ARRAY_SIZE(gn412x_debugfs_reg32);
++ 	gn412x->dbg_reg32.base = gn412x->mem;
+++#if KERNEL_VERSION(5, 6, 0) <= LINUX_VERSION_CODE
+++	debugfs_create_regset32(GN412X_DBG_REG_NAME, 0200,
+++				       dir, &gn412x->dbg_reg32);
+++#else
++ 	file = debugfs_create_regset32(GN412X_DBG_REG_NAME, 0200,
++ 				       dir, &gn412x->dbg_reg32);
++ 	if (IS_ERR_OR_NULL(file)) {
++@@ -201,13 +208,16 @@ static int gn4124_dbg_init(struct platform_device *pdev)
++ 			 GN412X_DBG_REG_NAME, err);
++ 		goto err_reg32;
++ 	}
+++	gn412x->dbg_reg = file;
+++#endif
++ 
++ 	gn412x->dbg_dir = dir;
++-	gn412x->dbg_reg = file;
++ 	return 0;
++ 
+++#if KERNEL_VERSION(5, 6, 0) > LINUX_VERSION_CODE
++ err_reg32:
++ 	debugfs_remove_recursive(dir);
+++#endif
++ err_dir:
++ 	return err;
++ }
++diff --git a/software/kernel/gn412x-gpio.c b/software/kernel/gn412x-gpio.c
++index 315f37e..6aa0f0d 100644
++--- a/software/kernel/gn412x-gpio.c
+++++ b/software/kernel/gn412x-gpio.c
++@@ -75,7 +75,10 @@ static const struct debugfs_reg32 gn412x_debugfs_reg32[] = {
++ 
++ static int gn412x_dbg_init(struct gn412x_gpio_dev *gn412x)
++ {
++-	struct dentry *dir, *file;
+++	struct dentry *dir;
+++#if KERNEL_VERSION(5, 6, 0) > LINUX_VERSION_CODE
+++	struct dentry *file;
+++#endif
++ 	int err;
++ 
++ #if KERNEL_VERSION(4, 5, 0) > LINUX_VERSION_CODE
++@@ -96,6 +99,10 @@ static int gn412x_dbg_init(struct gn412x_gpio_dev *gn412x)
++ 	gn412x->dbg_reg32.regs = gn412x_debugfs_reg32;
++ 	gn412x->dbg_reg32.nregs = ARRAY_SIZE(gn412x_debugfs_reg32);
++ 	gn412x->dbg_reg32.base = gn412x->mem;
+++#if KERNEL_VERSION(5, 6, 0) <= LINUX_VERSION_CODE
+++	debugfs_create_regset32(GN412X_DBG_REG_NAME, 0200,
+++				       dir, &gn412x->dbg_reg32);
+++#else
++ 	file = debugfs_create_regset32(GN412X_DBG_REG_NAME, 0200,
++ 				       dir, &gn412x->dbg_reg32);
++ 	if (IS_ERR_OR_NULL(file)) {
++@@ -105,13 +112,16 @@ static int gn412x_dbg_init(struct gn412x_gpio_dev *gn412x)
++ 			 GN412X_DBG_REG_NAME, err);
++ 		goto err_reg32;
++ 	}
+++	gn412x->dbg_reg = file;
+++#endif
++ 
++ 	gn412x->dbg_dir = dir;
++-	gn412x->dbg_reg = file;
++ 	return 0;
++ 
+++#if KERNEL_VERSION(5, 6, 0) > LINUX_VERSION_CODE
++ err_reg32:
++ 	debugfs_remove_recursive(dir);
+++#endif
++ err_dir:
++ 	return err;
++ }
++diff --git a/software/kernel/spec-compat.c b/software/kernel/spec-compat.c
++index 9973df0..2232c8c 100644
++--- a/software/kernel/spec-compat.c
+++++ b/software/kernel/spec-compat.c
++@@ -13,6 +13,15 @@
++ 
++ 
++ 
+++#if KERNEL_VERSION(5, 7, 0) <= LINUX_VERSION_CODE
+++#define KPROBE_LOOKUP
+++#include <linux/kprobes.h>
+++typedef unsigned long (*kallsyms_lookup_name_t)(const char *name);
+++static struct kprobe kp = {
+++	.symbol_name = "kallsyms_lookup_name"
+++};
+++#endif
+++
++ #if KERNEL_VERSION(4, 10, 0) > LINUX_VERSION_CODE && !defined(CONFIG_FPGA_MGR_BACKPORT)
++ struct fpga_manager *__fpga_mgr_get(struct device *dev)
++ {
++@@ -60,6 +69,13 @@ struct fpga_manager *fpga_mgr_get(struct device *dev)
++ 	struct class *fpga_mgr_class;
++ 	struct device *mgr_dev;
++ 
+++#ifdef KPROBE_LOOKUP
+++	kallsyms_lookup_name_t kallsyms_lookup_name;
+++
+++	register_kprobe(&kp);
+++	kallsyms_lookup_name = (kallsyms_lookup_name_t) kp.addr;
+++	unregister_kprobe(&kp);
+++#endif
++ 	fpga_mgr_class = (struct class *) kallsyms_lookup_name(FPGA_CLASS);
++ 	mgr_dev = class_find_device(fpga_mgr_class, NULL, dev,
++ 				    fpga_mgr_dev_match);
++@@ -156,6 +172,13 @@ int compat_gpiod_add_lookup_table(struct gpiod_lookup_table *table)
++ {
++ 	void (*gpiod_add_lookup_table_p)(struct gpiod_lookup_table *table);
++ 
+++#ifdef KPROBE_LOOKUP
+++	kallsyms_lookup_name_t kallsyms_lookup_name;
+++
+++	register_kprobe(&kp);
+++	kallsyms_lookup_name = (kallsyms_lookup_name_t) kp.addr;
+++	unregister_kprobe(&kp);
+++#endif
++ 	gpiod_add_lookup_table_p = (void *) kallsyms_lookup_name("gpiod_add_lookup_table");
++ 
++ 	if (gpiod_add_lookup_table_p)
++@@ -168,6 +191,13 @@ int compat_gpiod_add_lookup_table(struct gpiod_lookup_table *table)
++ #if KERNEL_VERSION(4, 3, 0) > LINUX_VERSION_CODE
++ void gpiod_remove_lookup_table(struct gpiod_lookup_table *table)
++ {
+++#ifdef KPROBE_LOOKUP
+++	kallsyms_lookup_name_t kallsyms_lookup_name;
+++
+++	register_kprobe(&kp);
+++	kallsyms_lookup_name = (kallsyms_lookup_name_t) kp.addr;
+++	unregister_kprobe(&kp);
+++#endif
++ 	struct mutex *gpio_lookup_lock_p = (void *) kallsyms_lookup_name("gpio_lookup_lock");
++ 
++ 	mutex_lock(gpio_lookup_lock_p);
++diff --git a/software/kernel/spec-core-fpga.c b/software/kernel/spec-core-fpga.c
++index 480bf05..96f3db6 100644
++--- a/software/kernel/spec-core-fpga.c
+++++ b/software/kernel/spec-core-fpga.c
++@@ -140,6 +140,11 @@ static int spec_fpga_dbg_init(struct spec_fpga *spec_fpga)
++ 	spec_fpga->dbg_csr_reg.regs = spec_fpga_debugfs_reg32;
++ 	spec_fpga->dbg_csr_reg.nregs = ARRAY_SIZE(spec_fpga_debugfs_reg32);
++ 	spec_fpga->dbg_csr_reg.base = spec_fpga->fpga;
+++#if KERNEL_VERSION(5, 6, 0) <= LINUX_VERSION_CODE
+++	debugfs_create_regset32(SPEC_DBG_CSR_NAME, 0200,
+++						     spec_fpga->dbg_dir_fpga,
+++						     &spec_fpga->dbg_csr_reg);
+++#else
++ 	spec_fpga->dbg_csr = debugfs_create_regset32(SPEC_DBG_CSR_NAME, 0200,
++ 						spec_fpga->dbg_dir_fpga,
++ 						&spec_fpga->dbg_csr_reg);
++@@ -150,6 +155,7 @@ static int spec_fpga_dbg_init(struct spec_fpga *spec_fpga)
++ 			SPEC_DBG_CSR_NAME, err);
++ 		goto err;
++ 	}
+++#endif
++ 
++ 	spec_fpga->dbg_bld = debugfs_create_file(SPEC_DBG_BLD_INFO_NAME,
++ 						 0444,
++@@ -202,14 +208,8 @@ static struct resource spec_fpga_vic_res[] = {
++ 
++ struct irq_domain *spec_fpga_irq_find_host(struct device *dev)
++ {
++-#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,7,0)
++-	struct irq_fwspec fwspec = {
++-		.fwnode = dev->fwnode,
++-		.param_count = 2,
++-		.param[0] = ((unsigned long)dev >> 32) & 0xffffffff,
++-		.param[1] = ((unsigned long)dev) & 0xffffffff,
++-	};
++-	return irq_find_matching_fwspec(&fwspec, DOMAIN_BUS_ANY);
+++#if KERNEL_VERSION(4, 4, 0) <= LINUX_VERSION_CODE
+++	return irq_find_matching_fwnode(dev->fwnode, DOMAIN_BUS_ANY);
++ #else
++ 	return (irq_find_host((void *)dev));
++ #endif
++diff --git a/software/kernel/spec-gn412x-dma.c b/software/kernel/spec-gn412x-dma.c
++index ead355c..10bd54f 100644
++--- a/software/kernel/spec-gn412x-dma.c
+++++ b/software/kernel/spec-gn412x-dma.c
++@@ -679,7 +679,10 @@ static irqreturn_t gn412x_dma_irq_handler(int irq, void *arg)
++ 
++ static int gn412x_dma_dbg_init(struct gn412x_dma_device *gn412x_dma)
++ {
++-	struct dentry *dir, *file;
+++	struct dentry *dir;
+++#if KERNEL_VERSION(5, 6, 0) > LINUX_VERSION_CODE
+++	struct dentry *file;
+++#endif
++ 	int err;
++ 
++ 	dir = debugfs_create_dir(dev_name(&gn412x_dma->pdev->dev), NULL);
++@@ -694,6 +697,10 @@ static int gn412x_dma_dbg_init(struct gn412x_dma_device *gn412x_dma)
++ 	gn412x_dma->dbg_reg32.regs = gn412x_dma_debugfs_reg32;
++ 	gn412x_dma->dbg_reg32.nregs = ARRAY_SIZE(gn412x_dma_debugfs_reg32);
++ 	gn412x_dma->dbg_reg32.base = gn412x_dma->addr;
+++#if KERNEL_VERSION(5, 6, 0) <= LINUX_VERSION_CODE
+++	debugfs_create_regset32(GN412X_DMA_DBG_REG_NAME, 0200,
+++				       dir, &gn412x_dma->dbg_reg32);
+++#else
++ 	file = debugfs_create_regset32(GN412X_DMA_DBG_REG_NAME, 0200,
++ 				       dir, &gn412x_dma->dbg_reg32);
++ 	if (IS_ERR_OR_NULL(file)) {
++@@ -703,13 +710,16 @@ static int gn412x_dma_dbg_init(struct gn412x_dma_device *gn412x_dma)
++ 			 GN412X_DMA_DBG_REG_NAME, err);
++ 		goto err_reg32;
++ 	}
+++	gn412x_dma->dbg_reg = file;
+++#endif
++ 
++ 	gn412x_dma->dbg_dir = dir;
++-	gn412x_dma->dbg_reg = file;
++ 	return 0;
++ 
+++#if KERNEL_VERSION(5, 6, 0) > LINUX_VERSION_CODE
++ err_reg32:
++ 	debugfs_remove_recursive(dir);
+++#endif
++ err_dir:
++ 	return err;
++ }
 diff --git a/patches/zio.diff b/patches/zio.diff
 index f6c5570..f7e3c3a 100644
 --- a/patches/zio.diff
@@ -201,3 +795,6 @@ index f171eb5..06d4332 100644
  [ $SKIP_BUILD ] || WBGEN2=$BUILD_DIR/wishbone-gen/wbgen2 make -C software
  [ $SKIP_INSTALL ] || WBGEN2=$BUILD_DIR/wishbone-gen/wbgen2 sudo -E make -C software install
  [ $SKIP_INSTALL ] || sudo -E make -C software/lib/PyMockTurtle install
+-- 
+2.30.2
+
