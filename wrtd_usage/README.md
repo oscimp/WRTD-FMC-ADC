@@ -3,7 +3,14 @@
 We will be using the C libraries provided by the WRTD repository as well as the ADC-lib to interact with the SPEC board.
 
 To facilitate basic compilation for a single source file, a Makefile was provided to automatically load the relevent libraries and include the headers.
-Just run `make <your source file witout the file extension>` to generate an executable from a single source.
+Just run `make <your source file witout the file extension>` to generate an executable from a single source. For cross-compiling, the following environment
+variables are expected:
+```bash
+export ARCH=arm64
+export CROSS_COMPILE=<Buildroot directory>/output/host/bin/aarch64-linux-
+export LINUX=<Buildroot directory>/output/build/linux-custom
+```
+in addition to the ``BUILD_DIR`` variable as described in section 5 of https://github.com/oscimp/WRTD-FMC-ADC/tree/main/wrtd_installation
 
 ## 1. Acquiring data without WRTD
 
