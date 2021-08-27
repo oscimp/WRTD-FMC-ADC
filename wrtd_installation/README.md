@@ -32,7 +32,7 @@ Reboot using CentOS Plus.
 sudo yum install gcc git patch curl python-setuptools python-decorator python-yaml readline-devel
 ```
 
-For cross-compiling to a target with a different architecture than the host (e.g. Compute Module 4 based ARM processor), refer to the environment variables to be set prior to running the scripts (section 2, Running the scripts), assuming a functional Buildroot is already available on the host.
+For cross-compiling to a target with a different architecture than the host (e.g. Compute Module 4 based ARM processor), refer to the environment variables to be set prior to running the scripts (section 2, Running the scripts), assuming a functional Buildroot is already available on the host, as described in section 5 Intallation on a Raspberry Pi CM4 with Buildroot. Most significantly ``SKIP_INSTALL`` will prevent installing the compilation result on the host.
 
 ## 2. Running the scripts
 
@@ -87,7 +87,7 @@ To do so, look into the `change_pci_class` directory.
 If you want to explore other solutions, see this discussion:
 https://forums.ohwr.org/t/spec-pci-class-code/848718
 
-## 5. Intallation on a Raspberry Pi CM4 with Buildroot
+## 5. Installation on a Raspberry Pi CM4 with Buildroot
 
 The userspace tools provided by the project were implemented into Buildroot packages here:
 https://github.com/oscimp/oscimp_br2_external.
