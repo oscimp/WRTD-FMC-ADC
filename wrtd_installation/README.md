@@ -63,6 +63,8 @@ The script `load_bitstream.sh` will run that command for you.
 
 You may receive an error message saying `Failed to abort DMA transfer`. According to CERN, this does not cause any issue and the FPGA still receives the bitstream.
 
+If the command says `noexistent directory`, then you need to mount the debufs file system by running `mount -t debugfs none /sys/kernel/debug`.
+
 ## 4. PCI class code issue
 
 You may encounter an error on some machines when the SPEC driver is loaded (it is the case for the Raspberry Pi CM4 for example).
@@ -85,7 +87,8 @@ https://forums.ohwr.org/t/spec-pci-class-code/848718
 The userspace tools provided by the project were implemented into Buildroot packages here:
 https://github.com/oscimp/oscimp_br2_external.
 
-The packages to activate from `make menuconfig` in order are `wishbone-gen -> mock-turtle -> wrtd`, `wrtd-binaries`, and `zio -> fmc-adc-100m -> adc-lib`.
+The packages to activate from `make menuconfig` in order are `wrtd`, `wrtd-binaries`, and `adc-lib`.
+These should automatically select `mock-turtle`, `zio` and `fmc-adc-100m`.
 
 However you will need to cross-compile the kernel modules and copy the relevent file onto your board manually for the time being.
 Before executing the build scripts, provide the following environment variables:
