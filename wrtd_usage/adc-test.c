@@ -17,7 +17,7 @@
 #define SAMPLES (NSHOTS * (PRESAMPLES + POSTSAMPLES))
 
 #define ZIO_ID 0x0000
-#define SW_TRG "/sys/bus/zio/devices/adc-100m14b-0000/cset0/triggers/sw-trg-fire"
+#define SW_TRG "/sys/bus/zio/devices/adc-100m14b-0000/cset0/trigger/sw-trg-fire"
 
 #define CSV_FILE "/tmp/data.csv"
 
