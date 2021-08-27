@@ -1,5 +1,3 @@
-cd $(dirname $0)
-
 mkdir -p modules/extra/triggers
 mkdir -p modules/extra/buffers
 mkdir -p modules/extra/devices
