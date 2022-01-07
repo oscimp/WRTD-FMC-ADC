@@ -113,7 +113,7 @@ int main(int argc,char **argv) {
 	adc_check_error("Failed to initialize the library");
 
 	if (argc>1) zio_id=atoi(argv[1]);
-	struct adc_dev *adc = adc_open("fmc-adc-100m14b4cha", ZIO_ID, SAMPLES, NSHOTS, ADC_F_FLUSH);
+	struct adc_dev *adc = adc_open("fmc-adc-100m14b4cha", zio_id, SAMPLES, NSHOTS, ADC_F_FLUSH);
 	adc_check_error("Failed to open device: check ZIO_ID");
 
 	config(adc);

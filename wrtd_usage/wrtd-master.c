@@ -205,12 +205,14 @@ void acquire(struct adc_dev *adc)
 	adc_check_error("Failed to release buffer");
 }
 
-int main()
+int main(int argc, char **argv)
 {
 	struct wrtd_dev *wrtd;
 	uint32_t node_id;
 	struct adc_dev *adc;
+	int zio_id=ZIO_ID;
 
+	if (argc>1) zio_id=atoi(argv[1]);
 	// WRTD initialization
 	wrtd_check_status(wrtd_get_node_id(1, &node_id), __LINE__);
 	wrtd_check_status(wrtd_init(node_id, false, NULL, &wrtd), __LINE__);
@@ -225,7 +227,7 @@ int main()
 	adc_init();
 	adc_check_error("Failed to initialize the library");
 
-	adc = adc_open("fmc-adc-100m14b4cha", ZIO_ID, SAMPLES, NSHOTS, ADC_F_FLUSH);
+	adc = adc_open("fmc-adc-100m14b4cha", zio_id, SAMPLES, NSHOTS, ADC_F_FLUSH);
 	adc_check_error("Failed to open device");
 	config_adc(adc);
 	acquire(adc);

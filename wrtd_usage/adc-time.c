@@ -33,12 +33,13 @@ int adc_get_time(struct adc_dev *adc)
 	return time;
 }
 
-int main()
-{
+int main(int argc, char **argv)
+{	int zio_id=ZIO_ID;
+	if (argc>1) zio_id=atoi(argv[1]);
 	adc_init();
 	adc_check_error("Failed to initialize the library");
 
-	struct adc_dev *adc = adc_open("fmc-adc-100m14b4cha", ZIO_ID, 0, 0, ADC_F_FLUSH);
+	struct adc_dev *adc = adc_open("fmc-adc-100m14b4cha", zio_id, 0, 0, ADC_F_FLUSH);
 	adc_check_error("Failed to open device");
 
 	printf("%i\n", adc_get_time(adc));
