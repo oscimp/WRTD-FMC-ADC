@@ -16,8 +16,9 @@
 #define POSTSAMPLES 100
 #define SAMPLES (NSHOTS * (PRESAMPLES + POSTSAMPLES))
 
-#define ZIO_ID 0x0000
-#define SW_TRG "/sys/bus/zio/devices/adc-100m14b-0000/cset0/trigger/sw-trg-fire"
+#define ZIO_ID 0x0007
+#define SW_TRG_BEG "/sys/bus/zio/devices/adc-100m14b-"
+#define SW_TRG_END "/cset0/trigger/sw-trg-fire"
 
 #define CSV_FILE "/tmp/data.csv"
 
@@ -41,9 +42,13 @@ static void config(struct adc_dev *adc) {
 	adc_check_error("Failed to apply acquisition configuration");	
 }
 
-static void trigger_fire() {
-	int fd = open(SW_TRG, O_WRONLY);
-	adc_check_error("Failed to open file descriptor for software trigger");
+static void trigger_fire(int zio_id) {
+	char sw_trg[256];
+	int fd;
+	sprintf(sw_trg,"%s%04d%s", SW_TRG_BEG, zio_id, SW_TRG_END);
+
+	fd = open(sw_trg, O_WRONLY);
+	adc_check_error("Failed to open file descriptor for software trigger: check ZIO_ID");
 	
 	write(fd, "1", 1);
 	close(fd);
@@ -74,7 +79,7 @@ static void write_acq(struct adc_buffer *buffer) {
 	adc_check_error("Failed to close file descriptor for software trigger");
 }
 
-static void acquire(struct adc_dev *adc) {
+static void acquire(struct adc_dev *adc, int zio_id) {
 	struct adc_buffer *buffer = adc_request_buffer(adc, SAMPLES, NULL,  0);
 	adc_check_error("Failed to allocate buffer");
 
@@ -90,7 +95,7 @@ static void acquire(struct adc_dev *adc) {
 	for (int i = 0; i < NSHOTS; i++) {
 		//adc_trigger_fire(adc);
 		//adc_check_error("Failed to fire software trigger");
-		trigger_fire();
+		trigger_fire(zio_id);
 
 		adc_fill_buffer(adc, buffer, ADC_F_FIXUP, &timeout);
 		adc_check_error("Failed to fill buffer");
@@ -102,16 +107,18 @@ static void acquire(struct adc_dev *adc) {
 	adc_check_error("Failed to release buffer");
 }
 
-int main() {
+int main(int argc,char **argv) {
+	int zio_id=ZIO_ID;
 	adc_init();
 	adc_check_error("Failed to initialize the library");
 
+	if (argc>1) zio_id=atoi(argv[1]);
 	struct adc_dev *adc = adc_open("fmc-adc-100m14b4cha", ZIO_ID, SAMPLES, NSHOTS, ADC_F_FLUSH);
-	adc_check_error("Failed to open device");
+	adc_check_error("Failed to open device: check ZIO_ID");
 
 	config(adc);
 
-	acquire(adc);
+	acquire(adc, zio_id);
 
 	adc_exit();
 	return EXIT_SUCCESS;
