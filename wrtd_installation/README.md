@@ -105,7 +105,7 @@ export SKIP_INSTALL=yes
 ```
 If you provide a `BUILDROOT` variable, you can just run `source cm4/build_settings.sh`.
 
-After exporting these variables, you can execute the `wrtd_ref_spec150t_adc_install.sh` scripts from ohwr-build-scripts which will build everything into `BUILD_DIR`.
+After exporting these variables, you can execute the `wrtd_ref_spec150t_adc_install.sh` scripts from https://gitlab.cern.ch/dlamprid/ohwr-build-scripts which will build everything into `BUILD_DIR`.
 
 After building, do the following steps to insert the kernel modules into the CM4:
 - Extract all the modules files (`.ko`) from the build directory. The script `extract_modules.sh` inside the `cm4` folder will copy all the relevent files into a `modules` folder, with the same folder structure as the normal installation would do.
