@@ -10,7 +10,7 @@ export ARCH=arm64
 export CROSS_COMPILE=<Buildroot directory>/output/host/bin/aarch64-linux-
 export LINUX=<Buildroot directory>/output/build/linux-custom
 ```
-in addition to the ``BUILD_DIR`` variable as described in section 5 of https://github.com/oscimp/WRTD-FMC-ADC/tree/main/wrtd_installation
+in addition to the ``BUILD_DIR`` variable as described in section 5 of https://github.com/oscimp/WRTD-FMC-ADC/tree/main/wrtd_installation. Notice that activating the userspace applications in Buildroot requires host-python3 for adc-lib (search for adc_lib in Buildroot make menuconfig). 
 
 ## 1. Acquiring data without WRTD
 
