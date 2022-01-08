@@ -92,7 +92,7 @@ https://forums.ohwr.org/t/spec-pci-class-code/848718
 The userspace tools provided by the project were implemented into Buildroot packages here:
 https://github.com/oscimp/oscimp_br2_external.
 
-The packages to activate from `make menuconfig` are `wrtd`, `wrtd-binaries`, and `adc-lib`.
+The packages to activate from `make menuconfig` are `wrtd`, `wrtd-binaries`, ``wrpc-sw`` and `adc-lib`.
 These should automatically select `mock-turtle`, `zio` and `fmc-adc-100m`.
 
 However you will need to cross-compile the kernel modules and copy the relevent files onto your board manually for the time being.
