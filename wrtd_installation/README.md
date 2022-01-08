@@ -111,3 +111,5 @@ After building, do the following steps to insert the kernel modules into the CM4
 - Extract all the modules files (`.ko`) from the build directory. The script `extract_modules.sh` inside the `cm4` folder will copy all the relevent files into a `modules` folder, with the same folder structure as the normal installation would do.
 - Copy the content of the `modules` folder located inside `cm4` onto your CM4 board file system at `/lib/modules/<Linux version>`. You can use `scp` if your CM4 board is connected to your network.
 - Activate the modules using the `insmod` command manually, or run the `activate_modules.sh` script on the CM4.
+
+<img src="SPEC150_on_CM4IO.png">
