@@ -45,7 +45,7 @@ static void config(struct adc_dev *adc) {
 static void trigger_fire(int zio_id) {
 	char sw_trg[256];
 	int fd;
-	sprintf(sw_trg,"%s%04d%s", SW_TRG_BEG, zio_id, SW_TRG_END);
+	sprintf(sw_trg,"%s%04x%s", SW_TRG_BEG, zio_id, SW_TRG_END);
 
 	fd = open(sw_trg, O_WRONLY);
 	adc_check_error("Failed to open file descriptor for software trigger: check ZIO_ID");

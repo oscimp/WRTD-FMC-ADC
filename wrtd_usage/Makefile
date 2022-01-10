@@ -2,7 +2,7 @@ EXEC=$(patsubst %.c,%,$(wildcard *.c))
 
 CC=$(CROSS_COMPILE)gcc
 
-LDFLAGS=-lwrtd -ladc
+LDLIBS=-lwrtd -ladc
 
 CFLAGS= -std=c99 \
 	-I$(BUILD_DIR)/wrtd/software/include \
