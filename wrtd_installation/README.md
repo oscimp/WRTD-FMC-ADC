@@ -44,7 +44,7 @@ git clone https://gitlab.cern.ch/dlamprid/ohwr-build-scripts.git
 You will then need to patch the repository:
 ```bash
 cd ohwr-build-scripts
-patch -p 1 < ../ohwr-build-scripts-patch.patch
+patch -p 1 < ../ohwr-build-scripts.patch
 ```
 
 You should set the variable `BUILD_DIR` to a directory where all sources and built files will end up.
