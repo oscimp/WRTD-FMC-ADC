@@ -1,31 +1,56 @@
 From 378dfc77d62e5c66680e8c43bac52c22e3660de2 Mon Sep 17 00:00:00 2001
 From: marionm <mathis.marion@grenoble-inp.org>
-Date: Fri, 27 Aug 2021 15:21:33 +0200
+Date: Fri, 14 Jan 2022 09:17:45 +0100
 Subject: [PATCH] Compatibility for newer kernels
 
 ---
- patches/fmc-adc-100m14b4cha-sw.diff | 147 +++++++++++++++++
- patches/fmc-sw.diff                 |  65 ++++++--
- patches/general-cores.diff          | 110 +++++++++++++
- patches/mock-turtle.diff            |  55 +++++++
+ patches/adc-lib.diff                |  12 ++
+ patches/fmc-adc-100m14b4cha-sw.diff | 154 ++++++++++++++++++
+ patches/fmc-sw.diff                 |  71 +++++++--
+ patches/general-cores.diff          | 136 ++++++++++++++++
+ patches/mock-turtle.diff            | 107 +++++++++++++
  patches/spec.diff                   | 238 ++++++++++++++++++++++++++++
+ patches/wrtd.diff                   |  24 +++
  patches/zio.diff                    |  39 +++++
  scripts/adc_lib_build.sh            |   3 +
+ scripts/check_dependencies          |   4 +-
  scripts/mockturtle_build.sh         |   1 +
- 8 files changed, 644 insertions(+), 14 deletions(-)
+ scripts/spec_carrier_build.sh       |   2 +-
+ scripts/wrtd_build.sh               |   1 +
+ 13 files changed, 773 insertions(+), 19 deletions(-)
+ create mode 100644 patches/adc-lib.diff
  create mode 100644 patches/fmc-adc-100m14b4cha-sw.diff
  create mode 100644 patches/general-cores.diff
  create mode 100644 patches/mock-turtle.diff
  create mode 100644 patches/spec.diff
+ create mode 100644 patches/wrtd.diff
 
+diff --git a/patches/adc-lib.diff b/patches/adc-lib.diff
+new file mode 100644
+index 0000000..d1bc869
+--- /dev/null
++++ b/patches/adc-lib.diff
+@@ -0,0 +1,12 @@
++diff --git a/lib/PyAdcLib/Makefile b/lib/PyAdcLib/Makefile
++index 5d61c16..2b4cee9 100644
++--- a/lib/PyAdcLib/Makefile
+++++ b/lib/PyAdcLib/Makefile
++@@ -3,6 +3,6 @@
++ all:
++ clean:
++ install:
++-	python setup.py install
+++	python3 setup.py install
++ 
++ .PHONY: all clean install
 diff --git a/patches/fmc-adc-100m14b4cha-sw.diff b/patches/fmc-adc-100m14b4cha-sw.diff
 new file mode 100644
-index 0000000..d5041fd
+index 0000000..5c2972d
 --- /dev/null
 +++ b/patches/fmc-adc-100m14b4cha-sw.diff
-@@ -0,0 +1,147 @@
+@@ -0,0 +1,154 @@
 +diff --git a/kernel/fa-core.c b/kernel/fa-core.c
-+index 6e1eb6d..59368f6 100644
++index 6e1eb6d..e8b8923 100644
 +--- a/kernel/fa-core.c
 ++++ b/kernel/fa-core.c
 +@@ -10,6 +10,7 @@
@@ -36,7 +61,7 @@ index 0000000..d5041fd
 + #include "linux/ipmi-fru.h"
 + #include "linux/fmc.h"
 + 
-+@@ -38,6 +39,28 @@ static const int zfad_hw_range[] = {
++@@ -38,6 +39,35 @@ static const int zfad_hw_range[] = {
 + struct workqueue_struct *fa_workqueue;
 + 
 + 
@@ -49,6 +74,12 @@ index 0000000..d5041fd
 ++						gfp_t gfp_mask)
 ++{
 ++#if KERNEL_VERSION(5, 10, 0) <= LINUX_VERSION_CODE
+++#if KERNEL_VERSION(5, 15, 0) <= LINUX_VERSION_CODE
+++	return sg_alloc_table_from_pages_segment(sgt, pages,
+++			n_pages, offset,
+++			size,
+++			max_segment, gfp_mask);
+++#else
 ++	struct scatterlist *sg;
 ++	sg =  __sg_alloc_table_from_pages(sgt, pages, n_pages, offset, size,
 ++			max_segment, NULL, 0, gfp_mask);
@@ -56,6 +87,7 @@ index 0000000..d5041fd
 ++		return PTR_ERR(sg);
 ++	else
 ++		return 0;
+++#endif
 ++#else
 ++	return __sg_alloc_table_from_pages(sgt, pages, n_pages, offset, size,
 ++			max_segment, gfp_mask);
@@ -65,7 +97,7 @@ index 0000000..d5041fd
 + /**
 +  * Description:
 +  *    The version from the Linux kernel automatically squash contiguous pages.
-+@@ -374,7 +397,11 @@ static void fa_init_timetag(struct fa_dev *fa)
++@@ -374,7 +404,11 @@ static void fa_init_timetag(struct fa_dev *fa)
 + {
 + 	unsigned long seconds;
 + 
@@ -77,7 +109,7 @@ index 0000000..d5041fd
 + 	fa_writel(fa, fa->fa_utc_base, &zfad_regs[ZFA_UTC_SECONDS_U],
 + 		  (seconds >> 32) & 0xFFFFFFFF);
 + 	fa_writel(fa, fa->fa_utc_base, &zfad_regs[ZFA_UTC_SECONDS_L],
-+@@ -553,12 +580,21 @@ int fa_probe(struct platform_device *pdev)
++@@ -553,12 +587,21 @@ int fa_probe(struct platform_device *pdev)
 + 	fa->pdev = pdev;
 + 	fa->msgdev = &fa->pdev->dev;
 + 
@@ -172,7 +204,7 @@ index 0000000..d5041fd
 + 
 + 	/* Operations */
 diff --git a/patches/fmc-sw.diff b/patches/fmc-sw.diff
-index 9a084e1..6e6539a 100644
+index 9a084e1..9ea845b 100644
 --- a/patches/fmc-sw.diff
 +++ b/patches/fmc-sw.diff
 @@ -1,5 +1,25 @@
@@ -198,20 +230,44 @@ index 9a084e1..6e6539a 100644
 + /**
  diff --git a/drivers/fmc/fmc-eeprom.c b/drivers/fmc/fmc-eeprom.c
 -index a000a0d..2bd2a6f 100644
-+index a000a0d..c3aa905 100644
++index a000a0d..cb5c778 100644
  --- a/drivers/fmc/fmc-eeprom.c
  +++ b/drivers/fmc/fmc-eeprom.c
  @@ -7,9 +7,14 @@
-@@ -74,7 +94,7 @@ index a000a0d..2bd2a6f 100644
+@@ -49,19 +69,21 @@ index a000a0d..2bd2a6f 100644
+   */
+  static void fmc_slot_eeprom_init(struct fmc_slot *slot,
+  				 struct i2c_board_info *info,
+-@@ -48,7 +57,11 @@ static void fmc_slot_eeprom_init(struct fmc_slot *slot,
++@@ -48,7 +57,13 @@ static void fmc_slot_eeprom_init(struct fmc_slot *slot,
+  {
+  	strncpy(info->type, name, I2C_NAME_SIZE);
+  	info->addr = FMC_EEPROM_ADDR_SPACE;
+ +#if KERNEL_VERSION(4, 6, 0) <= LINUX_VERSION_CODE
+++#if LINUX_VERSION_CODE < KERNEL_VERSION(5,13,0)
+ +	info->properties = slot->at24_data;
+++#endif
+ +#else
+  	info->platform_data = &slot->at24_data;
+ +#endif
+  }
+  
+  static void fmc_slot_eeprom_init_default(struct fmc_slot *slot,
+-@@ -56,8 +69,12 @@ static void fmc_slot_eeprom_init_default(struct fmc_slot *slot,
++@@ -56,8 +71,12 @@ static void fmc_slot_eeprom_init_default(struct fmc_slot *slot,
+  {
+  	memset(info, 0, sizeof(*info));
+  	fmc_slot_eeprom_init(slot, info, FMC_EEPROM_TYPE_DEFAULT);
+@@ -74,7 +96,7 @@ index a000a0d..2bd2a6f 100644
   }
   
   /**
 -@@ -66,13 +83,41 @@ static void fmc_slot_eeprom_init_default(struct fmc_slot *slot,
-+@@ -66,13 +83,44 @@ static void fmc_slot_eeprom_init_default(struct fmc_slot *slot,
++@@ -66,13 +85,44 @@ static void fmc_slot_eeprom_init_default(struct fmc_slot *slot,
   ssize_t fmc_slot_eeprom_read(struct fmc_slot *slot,
   			     void *buf, off_t offset, size_t count)
   {
-@@ -85,21 +105,24 @@ index a000a0d..2bd2a6f 100644
+@@ -85,21 +107,24 @@ index a000a0d..2bd2a6f 100644
  +	struct nvmem_device *nvmem;
  +	char *nvmem_name;
  +	/* 
@@ -244,12 +300,12 @@ index 9a084e1..6e6539a 100644
  +		}
  +		kfree(nvmem_name);
  +	}
-@@ -117,7 +140,21 @@ index a000a0d..2bd2a6f 100644
+@@ -117,7 +142,21 @@ index a000a0d..2bd2a6f 100644
   }
   EXPORT_SYMBOL(fmc_slot_eeprom_read);
   
 -@@ -152,7 +197,9 @@ void fmc_slot_eeprom_del(struct fmc_slot *slot)
-+@@ -108,8 +156,13 @@ static int __fmc_slot_eeprom_add(struct fmc_slot *slot,
++@@ -108,8 +158,13 @@ static int __fmc_slot_eeprom_add(struct fmc_slot *slot,
 + 	}
 + 
 + 	info_l.addr = fmc_slot_i2c_address(info_l.addr, slot->ga);
@@ -263,29 +319,29 @@ index 9a084e1..6e6539a 100644
 + 		return -ENODEV;
 + 
 + 	err = sysfs_create_link(&slot->dev.kobj, &slot->eeprom->dev.kobj,
-+@@ -152,7 +205,9 @@ void fmc_slot_eeprom_del(struct fmc_slot *slot)
++@@ -152,7 +207,9 @@ void fmc_slot_eeprom_del(struct fmc_slot *slot)
   	sysfs_remove_link(&slot->dev.kobj, FRU_EEPROM_NAME);
   	i2c_unregister_device(slot->eeprom);
   	slot->eeprom = NULL;
-@@ -127,7 +164,7 @@ index a000a0d..2bd2a6f 100644
+@@ -127,7 +166,7 @@ index a000a0d..2bd2a6f 100644
   }
   
   /**
 -@@ -197,19 +244,25 @@ int fmc_slot_eeprom_type_set(struct fmc_slot *slot, const char *type)
-+@@ -197,19 +252,25 @@ int fmc_slot_eeprom_type_set(struct fmc_slot *slot, const char *type)
++@@ -197,19 +254,25 @@ int fmc_slot_eeprom_type_set(struct fmc_slot *slot, const char *type)
   
   
   	memset(&i2c_info, 0, sizeof(i2c_info));
-@@ -156,7 +193,7 @@ index a000a0d..2bd2a6f 100644
+@@ -156,7 +195,7 @@ index a000a0d..2bd2a6f 100644
   	slot->at24_data.byte_len = len;
   	slot->at24_data.page_size = 1; /* 1Byte page to play safe */
   	slot->at24_data.setup = fmc_slot_eeprom_setup;
 -@@ -219,7 +272,15 @@ int fmc_slot_eeprom_type_set(struct fmc_slot *slot, const char *type)
-+@@ -219,7 +280,15 @@ int fmc_slot_eeprom_type_set(struct fmc_slot *slot, const char *type)
++@@ -219,7 +282,15 @@ int fmc_slot_eeprom_type_set(struct fmc_slot *slot, const char *type)
   		i2c_info.type, i2c_info.addr,
   		slot->at24_data.byte_len, slot->at24_data.page_size,
   		slot->at24_data.flags);
-@@ -173,7 +210,7 @@ index a000a0d..2bd2a6f 100644
+@@ -173,7 +212,7 @@ index a000a0d..2bd2a6f 100644
   }
   EXPORT_SYMBOL(fmc_slot_eeprom_type_set);
  diff --git a/drivers/fmc/fru-parse.c b/drivers/fmc/fru-parse.c
@@ -296,10 +352,10 @@ index 9a084e1..6e6539a 100644
  @@ -5,12 +5,6 @@
 diff --git a/patches/general-cores.diff b/patches/general-cores.diff
 new file mode 100644
-index 0000000..8af962c
+index 0000000..7b0edf1
 --- /dev/null
 +++ b/patches/general-cores.diff
-@@ -0,0 +1,110 @@
+@@ -0,0 +1,136 @@
 +diff --git a/software/htvic/drivers/htvic.c b/software/htvic/drivers/htvic.c
 +index 2f87aa7..ce6b2b6 100644
 +--- a/software/htvic/drivers/htvic.c
@@ -410,12 +466,38 @@ index 0000000..8af962c
 + 	}
 + 
 + 	return 0;
++diff --git a/software/spi-ocores/drivers/spi/spi-ocores.c b/software/spi-ocores/drivers/spi/spi-ocores.c
++index 1351d8f..a8aacc4 100644
++--- a/software/spi-ocores/drivers/spi/spi-ocores.c
+++++ b/software/spi-ocores/drivers/spi/spi-ocores.c
++@@ -6,6 +6,7 @@
++ 
++ #include <linux/kernel.h>
++ #include <linux/module.h>
+++#include <linux/version.h>
++ #include <linux/init.h>
++ #include <linux/delay.h>
++ #include <linux/platform_device.h>
++@@ -404,8 +405,13 @@ static int spi_ocores_hw_xfer_wait_complete(struct spi_ocores *sp,
++  */
++ static int spi_ocores_sw_xfer_finish(struct spi_ocores *sp)
++ {
+++#if KERNEL_VERSION(5,13,0) <= LINUX_VERSION_CODE
+++	if (sp->cur_xfer->delay.value)
+++		udelay(sp->cur_xfer->delay.value);
+++#else
++ 	if (sp->cur_xfer->delay_usecs)
++ 		udelay(sp->cur_xfer->delay_usecs);
+++#endif
++ 	if (sp->cur_xfer->cs_change) {
++ 		unsigned int cs;
++ 
 diff --git a/patches/mock-turtle.diff b/patches/mock-turtle.diff
 new file mode 100644
-index 0000000..6ebdab9
+index 0000000..80913cf
 --- /dev/null
 +++ b/patches/mock-turtle.diff
-@@ -0,0 +1,55 @@
+@@ -0,0 +1,107 @@
 +diff --git a/software/kernel/mockturtle-core.c b/software/kernel/mockturtle-core.c
 +index 65c1167..13e596a 100644
 +--- a/software/kernel/mockturtle-core.c
@@ -429,7 +511,7 @@ index 0000000..6ebdab9
 + #include <mockturtle/hw/mockturtle_cpu_csr.h>
 + #include <mockturtle/hw/mockturtle_queue.h>
 +diff --git a/software/kernel/mockturtle-drv.h b/software/kernel/mockturtle-drv.h
-+index 75e3929..352b407 100644
++index 75e3929..99e7267 100644
 +--- a/software/kernel/mockturtle-drv.h
 ++++ b/software/kernel/mockturtle-drv.h
 +@@ -12,6 +12,7 @@
@@ -471,6 +553,58 @@ index 0000000..6ebdab9
 + };
 + 
 + extern struct trtl_memory_ops memops;
++diff --git a/software/kernel/mockturtle-tty.c b/software/kernel/mockturtle-tty.c
++index 077af93..b1813db 100644
++--- a/software/kernel/mockturtle-tty.c
+++++ b/software/kernel/mockturtle-tty.c
++@@ -204,7 +204,11 @@ void trtl_tty_remove(struct trtl_dev *trtl)
++ 
++ 	kfree(trtl->tty_driver->driver_name);
++ 	kfree(trtl->tty_driver->name);
+++#if KERNEL_VERSION(5,15,0) <= LINUX_VERSION_CODE
+++	tty_driver_kref_put(trtl->tty_driver);
+++#else
++ 	put_tty_driver(trtl->tty_driver);
+++#endif
++ }
++ 
++ 
++@@ -221,7 +225,11 @@ int trtl_tty_probe(struct trtl_dev *trtl)
++ 		goto err; /* no error code, we can live without console */
++ 	}
++ 
+++#if KERNEL_VERSION(5,15,0) <= LINUX_VERSION_CODE
+++	trtl->tty_driver = tty_alloc_driver(trtl->cfgrom.n_cpu, 0);
+++#else
++ 	trtl->tty_driver = alloc_tty_driver(trtl->cfgrom.n_cpu);
+++#endif
++ 	if (!trtl->tty_driver)
++ 		return -ENOMEM;
++ 	trtl->tty_driver->driver_name = kasprintf(GFP_KERNEL, "%s-tty",
++@@ -276,7 +284,11 @@ err_tty:
++ err_cfg:
++ 	kfree(trtl->tty_driver->driver_name);
++ 	kfree(trtl->tty_driver->name);
+++#if KERNEL_VERSION(5,15,0) <= LINUX_VERSION_CODE
+++	tty_driver_kref_put(trtl->tty_driver);
+++#else
++ 	put_tty_driver(trtl->tty_driver);
+++#endif
++ err:
++ 	trtl->tty_driver = NULL;
++ 	return err;
++diff --git a/software/lib/PyMockTurtle/Makefile b/software/lib/PyMockTurtle/Makefile
++index ad5f5d7..345f8ae 100644
++--- a/software/lib/PyMockTurtle/Makefile
+++++ b/software/lib/PyMockTurtle/Makefile
++@@ -7,6 +7,6 @@
++ all:
++ clean:
++ install:
++-	python setup.py install
+++	python3 setup.py install
++ 
++ .PHONY: all clean install
 diff --git a/patches/spec.diff b/patches/spec.diff
 new file mode 100644
 index 0000000..6fad436
@@ -715,6 +849,36 @@ index 0000000..6fad436
 + err_dir:
 + 	return err;
 + }
+diff --git a/patches/wrtd.diff b/patches/wrtd.diff
+new file mode 100644
+index 0000000..cc2dcd9
+--- /dev/null
++++ b/patches/wrtd.diff
+@@ -0,0 +1,24 @@
++diff --git a/software/lib/python/Makefile b/software/lib/python/Makefile
++index 5d61c16..2b4cee9 100644
++--- a/software/lib/python/Makefile
+++++ b/software/lib/python/Makefile
++@@ -3,6 +3,6 @@
++ all:
++ clean:
++ install:
++-	python setup.py install
+++	python3 setup.py install
++ 
++ .PHONY: all clean install
++diff --git a/software/tools/Makefile b/software/tools/Makefile
++index 5d61c16..2b4cee9 100644
++--- a/software/tools/Makefile
+++++ b/software/tools/Makefile
++@@ -3,6 +3,6 @@
++ all:
++ clean:
++ install:
++-	python setup.py install
+++	python3 setup.py install
++ 
++ .PHONY: all clean install
 diff --git a/patches/zio.diff b/patches/zio.diff
 index f6c5570..f7e3c3a 100644
 --- a/patches/zio.diff
@@ -783,6 +947,28 @@ index 0105750..97d9066 100644
  [ $SKIP_INSTALL ] || sudo -E make -C lib/PyAdcLib install
  
  . $SCRIPT_DIR/post_script
+diff --git a/scripts/check_dependencies b/scripts/check_dependencies
+index 02dd90c..81d1aaf 100644
+--- a/scripts/check_dependencies
++++ b/scripts/check_dependencies
+@@ -30,7 +30,7 @@ _is_present() {
+ 
+ # Internal function to check if a given python module is present
+ _pymod_check() {
+-    python -c "import ${1}" 2> $BUILD_DIR/$1.pymod_check
++    python3 -c "import ${1}" 2> $BUILD_DIR/$1.pymod_check
+     if  [ -s $BUILD_DIR/$1.pymod_check ]; then
+         echo "ERROR: Python module \"${1}\" not found. Please install it before running this script."
+         DEP_FAIL=1
+@@ -51,7 +51,7 @@ _is_present git
+ _is_present sudo
+ _is_present gcc
+ _is_present make
+-_is_present python
++_is_present python3
+ _is_present lua
+ _is_present curl
+ 
 diff --git a/scripts/mockturtle_build.sh b/scripts/mockturtle_build.sh
 index f171eb5..06d4332 100644
 --- a/scripts/mockturtle_build.sh
@@ -795,6 +981,31 @@ index f171eb5..06d4332 100644
  [ $SKIP_BUILD ] || WBGEN2=$BUILD_DIR/wishbone-gen/wbgen2 make -C software
  [ $SKIP_INSTALL ] || WBGEN2=$BUILD_DIR/wishbone-gen/wbgen2 sudo -E make -C software install
  [ $SKIP_INSTALL ] || sudo -E make -C software/lib/PyMockTurtle install
+diff --git a/scripts/spec_carrier_build.sh b/scripts/spec_carrier_build.sh
+index 5b56c71..677b8cf 100644
+--- a/scripts/spec_carrier_build.sh
++++ b/scripts/spec_carrier_build.sh
+@@ -15,7 +15,7 @@ cd $BUILD_DIR
+ cd $PROJECT
+ git checkout -B release v1.4.9
+ [ $SKIP_PATCH ] || [ -e $PATCH_DIR/$PROJECT.diff ] && patch -p1 < $PATCH_DIR/$PROJECT.diff
+-export CHEBY="python $BUILD_DIR/cheby/proto/cheby.py"
++export CHEBY="python3 $BUILD_DIR/cheby/proto/cheby.py"
+ export FMC="$BUILD_DIR/fmc-sw"
+ export I2C="$BUILD_DIR/general-cores/software/i2c-ocores"
+ export SPI="$BUILD_DIR/general-cores/software/spi-ocores"
+diff --git a/scripts/wrtd_build.sh b/scripts/wrtd_build.sh
+index 60e8822..604f94f 100644
+--- a/scripts/wrtd_build.sh
++++ b/scripts/wrtd_build.sh
+@@ -12,6 +12,7 @@ cd $BUILD_DIR
+ cd $PROJECT
+ #TODO: release
+ git checkout -b tmp 1454731
++[ $SKIP_PATCH ] || [ -e $PATCH_DIR/$PROJECT.diff ] && patch -p1 < $PATCH_DIR/$PROJECT.diff
+ export WRTD_DEP_TRTL=$BUILD_DIR/mock-turtle
+ [ $SKIP_BUILD ] || make -C software
+ [ $SKIP_INSTALL ] || sudo -E make -C software install
 -- 
-2.30.2
+2.34.1
 
