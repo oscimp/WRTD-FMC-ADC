@@ -212,7 +212,7 @@ int main(int argc, char **argv)
 	struct adc_dev *adc;
 	int zio_id=ZIO_ID;
 
-	if (argc>1) zio_id=atoi(argv[1]);
+	if (argc>1) zio_id=strtol(argv[1],NULL,16);
 	// WRTD initialization
 	wrtd_check_status(wrtd_get_node_id(1, &node_id), __LINE__);
 	wrtd_check_status(wrtd_init(node_id, false, NULL, &wrtd), __LINE__);

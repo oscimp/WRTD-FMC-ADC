@@ -35,7 +35,7 @@ int adc_get_time(struct adc_dev *adc)
 
 int main(int argc, char **argv)
 {	int zio_id=ZIO_ID;
-	if (argc>1) zio_id=atoi(argv[1]);
+	if (argc>1) zio_id=strtol(argv[1],NULL,16);
 	adc_init();
 	adc_check_error("Failed to initialize the library");
 
