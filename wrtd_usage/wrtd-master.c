@@ -21,7 +21,7 @@
 static char *rule_msg_id = "RULE-MSG";
 static char *rule_trg_id = "RULE-TRG";
 static char *alarm_id = "ALARM-1";
-static char *message_id = "MESSAGE";
+static char *message_id = "MESSAGE";  // must be identical on master and slave
 static char *trigger_id = "LC-O1";
 
 void wrtd_check_status(wrtd_status status, int line)

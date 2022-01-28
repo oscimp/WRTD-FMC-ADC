@@ -19,7 +19,7 @@
 #define CSV_FILE "/tmp/data.csv"
 
 static char *rule_id = "RULE-1";
-static char *message_id = "MSG";
+static char *message_id = "MESSAGE";
 static char *trigger_id = "LC-O1";
 
 void wrtd_check_status(wrtd_status status, int line) {
