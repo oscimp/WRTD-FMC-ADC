@@ -1,3 +1,7 @@
+# Distribution and Linux versions
+
+The software described below has been tested on Linux kernel 3.10 (CentOS7 officially supported by CERN), 5.06 (Debian, Jun-Jul 2021 and Jan. 2022) and 5.15 (Debian, Jan. 2022) on x86_64 based personal computers. The adc-test example is functional on a Compute Module 4 (OEM version of the Raspberry Pi 4) running Linux kernel 5.12 (Jan. 2022, Buildroot 2021.02.2) but none of the wrtd* examples are working on this embedded board (yet !). WRTD remote triggering from master to slave has not been confirmed at the moment (in progress).
+
 # How to use WRTD with the FMC ADC
 
 We will be using the C libraries provided by the WRTD repository as well as the ADC-lib to interact with the SPEC board.
