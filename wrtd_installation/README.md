@@ -13,7 +13,7 @@ https://gitlab.cern.ch/dlamprid/ohwr-build-scripts.
 
 With `apt` for Debian:
 ```bash
-sudo apt install linux-headers-amd64 build-essential gcc git patch sudo curl lua5.1 python-setuptools python-yaml python-decorator libreadline-dev
+sudo apt install linux-headers-amd64 build-essential gcc git patch sudo curl lua5.1 python3-setuptools python3-yaml python3-decorator libreadline-dev
 ```
 You may need to install `python-is-python3` so Python works properly when running the scripts later.
 
@@ -21,7 +21,7 @@ Note: You will need LUA 5.1 and no other version for one of the tools to work.
 
 ---
 
-With `yum` for CentOS:
+With `yum` for CentOS (Feb 2022 update: will not work anymore on CentOS7 due to the shift to Python3):
 
 You will need CentOS Plus
 ```bash
