@@ -11,13 +11,13 @@ Subject: [PATCH] Compatibility for newer kernels
  patches/mock-turtle.diff            | 107 +++++++++++++
  patches/spec.diff                   | 238 ++++++++++++++++++++++++++++
  patches/wrtd.diff                   |  24 +++
- patches/zio.diff                    |  39 +++++
+ patches/zio.diff                    |  55 +++++++
  scripts/adc_lib_build.sh            |   3 +
  scripts/check_dependencies          |   4 +-
  scripts/mockturtle_build.sh         |   1 +
  scripts/spec_carrier_build.sh       |   2 +-
  scripts/wrtd_build.sh               |   1 +
- 13 files changed, 773 insertions(+), 19 deletions(-)
+ 13 files changed, 789 insertions(+), 19 deletions(-)
  create mode 100644 patches/adc-lib.diff
  create mode 100644 patches/fmc-adc-100m14b4cha-sw.diff
  create mode 100644 patches/general-cores.diff
@@ -607,7 +607,7 @@ index 0000000..80913cf
 + .PHONY: all clean install
 diff --git a/patches/spec.diff b/patches/spec.diff
 new file mode 100644
-index 0000000..6fad436
+index 0000000..4f566e6
 --- /dev/null
 +++ b/patches/spec.diff
 @@ -0,0 +1,238 @@
@@ -893,13 +893,29 @@ index 0000000..cc2dcd9
 + 
 + .PHONY: all clean install
 diff --git a/patches/zio.diff b/patches/zio.diff
-index f6c5570..f7e3c3a 100644
+index f6c5570..1132c46 100644
 --- a/patches/zio.diff
 +++ b/patches/zio.diff
-@@ -47,6 +47,24 @@ index f1d7e4c..1dd88b4 100644
+@@ -47,6 +47,40 @@ index f1d7e4c..1dd88b4 100644
   
   	pr_info("zio-core had been loaded\n");
   	return 0;
++diff --git a/drivers/zio/devices/zio-ad788x.c b/drivers/zio/devices/zio-ad788x.c
++index fe0515d..8e67e71 100644
++--- a/drivers/zio/devices/zio-ad788x.c
+++++ b/drivers/zio/devices/zio-ad788x.c
++@@ -221,7 +221,11 @@ static int ad788x_input_cset(struct zio_cset *cset)
++ 	spi_message_add_tail(&context->transfer, &context->message);
++ 
++ 	/* start acquisition */
+++#if KERNEL_VERSION(5, 16, 0) > LINUX_VERSION_CODE
++ 	err = spi_async_locked(ad788x->spi, &context->message);
+++#else
+++	err = spi_async(ad788x->spi, &context->message);
+++#endif
++ 	if (!err)
++ 		return -EAGAIN;
++ 
 +diff --git a/drivers/zio/devices/zio-fake-dtc.c b/drivers/zio/devices/zio-fake-dtc.c
 +index ad1b9f6..629a152 100644
 +--- a/drivers/zio/devices/zio-fake-dtc.c
@@ -921,7 +937,7 @@ index f6c5570..f7e3c3a 100644
  diff --git a/drivers/zio/devices/zio-loop.c b/drivers/zio/devices/zio-loop.c
  index 4edd97f..c88acda 100644
  --- a/drivers/zio/devices/zio-loop.c
-@@ -84,3 +102,24 @@ index 42f292a..9f0ca40 100644
+@@ -84,3 +118,24 @@ index 42f292a..9f0ca40 100644
   	case 1:
   		ctrl->zio_alarms &= (~v1);
   		break;
