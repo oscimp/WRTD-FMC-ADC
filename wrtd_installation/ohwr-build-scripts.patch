@@ -804,6 +804,19 @@ index 0000000..6fad436
 + #else
 + 	return (irq_find_host((void *)dev));
 + #endif
++diff --git a/software/kernel/spec-core.c b/software/kernel/spec-core.c
++index 9956e29..0c7baa3 100644
++--- a/software/kernel/spec-core.c
+++++ b/software/kernel/spec-core.c
++@@ -90,7 +90,7 @@ static ssize_t spec_dbg_fw_write(struct file *file,
++ 	if (err)
++ 		return -EFAULT;
++ 
++-	err = spec_fw_load(spec_gn412x, buf);
+++	err = spec_fw_load(spec_gn412x, buf_l);
++ 	if (err)
++ 		return err;
++ 	return count;
 +diff --git a/software/kernel/spec-gn412x-dma.c b/software/kernel/spec-gn412x-dma.c
 +index ead355c..10bd54f 100644
 +--- a/software/kernel/spec-gn412x-dma.c
