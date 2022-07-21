@@ -566,3 +566,7 @@ You can compile the programs by running `make wrtd-master` and `make wrtd-slave`
 
 Example of master-slave data acqusition of the 10 MHz WR output using a WRTD running as master on a 5.6.0.2 Linux kernel and a
 slave running on a 5.15.5-2 kernel, both on x86_64 based personal computers.
+
+### Known limitations
+
+This sample program will **not** work with two SPEC/FMC-ADC boards fitted in the same computer. Only a single slave board should be fitted in a given computer.
