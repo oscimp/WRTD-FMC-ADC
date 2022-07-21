@@ -3,21 +3,23 @@ From: marionm <mathis.marion@grenoble-inp.org>
 Date: Fri, 14 Jan 2022 09:17:45 +0100
 Subject: [PATCH] Compatibility for newer kernels
 
+Signed-off-by: Gwenhael Goavec-Merou <gwenhael.goavec-merou@trabucayre.com>
 ---
  patches/adc-lib.diff                |  12 ++
- patches/fmc-adc-100m14b4cha-sw.diff | 154 ++++++++++++++++++
- patches/fmc-sw.diff                 |  71 +++++++--
- patches/general-cores.diff          | 136 ++++++++++++++++
- patches/mock-turtle.diff            | 107 +++++++++++++
- patches/spec.diff                   | 238 ++++++++++++++++++++++++++++
+ patches/fmc-adc-100m14b4cha-sw.diff | 154 +++++++++++++++++
+ patches/fmc-sw.diff                 |  71 ++++++--
+ patches/general-cores.diff          | 136 +++++++++++++++
+ patches/mock-turtle.diff            | 119 +++++++++++++
+ patches/spec.diff                   | 250 ++++++++++++++++++++++++++++
  patches/wrtd.diff                   |  24 +++
- patches/zio.diff                    |  55 +++++++
+ patches/zio.diff                    |  77 +++++++++
  scripts/adc_lib_build.sh            |   3 +
  scripts/check_dependencies          |   4 +-
  scripts/mockturtle_build.sh         |   1 +
  scripts/spec_carrier_build.sh       |   2 +-
  scripts/wrtd_build.sh               |   1 +
- 13 files changed, 789 insertions(+), 19 deletions(-)
+ 14 files changed, 835 insertions(+), 19 deletions(-)
+ create mode 100644 patches/.spec.diff.swp
  create mode 100644 patches/adc-lib.diff
  create mode 100644 patches/fmc-adc-100m14b4cha-sw.diff
  create mode 100644 patches/general-cores.diff
@@ -494,10 +496,10 @@ index 0000000..7b0edf1
 + 
 diff --git a/patches/mock-turtle.diff b/patches/mock-turtle.diff
 new file mode 100644
-index 0000000..80913cf
+index 0000000..c3c94c2
 --- /dev/null
 +++ b/patches/mock-turtle.diff
-@@ -0,0 +1,107 @@
+@@ -0,0 +1,119 @@
 +diff --git a/software/kernel/mockturtle-core.c b/software/kernel/mockturtle-core.c
 +index 65c1167..13e596a 100644
 +--- a/software/kernel/mockturtle-core.c
@@ -554,10 +556,22 @@ index 0000000..80913cf
 + 
 + extern struct trtl_memory_ops memops;
 +diff --git a/software/kernel/mockturtle-tty.c b/software/kernel/mockturtle-tty.c
-+index 077af93..b1813db 100644
++index 077af93..03c9403 100644
 +--- a/software/kernel/mockturtle-tty.c
 ++++ b/software/kernel/mockturtle-tty.c
-+@@ -204,7 +204,11 @@ void trtl_tty_remove(struct trtl_dev *trtl)
++@@ -35,7 +35,11 @@ static inline void trtl_tty_flip_buffer_push(struct trtl_cpu *cpu)
++ #if KERNEL_VERSION(3, 9, 0) > LINUX_VERSION_CODE
++ 	tty_schedule_flip(cpu->tty_port.tty);
++ #else
+++#if KERNEL_VERSION(5, 17, 0) > LINUX_VERSION_CODE
++ 	tty_schedule_flip(&cpu->tty_port);
+++#else
+++	tty_flip_buffer_push(&cpu->tty_port);
+++#endif
++ #endif
++ }
++ 
++@@ -204,7 +208,11 @@ void trtl_tty_remove(struct trtl_dev *trtl)
 + 
 + 	kfree(trtl->tty_driver->driver_name);
 + 	kfree(trtl->tty_driver->name);
@@ -569,7 +583,7 @@ index 0000000..80913cf
 + }
 + 
 + 
-+@@ -221,7 +225,11 @@ int trtl_tty_probe(struct trtl_dev *trtl)
++@@ -221,7 +229,11 @@ int trtl_tty_probe(struct trtl_dev *trtl)
 + 		goto err; /* no error code, we can live without console */
 + 	}
 + 
@@ -581,7 +595,7 @@ index 0000000..80913cf
 + 	if (!trtl->tty_driver)
 + 		return -ENOMEM;
 + 	trtl->tty_driver->driver_name = kasprintf(GFP_KERNEL, "%s-tty",
-+@@ -276,7 +284,11 @@ err_tty:
++@@ -276,7 +288,11 @@ err_tty:
 + err_cfg:
 + 	kfree(trtl->tty_driver->driver_name);
 + 	kfree(trtl->tty_driver->name);
@@ -607,10 +621,10 @@ index 0000000..80913cf
 + .PHONY: all clean install
 diff --git a/patches/spec.diff b/patches/spec.diff
 new file mode 100644
-index 0000000..4f566e6
+index 0000000..642fd4b
 --- /dev/null
 +++ b/patches/spec.diff
-@@ -0,0 +1,238 @@
+@@ -0,0 +1,250 @@
 +diff --git a/software/kernel/gn412x-fcl.c b/software/kernel/gn412x-fcl.c
 +index cfd7c98..472f53e 100644
 +--- a/software/kernel/gn412x-fcl.c
@@ -818,7 +832,7 @@ index 0000000..4f566e6
 + 		return err;
 + 	return count;
 +diff --git a/software/kernel/spec-gn412x-dma.c b/software/kernel/spec-gn412x-dma.c
-+index ead355c..10bd54f 100644
++index ead355c..19fdc14 100644
 +--- a/software/kernel/spec-gn412x-dma.c
 ++++ b/software/kernel/spec-gn412x-dma.c
 +@@ -679,7 +679,10 @@ static irqreturn_t gn412x_dma_irq_handler(int irq, void *arg)
@@ -844,15 +858,14 @@ index 0000000..4f566e6
 + 	file = debugfs_create_regset32(GN412X_DMA_DBG_REG_NAME, 0200,
 + 				       dir, &gn412x_dma->dbg_reg32);
 + 	if (IS_ERR_OR_NULL(file)) {
-+@@ -703,13 +710,16 @@ static int gn412x_dma_dbg_init(struct gn412x_dma_device *gn412x_dma)
-+ 			 GN412X_DMA_DBG_REG_NAME, err);
++@@ -704,12 +711,15 @@ static int gn412x_dma_dbg_init(struct gn412x_dma_device *gn412x_dma)
 + 		goto err_reg32;
 + 	}
-++	gn412x_dma->dbg_reg = file;
-++#endif
 + 
-+ 	gn412x_dma->dbg_dir = dir;
-+-	gn412x_dma->dbg_reg = file;
++-	gn412x_dma->dbg_dir = dir;
++ 	gn412x_dma->dbg_reg = file;
+++#endif
+++	gn412x_dma->dbg_dir = dir;
 + 	return 0;
 + 
 ++#if KERNEL_VERSION(5, 6, 0) > LINUX_VERSION_CODE
@@ -893,15 +906,15 @@ index 0000000..cc2dcd9
 + 
 + .PHONY: all clean install
 diff --git a/patches/zio.diff b/patches/zio.diff
-index f6c5570..1132c46 100644
+index f6c5570..43ece89 100644
 --- a/patches/zio.diff
 +++ b/patches/zio.diff
-@@ -47,6 +47,40 @@ index f1d7e4c..1dd88b4 100644
+@@ -47,6 +47,62 @@ index f1d7e4c..1dd88b4 100644
   
   	pr_info("zio-core had been loaded\n");
   	return 0;
 +diff --git a/drivers/zio/devices/zio-ad788x.c b/drivers/zio/devices/zio-ad788x.c
-+index fe0515d..8e67e71 100644
++index fe0515d..851ce88 100644
 +--- a/drivers/zio/devices/zio-ad788x.c
 ++++ b/drivers/zio/devices/zio-ad788x.c
 +@@ -221,7 +221,11 @@ static int ad788x_input_cset(struct zio_cset *cset)
@@ -916,6 +929,28 @@ index f6c5570..1132c46 100644
 + 	if (!err)
 + 		return -EAGAIN;
 + 
++@@ -379,7 +383,11 @@ static int ad788x_spi_probe(struct spi_device *spi)
++ 	return err;
++ }
++ 
+++#if KERNEL_VERSION(5, 18, 0) > LINUX_VERSION_CODE
++ static int ad788x_spi_remove(struct spi_device *spi)
+++#else
+++static void ad788x_spi_remove(struct spi_device *spi)
+++#endif
++ {
++ 	struct zio_device *zdev;
++ 	struct ad788x *ad788x;
++@@ -390,7 +398,9 @@ static int ad788x_spi_remove(struct spi_device *spi)
++ 	zio_unregister_device(zdev);
++ 	kfree(ad788x);
++ 	zio_free_device(zdev);
+++#if KERNEL_VERSION(5, 18, 0) > LINUX_VERSION_CODE
++ 	return 0;
+++#endif
++ }
++ 
++ static struct spi_driver ad788x_driver = {
 +diff --git a/drivers/zio/devices/zio-fake-dtc.c b/drivers/zio/devices/zio-fake-dtc.c
 +index ad1b9f6..629a152 100644
 +--- a/drivers/zio/devices/zio-fake-dtc.c
@@ -937,7 +972,7 @@ index f6c5570..1132c46 100644
  diff --git a/drivers/zio/devices/zio-loop.c b/drivers/zio/devices/zio-loop.c
  index 4edd97f..c88acda 100644
  --- a/drivers/zio/devices/zio-loop.c
-@@ -84,3 +118,24 @@ index 42f292a..9f0ca40 100644
+@@ -84,3 +140,24 @@ index 42f292a..9f0ca40 100644
   	case 1:
   		ctrl->zio_alarms &= (~v1);
   		break;
@@ -1036,5 +1071,5 @@ index 60e8822..604f94f 100644
  [ $SKIP_BUILD ] || make -C software
  [ $SKIP_INSTALL ] || sudo -E make -C software install
 -- 
-2.34.1
+2.35.1
 
