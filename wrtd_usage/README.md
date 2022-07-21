@@ -557,8 +557,8 @@ Here is an image of the whole process:
 The blue arrow represents the message sent by the master into the White Rabbit network.
 
 The two programs `wrtd-master.c` and `wrtd_slave.c` will do exactly that.
-To use them you first need to launch the slave program on your slave computer, which will wait for a trigger to happen.
-Then you launch the master program on the master computer.
+To use them, first launch as **root** the slave program on the slave computer, which will wait for a trigger to happen.
+Then launch as **root** the master program on the master computer.
 Both programs should terminate after a few seconds, and you should get a CSV file on each machine where you specified the location (`CSV_FILE` macro).
 You can compile the programs by running `make wrtd-master` and `make wrtd-slave`.
 
