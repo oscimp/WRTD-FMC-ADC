@@ -261,3 +261,32 @@ Knowing which edge is the right one is not a trivial task, but if we get there w
 During a meeting with CERN engineers, some potential changes to the PTP core were mentioned to account for clock domain crossing issues.
 However this is not yet implemented so we need to find our own way for now.
 
+#### Merging DIO DPLL and WRTD
+
+As of Aug. 2022, Tomasz Wlostowski provided a functional digital-PLL control of the slave Si570 from the White-Rabbit-controlled master Si570 connected to the SPEC150T FPGA. The comparison of the two synthesis procedures are as follows. Let us emphasize that the DIO is using the Lattice LM32 softcore CPU whereas the WRTD is using the RISC-V, hence the need to install two different cross-compilation toolchains, both using heavily outdated versions of gcc:
+
+DIO DPLL | WRTD |
+---------|------|
+Top level HDL:
+https://ohwr.org/project/wr-cores/tree/tom-wrpc-v5-oversampled-ddmtd/top/spec_ref_design | |
+Synthesis directory:
+https://ohwr.org/project/wr-cores/tree/tom-wrpc-v5-oversampled-ddmtd/syn/spec_ref_design | |
+Recursive clone wr-cores | |
+$ git clone https://ohwr.org/project/wr-cores.git | |
+$ git submodule update --init --recursive | |
+$ git checkout tom-wrpc-v5-oversampled-ddmtd | |
+Open the .xise project in the syn/spec_ref_design subdirectory and build the bitstream. | |
+For the WRPC software: | |
+$ git clone https://ohwr.org/project/wrpc-sw | |
+$ git submodule update --init --recursive | |
+$ git checkout tom-wrpc-v5-oversampled-dmtd | |
+$ make menuconfig | |
+In the target board menu, select "SPEC Board with a silabs aux oscillator (TEST)”. Then save the config and do | |
+$ make | |
+Two binaries to be loaded to the board are generated. | |
+Get the spec-sw driver at https://ohwr.org/project/spec-sw | |
+as root: spec-fwloader spec_wr_ref_top.bin | |
+as root: spec-cl wrc.bin | |
+as root: spec-vuart # open the virtual UART console... | |
+
+To be continued...
