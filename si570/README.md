@@ -137,12 +137,15 @@ sudo apt install flex bison
 
 ### hdl-make
 
-Simply clone the repository and run the installation script.
+Clone the repository and run the installation script.
 ```bash
 git clone https://ohwr.org/project/hdl-make.git
 cd hdl-make
 python3 setup.py install --user
 ```
+
+*Notice that the current (Aug. 2022) version of hdlmake will generate a Makefile that is not 
+functional due to a missing space between the command and the argument. To correct, plase replace line 157 of ``hdlmake/tools/makefilesyn.py`` from ``\t\t$(TCL_INTERPRETER)$@.tcl`` to ``\t\t$(TCL_INTERPRETER) $@.tcl`` before setting up.*
 
 ### wishbone-gen
 
@@ -169,6 +172,8 @@ export CROSS_COMPILE_TARGET=<install path>/riscv_toolchain/bin/riscv32-elf-
 
 An account is needed to download the official Linux installer:
 https://www.xilinx.com/member/forms/download/xef.html?filename=Xilinx_ISE_DS_Lin_14.7_1015_1.tar
+
+*Notice that a license is needed to synthetsize for the LX150T FPGA, possibly a XUP (Xilinx University Program) license for academic users, but the free WebPack will not allow to complete the synthesis.*
 
 Extract the files and launch `xsetup`. If the installer keeps giving an error when specifying the installation directory, try using `bin/lin64/xsetup` instead.
 
