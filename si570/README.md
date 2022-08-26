@@ -263,7 +263,7 @@ However this is not yet implemented so we need to find our own way for now.
 
 ## 4. Merging DIO DPLL and WRTD
 
-As of Aug. 2022, Tomasz Wlostowski provided a functional digital-PLL control of the slave Si570 from the White-Rabbit-controlled master Si570 connected to the SPEC150T FPGA. The comparison of the two synthesis procedures are as follows. Let us emphasize that the DIO is using the Lattice LM32 softcore CPU whereas the WRTD is using the RISC-V, hence the need to install two different cross-compilation toolchains, both using heavily outdated versions of gcc (the RISC-V toolchain **must** be https://ohwr.org/project/wrpc-sw/wikis/Documents/Project-Attachments and not any newer version of gcc which would reslut in a code that freezes):
+As of Aug. 2022, Tomasz Wlostowski provided a functional digital-PLL control of the slave Si570 from the White-Rabbit-controlled master Si570 connected to the SPEC150T FPGA. The comparison of the two synthesis procedures are as follows. Let us emphasize that the DIO is using the Lattice LM32 softcore CPU whereas the WRTD is additionally using the RISC-V, hence the need to install two different cross-compilation toolchains, both using heavily outdated versions of gcc (the RISC-V toolchain **must** be https://ohwr.org/project/wrpc-sw/wikis/Documents/Project-Attachments and not any newer version of gcc which would result in a code that freezes):
 
 DIO DPLL | WRTD |
 ---------|------|
