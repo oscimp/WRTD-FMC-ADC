@@ -16,7 +16,7 @@
 #define POSTSAMPLES 100
 #define SAMPLES (NSHOTS * (PRESAMPLES + POSTSAMPLES))
 
-#define ZIO_ID 0x0007
+#define ZIO_ID 0x0009
 #define SW_TRG_BEG "/sys/bus/zio/devices/adc-100m14b-"
 #define SW_TRG_END "/cset0/trigger/sw-trg-fire"
 
@@ -42,6 +42,7 @@ static void config(struct adc_dev *adc) {
 	adc_check_error("Failed to apply acquisition configuration");	
 }
 
+/* obsolete
 static void trigger_fire(int zio_id) {
 	char sw_trg[256];
 	int fd;
@@ -54,6 +55,7 @@ static void trigger_fire(int zio_id) {
 	close(fd);
 	adc_check_error("Failed to close file descriptor for software trigger");
 }
+*/
 
 
 static void write_acq(struct adc_buffer *buffer) {
@@ -93,9 +95,9 @@ static void acquire(struct adc_dev *adc, int zio_id) {
 	timeout.tv_sec = 5;
 
 	for (int i = 0; i < NSHOTS; i++) {
-		//adc_trigger_fire(adc);
-		//adc_check_error("Failed to fire software trigger");
-		trigger_fire(zio_id);
+		adc_trigger_fire(adc);
+		adc_check_error("Failed to fire software trigger");
+		// trigger_fire(zio_id);
 
 		adc_fill_buffer(adc, buffer, ADC_F_FIXUP, &timeout);
 		adc_check_error("Failed to fill buffer");

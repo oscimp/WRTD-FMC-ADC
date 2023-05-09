@@ -190,18 +190,7 @@ adc_release_buffer(adc, buffer, NULL);
 #### Software triggers
 
 We can trigger manually a trigger in software, which is very handy for testing.
-Normally we should be able to use `adc_trigger_fire` according to the documentation.
-Unfortunately this function does not work so a workaround is needed.
-
-My workaround was to manually write to a sysfs file using the following function:
-```c
-static void trigger_fire()
-{
-	int fd = open("/sys/bus/zio/devices/adc-100m14b-<ZIO ID>/cset0/trigger/sw-trg-fire", O_WRONLY);
-	write(fd, "1", 1);
-	close(fd);
-}
-```
+This operation is achieved using `adc_trigger_fire` according to the documentation.
 
 #### Time triggers
 
