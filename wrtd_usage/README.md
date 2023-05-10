@@ -559,3 +559,14 @@ slave running on a 5.15.5-2 kernel, both on x86_64 based personal computers.
 ### Known limitations
 
 This sample program will **not** work with two SPEC/FMC-ADC boards fitted in the same computer. Only a single slave board should be fitted in a given computer.
+
+### Debugging commands
+
+To identify the WRTD nodes:
+
+```sudo python3 ./wrtd_tool.py list-nodes```
+
+To list WRTD rules on a node:
+
+```sudo python3 ./wrtd_tool.py list-rules 8```
+
