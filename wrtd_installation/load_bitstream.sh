@@ -9,4 +9,5 @@ elif [ ${#PCI_ID} -gt 7 ]; then
 fi
 PCI_ID=0000:$PCI_ID
 
-echo -e -n "wrtd_ref_spec150t_adc.bin\0" > /sys/kernel/debug/$PCI_ID/fpga_firmware
+echo -e -n "wrtd_ref_spec150t_adc.bin\0" > /sys/class/pci_bus/$PCI_ID/firmware_name
+# echo -e -n "wrtd_ref_spec150t_adc.bin\0" > /sys/kernel/debug/$PCI_ID/fpga_firmware <- OBSOLETE

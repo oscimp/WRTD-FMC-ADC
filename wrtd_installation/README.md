@@ -21,7 +21,7 @@ Note: You will need LUA 5.1 and no other version for one of the tools to work.
 
 ---
 
-With `yum` for CentOS (Feb 2022 update: will not work anymore on CentOS7 due to the shift to Python3):
+With `yum` for CentOS (tested June 2023):
 
 You will need CentOS Plus
 ```bash
@@ -50,20 +50,48 @@ patch -p 1 < ../ohwr-build-scripts.patch
 You should set the variable `BUILD_DIR` to a directory where all sources and built files will end up.
 
 Finally, you need to run the installation script (lua related errors might be related to versions newer than 5.1: make sure to have this version
-installed) and reboot:
+installed):
 ```bash
 cd scripts
 sh wrtd_ref_spec150t_adc_install.sh
 ```
-This should take roughly 5 minutes.
+This should take roughly 5 minutes. 
+
+Update the module loading conditions as needed for the next step with `/etc/modprobe.d/fmc.conf` 
+including the options
+```bash
+options spec-fmc-carrier version_ignore=1
+options fmc-adc-100m14b4ch version_ignore=1
+```
+
+Once completed, **reboot** with the SPEC board installed to load the kernel modules.
+
+```bash
+lsmod | grep spec
+```
+should display `spec_fmc_carrier spec_gn412x_dma fpga_mgr fmc`. 
+
 
 ## 3. Flashing the FPGA
 
-After each reboot, you will need to send the bitstream to the FPGA before you can do anything with the board.
-To do so you can use the following command (`<PCI ID>` corresponds to the first column you should get when running `lspci | grep CERN`, looking like `XX:XX.X`; don't forget to escape the colon with a backslash):
+After each cold boot (power off/power on), the bitstream must be sent to the FPGA before the board
+can be used.
+The following commands (`<PCI ID>` corresponds to the first column you should get when running 
+`lspci | grep CERN`, looking like `XX:XX.X`; don't forget to escape the colon with a backslash) will
+achieve this result:
 ```bash
-echo -e -n "wrtd_ref_spec150t_adc.bin\0" > /sys/kernel/debug/0000\:<PCI ID>/fpga_firmware
+export PCI_ID=$(lspci | grep CERN | awk '{print $1}')
+export PCI_BUS_ID="0000:"$PCI_ID
+echo 1 > /sys/bus/pci/devices/$PCI_BUS_ID/enable
+echo -e -n "wrtd_ref_spec150t_adc.bin\0" > /sys/class/pci_bus/$PCI_BUS_ID/firmware_name
 ```
+Once the firmware is flahed,
+```bash
+lsmod | grep wrtd
+```
+should display `wrtd_ref_spec150t_adc`, the directory `/dev/mockturtle*` should be filled, and
+`/sys/bus/zio/devices` must be filled with two entries including `adc` in their name.
+
 The script `load_bitstream.sh` will run that command for you.
 
 You may receive an error message saying `Failed to abort DMA transfer`. According to CERN, this does not cause any issue and the FPGA still receives the bitstream.
